@@ -1,4 +1,4 @@
-// $Id: gpxtimeshift.cpp c546ffd259f3 2008/08/29 15:38:11 Oliver Lau <ola@ct.heise.de> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 
@@ -21,7 +21,7 @@ using namespace std;
 using namespace GPS;
 
 enum _direction {
-    PLUS = 1,
+    PLUS = +1,
     MINUS = -1,
     ABSOLUTE = 0
 };
@@ -59,7 +59,7 @@ static struct option long_options[] = {
 void disclaimer(void)
 {
     cout << "gpxtimeshift - Die Zeitstempel aller Trackpunkte in einer GPX-Datei um" << endl
-         << "               ein angegebenes Maß in die Zukunft oder die Vergangenheit" << endl
+         << "               ein angegebenes Mass in die Zukunft oder die Vergangenheit" << endl
          << "               verschieben." << endl
          << "Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>" << endl
          << "Alle Rechte vorbehalten." << endl
@@ -70,12 +70,12 @@ void disclaimer(void)
 void usage(void)
 {
     cout << "Aufruf: " << endl
-         << "   gpxtimeshift Eingabedatei.gpx Ausgabedatei.gpx [--plus | --minus | --to] Datum/Zeit" << endl
+         << "   gpxtimeshift eingabe.gpx ausgabe.gpx [ --plus | --minus | --to ] Datum/Zeit" << endl
          << endl
          << "Optionen:" << endl
          << "   --plus hh:mm:ss            um hh:mms:ss in die Zukunft verschieben" << endl
          << "   --minus hh:mm:ss           um hh:mms:ss in die Vergangenheit verschieben" << endl
-         << "   --to YYYY-MM-DDThh:mmTZD   Zeitstempel an Datum ausrichten" << endl
+         << "   --to YYYY-MM-DDThh:mmZ     Zeitstempel an Datum ausrichten" << endl
          << "   --verbose | -v" << endl
          << "   --quiet   | -q             nur Ergebnisse ausgeben" << endl
          << "   --help    | -? | -h        diese Hilfe ausgeben" << endl
@@ -133,13 +133,12 @@ int main(int argc, char* argv[])
 
     if (argc - optind < 2)
     {
-        cout << "argc - optind = " << argc - optind;
         usage();
         exit(EXIT_FAILURE);
     }
 
-    string gpxInFile = argv[optind++];
-    string gpxOutFile = argv[optind++];
+    std::string gpxInFile = argv[optind++];
+    std::string gpxOutFile = argv[optind++];
 
     if (!quiet)
         cout << "Lesen von " << gpxInFile << " .. " << endl;
