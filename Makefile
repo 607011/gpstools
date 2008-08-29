@@ -18,7 +18,6 @@ all:
 	make -C tinyxml
 	make -C gpslib
 	make -C gpsplot
-	make -C test
 	make -C wpl1000reader
 	make -C trkcompare
 	make -C splittrack
@@ -29,7 +28,6 @@ clean:
 	make -C tinyxml clean
 	make -C gpslib clean
 	make -C gpsplot clean
-	make -C test clean
 	make -C wpl1000reader clean
 	make -C trkcompare clean
 	make -C splittrack clean
