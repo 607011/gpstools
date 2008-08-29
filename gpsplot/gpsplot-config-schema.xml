@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://von-und-fuer-lau.de/gpsplot-config" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://von-und-fuer-lau.de/gpsplot-config">
+
+    <xsd:annotation>
+        <xsd:documentation>
+            gpsplot configuration file schema version 1.0 - Mehr Informationen unter http://von-und-fuer-lau.de/gpsplot.html
+        </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:element name="config" type="configType">
+        <xsd:annotation>
+            <xsd:documentation>CONFIG ist das Wurzelelement in der Konfigurationsdatei.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="generalParametersType">
+        <xsd:sequence>
+            <xsd:element name="title" type="xsd:string" maxOccurs="1" minOccurs="0">
+			        <xsd:annotation>
+			          <xsd:documentation>
+			            Dieser Text erscheint als Überschrift in der erzeugten Grafik.
+			          </xsd:documentation>
+			        </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="url" type="xsd:string" maxOccurs="1" minOccurs="0">
+              <xsd:annotation>
+                <xsd:documentation>
+                  Diese URL wird für den METADATA/LINK-Abschnitt der erzeugten GPX-Datei verwendet.
+                </xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="author" type="authorType" maxOccurs="1" minOccurs="0">
+              <xsd:annotation>
+                <xsd:documentation>
+                  Die Autoreninformationen werden für den METADATA-Abschnitt der erzeugten GPX-Datei verwendet.
+                </xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="authorType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Informationen über den Sammler der GPS-Daten.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="name" type="xsd:string">
+              <xsd:annotation>
+                <xsd:documentation>
+                  Die URL wird zum Beispiel für den METADATA/AUTHOR/NAME-Abschnitt der erzeugten GPX-Datei verwendet.
+                </xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="email" type="xsd:string">
+              <xsd:annotation>
+                <xsd:documentation>
+                  Die E-Mail-Adresse wird zum Beispiel für den METADATA/AUTHOR/EMAIL-Abschnitt der erzeugten GPX-Datei verwendet.
+                </xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="url" type="xsd:string">
+              <xsd:annotation>
+                <xsd:documentation>
+                  Die URL wird zum Beispiel für den METADATA/AUTHOR-Abschnitt der erzeugten GPX-Datei verwendet.
+                </xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="configType">
+        <xsd:annotation>
+            <xsd:documentation>gpsplot-Konfiguration.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="general" type="generalParametersType" maxOccurs="1" minOccurs="1"></xsd:element>
+            <xsd:element name="input" type="inputType" maxOccurs="1" minOccurs="1"></xsd:element>
+            <xsd:element name="calculations" type="calculationsType" maxOccurs="1" minOccurs="0"></xsd:element>
+            <xsd:element name="gnuplot" type="gnuplotType" maxOccurs="1" minOccurs="1"></xsd:element>
+            <xsd:element name="dump" type="dumpType" maxOccurs="1" minOccurs="0"></xsd:element>
+            <xsd:element name="kml" type="kmlType" maxOccurs="1" minOccurs="0"></xsd:element>
+            <xsd:element name="googlemaps" type="googlemapsType" maxOccurs="1" minOccurs="0"></xsd:element>
+        </xsd:sequence>
+
+        <xsd:attribute name="version" type="xsd:string" use="required" fixed="1.0">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Das CONFIG-Element muss diese Versionsbezeichnung tragen.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="inputType">
+        <xsd:sequence>
+            <xsd:element name="elevation" type="inputFileType" maxOccurs="1" minOccurs="1"></xsd:element>
+            <xsd:element name="heartrate" type="inputFileType" maxOccurs="1" minOccurs="0"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+
+    <xsd:complexType name="inputFileType">
+        <xsd:sequence>
+            <xsd:element name="file" type="xsd:string" maxOccurs="1" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Pfad und Name der Datei, aus der die Daten
+                        gelesen werden sollen. Der Pfad kann absolut
+                        oder relativ sein.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="offset" type="timeOffsetType" maxOccurs="1" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Zeitstempel um das angegebene Maß in die Zukunft
+                        oder die Vergangenheit verschieben.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="timeOffsetType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Format des Zeitstempeloffsets.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[+\-]\d{2}:\d{2}:\d{2}"></xsd:pattern>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="calculationsType">
+        <xsd:sequence>
+            <xsd:element name="smoothing" type="smoothingsType" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="smoothingsType">
+        <xsd:sequence>
+            <xsd:element name="algorithm" type="algorithmType" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+            <xsd:element name="param" type="xsd:decimal" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+            <xsd:element name="draw" type="xsd:boolean"></xsd:element>
+            <xsd:element name="gnuplotOption" type="xsd:string"></xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="xsd:string"></xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:simpleType name="algorithmType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="threshold"></xsd:enumeration>
+            <xsd:enumeration value="douglas_peucker"></xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="gnuplotType">
+        <xsd:annotation>
+            <xsd:documentation>Parameter für gnuplot.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="executable" type="xsd:string" maxOccurs="1" minOccurs="1"></xsd:element>
+            <xsd:element name="format" type="xsd:string" maxOccurs="1" minOccurs="1"></xsd:element>
+            <xsd:element name="suffix" type="xsd:string" maxOccurs="1" minOccurs="1"></xsd:element>
+            <xsd:element name="xaxis" type="xaxisType" maxOccurs="1" minOccurs="1"></xsd:element>
+            <xsd:element name="speedinterval" type="speedIntervalType" maxOccurs="1" minOccurs="1"></xsd:element>
+            <xsd:element name="legend" type="xsd:boolean" maxOccurs="1" minOccurs="1"></xsd:element>
+            <xsd:element name="elevation" type="dimensionsType" maxOccurs="1" minOccurs="1"></xsd:element>
+            <xsd:element name="speed" type="dimensionsAndSourceType" maxOccurs="1" minOccurs="0"></xsd:element>
+            <xsd:element name="hr" type="dimensionsType" maxOccurs="1" minOccurs="0"></xsd:element>
+            <xsd:element name="slope" type="dimensionsAndSourceType" maxOccurs="1" minOccurs="0"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="xaxisType">
+        <xsd:annotation>
+            <xsd:documentation>Skalierung der x-Achse.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="distance"></xsd:enumeration>
+            <xsd:enumeration value="datetime"></xsd:enumeration>
+            <xsd:enumeration value="duration"></xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="speedIntervalType">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:int">
+                <xsd:attribute name="unit" type="intervalUnitType"></xsd:attribute>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:simpleType name="intervalUnitType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="seconds"></xsd:enumeration>
+            <xsd:enumeration value="meters"></xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="dimensionsType">
+        <xsd:annotation>
+            <xsd:documentation>Größe und Darstellungsparameter der einzelnen Plot-Abschnitte.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="height" maxOccurs="1" minOccurs="1">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:int">
+                        <xsd:minInclusive value="0"></xsd:minInclusive>
+                        <xsd:maxInclusive value="100"></xsd:maxInclusive>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="range" type="rangeType" maxOccurs="1" minOccurs="0"></xsd:element>
+            <xsd:element name="average" type="xsd:boolean" maxOccurs="1" minOccurs="0"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="rangeType">
+        <xsd:sequence>
+            <xsd:element name="lo" type="xsd:decimal" minOccurs="0" maxOccurs="1"></xsd:element>
+            <xsd:element name="hi" type="xsd:decimal" minOccurs="0" maxOccurs="1"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="dimensionsAndSourceType">
+        <xsd:complexContent>
+            <xsd:extension base="dimensionsType">
+                <xsd:sequence>
+                    <xsd:element name="source" type="xsd:string" maxOccurs="1" minOccurs="1"></xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="dumpType">
+        <xsd:sequence>
+            <xsd:element name="file" type="xsd:string" maxOccurs="1" minOccurs="1"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="kmlType">
+        <xsd:sequence>
+            <xsd:element name="file" type="xsd:string" maxOccurs="1" minOccurs="1"></xsd:element>
+            <xsd:element name="start" type="xsd:boolean" maxOccurs="1" minOccurs="0"></xsd:element>
+            <xsd:element name="finish" type="xsd:boolean" maxOccurs="1" minOccurs="0"></xsd:element>
+            <xsd:element name="ticks" type="xsd:positiveInteger" maxOccurs="1" minOccurs="0"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="googlemapsType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Einstellungen der JavaScript-Datei, um den Track mit
+                Hilfe des Google-Maps-API in der eigenen Webseite
+                darzustellen.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="file" type="xsd:string" maxOccurs="1" minOccurs="1"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+</xsd:schema>

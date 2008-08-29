@@ -1,0 +1,20 @@
+TODO
+
+[ ] Karte nebst Kalibrierungsdaten in GeoTIFF-Dateien verwalten, http://www.remotesensing.org/geotiff/
+
+[ ] Geografische Position eines Kalibrierungspunktes nicht nur mit
+Längen- und Breitengrad angeben, sondern auch als UTM-Koordinaten u.ä.
+
+[ ] Timeshift
+
+    [ ] um +|- hh:mm:ss eines Tracks
+    [ ] Anfangszeit auf bestimmten Zeitstempel setzen
+
+[x] Track vereinfachen per Douglas-Peucker
+
+[ ] Track speichern mit Exportfilter
+
+    [ ] in verschiedenen Formaten: GPX, KML, ...
+    [ ] Splitten nach x Punkten (Vorgabe: 500)
+    [ ] Splitten nach Pausen
+    
