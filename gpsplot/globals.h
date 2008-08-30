@@ -1,4 +1,4 @@
-// $Id: globals.h b1c70e73719f 2008/08/28 15:26:05 Oliver Lau <ola@ct.heise.de> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 
@@ -82,6 +82,7 @@ extern std::string gnuplotSlopeSource;
 extern std::string dumpFile;
 extern std::string dumpFileCmdline;
 extern std::string kmlFile;
+extern std::string staticImagesUrl;
 extern bool kmlMarkStart;
 extern bool kmlMarkFinish;
 extern int kmlKmTicks;

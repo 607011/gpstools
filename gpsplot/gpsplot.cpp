@@ -1,4 +1,4 @@
-// $Id: gpsplot.cpp b1c70e73719f 2008/08/28 15:26:05 Oliver Lau <ola@ct.heise.de> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 
@@ -42,6 +42,8 @@ static struct option long_options[] = {
     { "verbose",   no_argument,       0, SELECT_VERBOSE },
     { 0,           0,                 0, 0 }
 };
+
+
 
 
 int main(int argc, char* argv[])
@@ -670,7 +672,8 @@ int main(int argc, char* argv[])
             sprintf(deg, "%03d", i);
 #endif
             js << "  var arrow" << deg << " = new GIcon(baseIcon);"
-                << " arrow" << deg << ".image = 'http://knallwade.de/images/arrow" << deg << ".png';" << endl;
+                << " arrow" << deg << ".image = '" << staticImagesUrl << "/arrow" << deg << ".png';" << endl;
+            // TODO: Domain konfigurierbar machen
         }
         Trackpoint* start = trk->points().front();
         Trackpoint* finish = trk->points().back();
