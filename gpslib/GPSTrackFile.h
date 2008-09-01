@@ -1,4 +1,4 @@
-// $Id: GPSTrackFile.h bd86a16444b7 2008/08/27 15:09:21 Oliver Lau <ola@ct.heise.de> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 
@@ -13,14 +13,16 @@
 #include "Track.h"
 
 
+
 #if !defined(WIN32) && !defined(errno_t)
 #define errno_t int
 #endif
 
 namespace GPS {
 
+
     /// (Teil-)Abstrakte Klasse zur Verwaltung von Dateien, die GPS-Tracks enthalten.
-    class GPSTrackFile {
+    class GPSTrackFile { // TODO: Die Klasse müsste eigentlich GPSFile heißen und nicht GPSTrackFile.
 
     protected:
         /// GPS-Track
@@ -85,17 +87,33 @@ namespace GPS {
         /// @return Track
         inline Track* track(void) { return _Trk; } 
 
+        /// Track zurückgeben.
+        /// @return Track
+        inline const Track* track(void) const { return _Trk; } 
+
         /// Track-Liste zurückgeben.
         /// @return Track-Liste
         inline TrackList& tracks(void) { return _TrkList; }
+
+        /// Track-Liste zurückgeben.
+        /// @return Track-Liste
+        inline const TrackList& tracks(void) const { return _TrkList; }
 
         /// Wegpunkte-Liste zurückgeben.
         /// @return Wegpunkte-Liste
         inline WaypointList& waypoints(void) { return _Waypoints; }
 
+        /// Wegpunkte-Liste zurückgeben.
+        /// @return Wegpunkte-Liste
+        inline const WaypointList& waypoints(void) const { return _Waypoints; }
+
         /// Routen-Liste zurückgeben.
         /// @return Routen-Liste
         inline RouteList& routes(void) { return _Routes; }
+
+        /// Routen-Liste zurückgeben.
+        /// @return Routen-Liste
+        inline const RouteList& routes(void) const { return _Routes; }
 
         /// Track setzen.
         /// @param trk Track

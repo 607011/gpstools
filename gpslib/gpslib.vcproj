@@ -199,6 +199,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Polygon.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Stochastics.cpp"
 				>
 			</File>
@@ -278,6 +282,10 @@
 			</File>
 			<File
 				RelativePath=".\Point.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Polygon.h"
 				>
 			</File>
 			<File

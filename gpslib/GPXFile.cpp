@@ -1,4 +1,4 @@
-// $Id: GPXFile.cpp a5c498e66508 2008/08/28 06:31:06 Oliver Lau <oliver.lau@gmail.com> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 
@@ -27,6 +27,7 @@ namespace GPS {
     }
 
 
+    // TODO: auﬂer Tracks auch Wegpunkte und Routen laden
     errno_t GPXFile::load(const std::string& filename)
     {
         if (!filename.empty())
@@ -78,6 +79,7 @@ namespace GPS {
     }
 
 
+    // TODO: auﬂer Tracks auch Wegpunkte und Routen speichern
     errno_t GPXFile::write(const std::string& filename, bool onlyKept)
     {
         if (!filename.empty())

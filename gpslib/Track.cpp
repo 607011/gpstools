@@ -1,4 +1,4 @@
-// $Id: Track.cpp c546ffd259f3 2008/08/29 15:38:11 Oliver Lau <ola@ct.heise.de> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 
@@ -74,6 +74,13 @@ namespace GPS {
         return isEmpty()
             ? 0
             : samples.back()->distance();
+    }
+
+
+    // TODO: Flächenberechnung implementieren
+    double Track::area(void) const
+    {
+        return -1;
     }
 
 

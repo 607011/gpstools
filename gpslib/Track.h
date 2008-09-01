@@ -1,4 +1,4 @@
-// $Id: Track.h c546ffd259f3 2008/08/29 15:38:11 Oliver Lau <ola@ct.heise.de> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 
@@ -229,9 +229,14 @@ namespace GPS {
         /// @return größte Höhe (in Metern üNN)
         const DoubleValue& maxElevation(void) const { return _MaxElevation; }
 
-        /// Entfernung in Metern zurückgeben. Get distance in meters.
-        /// @return Entfernung in Metern; -1, wenn der Track keine Entfernungsangaben enthält.
+        /// Entfernung in Metern zurückgeben.
+        /// @return Entfernung in Metern
         double distance(void) const;
+
+        /// Durch den Track eingeschlossene Fläche in Quadratmetern zurückgeben.
+        /// NOCH NICHT IMPLEMENTIERT!
+        /// @return Fläche in Quadratmetern
+        double area(void) const;
 
         /// Dauer in Sekunden zurückgeben.
         /// @return Dauer in Sekunden.
@@ -332,7 +337,6 @@ namespace GPS {
         void dump(std::ostream& os, std::string msg, bool dumpTrackpoints = false);
 
         /// Den Track in kleinere Tracks aufspalten mit nicht mehr als n Punkten.
-        /// NOCH NICHT IMPLEMENTIERT!
         /// @param n Maximale Anzahl der Punkte, die ein Track haben darf.
         /// @return Chronologisch sortierte Liste der Teil-Tracks.
         TrackList* split(size_t n);
