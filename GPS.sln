@@ -21,6 +21,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "splittrack", "splittrack\sp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gpxtimeshift", "gpxtimeshift\gpxtimeshift.vcproj", "{D993BB98-1ECF-4D25-B4EB-E5B907776A9B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcproj", "{175B5041-C2ED-42DC-8057-31663812E41A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -63,6 +65,10 @@ Global
 		{D993BB98-1ECF-4D25-B4EB-E5B907776A9B}.Debug|Win32.Build.0 = Debug|Win32
 		{D993BB98-1ECF-4D25-B4EB-E5B907776A9B}.Release|Win32.ActiveCfg = Release|Win32
 		{D993BB98-1ECF-4D25-B4EB-E5B907776A9B}.Release|Win32.Build.0 = Release|Win32
+		{175B5041-C2ED-42DC-8057-31663812E41A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{175B5041-C2ED-42DC-8057-31663812E41A}.Debug|Win32.Build.0 = Debug|Win32
+		{175B5041-C2ED-42DC-8057-31663812E41A}.Release|Win32.ActiveCfg = Release|Win32
+		{175B5041-C2ED-42DC-8057-31663812E41A}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

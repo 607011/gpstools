@@ -12,17 +12,14 @@
 
 namespace GPS {
 
-    typedef std::vector<Line> LineList;
+    typedef std::vector<Point> PointList;
 
     /// Die Klasse Polygon beschreibt 2-dimensionale Polygone in einem kartesischen Koordinatensystem.
     class Polygon
     {
     private:
         /// Liste der Punkt für Punkt aneinanderhängenden Kanten, aus denen sich der Polygon zusammensetzt.
-        LineList lines;
-
-    private:
-        static double triangleArea(const Point& p1, const Point& p2, const Point& p3);
+        PointList points;
 
     public:
         /// Konstruktor.
@@ -35,9 +32,19 @@ namespace GPS {
         /// @return Umfang des Polygons
         double perimeter(void) const;
 
-        /// Eine Kante ans Ende der Kantenliste anhängen.
-        /// @param line neue Kante
-        inline void append(const Line& line) { lines.push_back(line); }
+        /// Flächeninhalt des Polygons ermitteln.
+        /// @return Flächeninhalt des Polygons
+        double area(void) const;
+
+        /// Einen Punkt ans Ende der Punktliste anhängen.
+        /// @param line neuer Punkt
+        inline void append(const Point& p) { points.push_back(p); }
+
+        inline Polygon& operator<<(const Point& p) { points.push_back(p); return *this; }
+
+        /// Polygon schließen.
+        /// Diese Funktion *muss* aufgerufen werden, bevor man perimeter() oder area() aufruft.
+        void close(void);
     };
 
 
