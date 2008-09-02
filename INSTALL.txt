@@ -6,7 +6,7 @@ Getestete Systeme:
 
 *	Suse Linux 9.3 mit GCC 3.3.5 20050117 (prerelease)
 *	Ubuntu Linux 8.04 mit GCC 4.2.3
-*	Mac OS X mit GCC 4.0.1 (Apple Inc. build 5465)
+*	Mac OS X 10.5.4 (Leopard) mit GCC 4.0.1 (Apple Inc. build 5465)
 
 
 
@@ -22,5 +22,3 @@ Getestete Systeme:
 
 
 Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
-
-$Id$
