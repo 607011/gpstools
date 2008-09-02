@@ -1,0 +1,8 @@
+KOMPILIEREN
+
+Die Eingabe von make übersetzt die GPS-Bibliothek im Verzeichnis gpslib und alle darauf aufbauenden Tools in den anderen Unterverzeichnissen.
+
+Getestete Systeme:
+
+*	Suse Linux 9.3 mit GCC 3.3.5 20050117 (prerelease)
+*	Ubuntu Linux 8.04 mit
