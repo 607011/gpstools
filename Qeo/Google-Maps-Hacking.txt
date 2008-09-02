@@ -1,0 +1,34 @@
+﻿Google Maps Hacking
+===================
+
+
+
+
+
+Kacheln per Angabe von x- und y-Koordinate der *Kachel* sowie einer Zoom-Stufe, zum Beispiel eine Kachel von Hannover bis Karlsruhe:
+http://mt.google.com/mt?x=33&y=21&zoom=11
+
+
+
+http://khm[0-4]?.google.de/kh/?v=29&hl=de&
+
+zum Beispiel Blick auf den Heise Verlag:
+http://khm2.google.de/kh?v=29&hl=de&t=trtqtqsrqrrrssttrtqrq
+http://maps.google.de/?ll=52.380508,9.806262&spn=0.000422,0.001003&t=k&z=20
+
+
+
+http://blog.grimpoteuthis.org/2005/04/more-maps.html
+
+Google Map Parameters
+http://mapki.com/wiki/Google_Map_Parameters
+
+
+Google Static Maps
+http://code.google.com/apis/maps/documentation/staticmaps/>http://code.google.com/apis/maps/documentation/staticmaps/
+
+http://maps.google.com/staticmap?center=52.228422,9.484042&zoom=13&size=512x512&key=ABQIAAAASUyQQ8GoT40oNgrqyxt5UhTgFoc_gWUfqHj-0TsDKuhGG3s4IxQ1U0PpUbld_I32IsNw_IfmiUS8og&hl=de
+
+
+&center=: Breiten- und Längengrad (dezimal)
+&zoom=: maximal 17 bei Straßenkarten
