@@ -1,4 +1,4 @@
-// $Id: Trackpoint.h bd86a16444b7 2008/08/27 15:09:21 Oliver Lau <ola@ct.heise.de> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 
@@ -55,6 +55,7 @@ namespace GPS {
         /// _Keep wird auf false gesetzt.
         /// @param other Trackpunkt, von dem die Kopie erstellt werden soll.
         Trackpoint(const Trackpoint& other);
+
 
         /// Abstand des Trackpunktes zu einer gedachten berechnen, die durch die beiden übergebenen Trackpunkten verläuft.
         /// Die Berechnung erfolgt in zwei Dimensionen, und zwar nur unter Einbeziehung der Entfernung vom Start und der Höhe.

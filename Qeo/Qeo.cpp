@@ -1,4 +1,4 @@
-// $Id: Qeo.cpp 0aafbc2f4c11 2008/08/12 15:32:38 Oliver Lau <oliver@ersatzworld.net> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <ola@ct.heise.de>, Heise Zeitschriften Verlag.
 // Alle Rechte vorbehalten.
 
