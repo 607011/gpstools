@@ -16,11 +16,14 @@
     <xsd:complexType name="generalParametersType">
         <xsd:sequence>
             <xsd:element name="title" type="xsd:string" maxOccurs="1" minOccurs="0">
-			        <xsd:annotation>
-			          <xsd:documentation>
-			            Dieser Text erscheint als Überschrift in der erzeugten Grafik.
-			          </xsd:documentation>
-			        </xsd:annotation>
+                    <xsd:annotation>
+                      <xsd:documentation>
+                        Dieser Text erscheint als Überschrift in der erzeugten Grafik
+                        und wird als Dateiname der erzeugten Grafik verwendet.
+                        Sonderzeichen werden im Dateinamen durch Unterstriche ersetzt,
+                        die Dateiendung automatisch hinzugefügt.
+                      </xsd:documentation>
+                    </xsd:annotation>
             </xsd:element>
             <xsd:element name="url" type="xsd:string" maxOccurs="1" minOccurs="0">
               <xsd:annotation>

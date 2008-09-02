@@ -50,7 +50,7 @@ namespace GPS {
                 sum += (p1.x() - p2.x()) * (p1.y() + p2.y());
             }
         }
-        return -0.5 * sum;
+        return fabs(0.5 * sum);
     }
 
 

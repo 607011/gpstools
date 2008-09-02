@@ -1,4 +1,4 @@
-// $Id: splittrack.cpp bd86a16444b7 2008/08/27 15:09:21 Oliver Lau <ola@ct.heise.de> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 
@@ -44,14 +44,14 @@ static struct option long_options[] = {
 void disclaimer(void)
 {
     std::cout << "splittrack - Track aus GPX-Datei in mehrere aufteilen." << endl
-        << "Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net> Alle Rechte vorbehalten." << endl
+        << "Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>" << endl
         << "Alle Rechte vorbehalten." << endl << endl;
 }
 
 
 void usage(void)
 {
-    std::cout << "Usage: splittrack [-n x] track.gpx" << endl
+    std::cout << "Aufruf: splittrack [-n x] track.gpx" << endl
         << "Optionen:" << endl
         << "  -n x" << endl
         << "     Teiltrack soll nicht mehr als x Punkte haben (Vorgabe: x = " << DefaultPointCount << ")" << endl
