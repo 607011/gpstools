@@ -234,7 +234,7 @@ namespace GPS {
         double distance(void) const;
 
         /// Durch den Track eingeschlossene Fläche in Quadratmetern zurückgeben.
-        /// NOCH NICHT IMPLEMENTIERT!
+        /// UNGETESTET!
         /// @return Fläche in Quadratmetern
         double area(void) const;
 

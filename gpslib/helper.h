@@ -1,4 +1,4 @@
-// $Id: helper.h bd86a16444b7 2008/08/27 15:09:21 Oliver Lau <ola@ct.heise.de> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 
@@ -25,6 +25,9 @@ extern const char* encode_extended(size_t val);
 
 /// Convert int to string.
 extern std::string itos(int _Val);
+
+/// Convert double to string.
+extern std::string dtos(double d);
 
 /// Convert seconds into W3C timestamp
 extern std::string secs2timestamp(time_t dur);

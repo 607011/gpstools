@@ -29,10 +29,7 @@ bool doWrite = true;
 void polygon_tests(void)
 {
     Polygon p;
-    p << Point(2, 4) 
-        << Point(4, 4) 
-        << Point(4, 0)
-        << Point(2, 0);
+    p << Point(1, 1) << Point(1, 3) << Point(5, 3);
     p.close();
     cout << "perimeter = " << p.perimeter() << endl
         << "area = " << p.area();
@@ -139,8 +136,8 @@ void weeding_tests(void)
 
 int main(/*int argc, char* argv[]*/)
 {
+    basic_tests();
     polygon_tests();
-    // basic_tests();
     // weeding_tests();
 
     if (!quiet)

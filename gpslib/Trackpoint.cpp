@@ -1,4 +1,4 @@
-// $Id: Trackpoint.cpp a5c498e66508 2008/08/28 06:31:06 Oliver Lau <oliver.lau@gmail.com> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 
@@ -125,16 +125,16 @@ namespace GPS {
 
     std::string Trackpoint::paceString(void) const
     {
-        int rc;
-        char buf[17];
         double p = _Pace;
         int min = (int) (_Pace);
         if (min >= 100) { min = 99; p = 99; }
         int sec = (int) (60 * (p - (double) min));
 #if defined(_WIN32) && (_MSC_VER >= 1400)
-        rc = sprintf_s(buf, 16, "%d:%02d", min, sec);
+        char buf[17];
+        sprintf_s(buf, 16, "%d:%02d", min, sec);
 #else
-        rc = sprintf(buf, "%d:%02d", min, sec);
+        char buf[256];
+        sprintf(buf, "%d:%02d", min, sec);
 #endif
         return buf;
     }

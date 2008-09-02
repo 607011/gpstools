@@ -1,9 +1,11 @@
-// $Id: Point.h bd86a16444b7 2008/08/27 15:09:21 Oliver Lau <ola@ct.heise.de> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 
 #ifndef __POINT_H_
 #define __POINT_H_
+
+#include <string>
 
 namespace GPS {
 
@@ -108,6 +110,13 @@ namespace GPS {
         /// @return Z-Wert
         /// @see _Z
         inline double z(void) const { return _Z; }
+
+        /// Den Punkt in einen String wandeln.
+        inline operator std::string() { return toString(); }
+
+        /// Den Punkt in einen String wandeln.
+        virtual std::string toString(void) const;
+
     };
 
 };

@@ -1,4 +1,4 @@
-// $Id: helper.cpp bd86a16444b7 2008/08/27 15:09:21 Oliver Lau <ola@ct.heise.de> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 
@@ -31,6 +31,14 @@ std::string itos(int i)
 {
     std::stringstream s;
     s << i;
+    return s.str();
+}
+
+
+std::string dtos(double d)
+{
+    std::stringstream s;
+    s << d;
     return s.str();
 }
 

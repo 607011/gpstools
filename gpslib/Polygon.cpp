@@ -5,6 +5,10 @@
 #include "Polygon.h"
 #include "Vector.h"
 
+#ifdef _DEBUG
+#include <iostream>
+#endif
+
 #include <cmath>
 
 namespace GPS {
@@ -25,8 +29,11 @@ namespace GPS {
     {
         double sum = 0.0;
         if (points.size() > 3) {
-            for (PointList::const_iterator i = points.begin(); i != points.end()-1; ++i)
-                sum += Vector(*i, (*(i+1))).length();
+            for (PointList::const_iterator i = points.begin(); i != points.end()-1; ++i) {
+                const Point& p1 = *i;
+                const Point& p2 = *(i+1);
+                sum += Vector(p1, p2).length();
+            }
         }
         return sum;
     }
@@ -37,7 +44,11 @@ namespace GPS {
         double sum = 0.0;
         if (points.size() > 3) {
             for (PointList::const_iterator i = points.begin(); i != points.end()-1; ++i)
-                sum += ((*i).x() - ((*i)+1).x()) * ((*i).y() + ((*i)+1).y());
+            {
+                const Point& p1 = *i;
+                const Point& p2 = *(i+1);
+                sum += (p1.x() - p2.x()) * (p1.y() + p2.y());
+            }
         }
         return -0.5 * sum;
     }
@@ -45,6 +56,7 @@ namespace GPS {
 
     void Polygon::close(void) 
     {
-        append(points.front());
+        if (points.front() != points.back())
+            append(points.front());
     }
 };

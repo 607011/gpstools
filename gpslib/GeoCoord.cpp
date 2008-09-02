@@ -1,4 +1,4 @@
-// $Id: GeoCoord.cpp bd86a16444b7 2008/08/27 15:09:21 Oliver Lau <ola@ct.heise.de> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 
@@ -179,7 +179,7 @@ namespace GPS {
     }
 
 
-    std::string GeoCoord::toString(void)
+    std::string GeoCoord::toString(void) const
     {
         return dec2dms(_Longitude, LONGITUDE) + " " + dec2dms(_Latitude, LATITUDE);
     }

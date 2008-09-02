@@ -7,6 +7,7 @@
 #include <cmath>
 
 #include "helper.h"
+#include "Polygon.h"
 #include "Track.h"
 #include "TrackLine.h"
 #include "Timestamp.h"
@@ -77,10 +78,13 @@ namespace GPS {
     }
 
 
-    // TODO: Flächenberechnung implementieren
     double Track::area(void) const
     {
-        return -1;
+        Polygon p;
+        for (TrackpointList::const_iterator i = samples.begin(); i != samples.end(); ++i)
+            p << (*i)->toUTM();
+        p.close();
+        return p.area();
     }
 
 

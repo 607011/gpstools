@@ -1,14 +1,22 @@
-// $Id: Point.cpp bd86a16444b7 2008/08/27 15:09:21 Oliver Lau <ola@ct.heise.de> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 
 #include <cmath>
 
+
 #include "Line.h"
 #include "Point.h"
 #include "Vector.h"
+#include "helper.h"
 
 namespace GPS {
+
+    std::string Point::toString(void) const
+    {
+        return dtos(_X) + " / " + dtos(_Y);
+    }
+
 
     double Point::perpendicularDistanceToSegment(const Point& p1, const Point& p2) const
     {

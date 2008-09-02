@@ -1,4 +1,4 @@
-// $Id: GeoCoord.h bd86a16444b7 2008/08/27 15:09:21 Oliver Lau <ola@ct.heise.de> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 
@@ -116,13 +116,13 @@ namespace GPS {
         /// @return Mercator-Koordinaten
         inline operator MercatorCoord() { return toMercator(); }
 
-        /// Die geografischen in einen String wandeln.
+        /// Die geografischen Koordinaten in einen String wandeln.
         /// Der String hat das Format (E|W) dd°dd'dd.dddd" (N|S) dd°dd'dd.dddd".
         inline operator std::string() { return toString(); }
 
-        /// Die geografischen in einen String wandeln.
+        /// Die geografischen Koordinaten in einen String wandeln.
         /// Der String hat das Format (E|W) dd°dd'dd.dddd" (N|S) dd°dd'dd.dddd".
-        std::string toString(void);
+        std::string toString(void) const;
 
         /// Längen- oder Breitengrad in einen String wandeln.
         /// Der String hat das Format (N|S|E|W) dd°dd'dd.dddd", abhängig davon,

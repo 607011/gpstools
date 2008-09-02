@@ -23,6 +23,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gpxtimeshift", "gpxtimeshif
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcproj", "{175B5041-C2ED-42DC-8057-31663812E41A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "areameter", "areameter\areameter.vcproj", "{3530B408-C3B4-4ED0-AA3B-76DC5F5D6F62}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -69,6 +71,10 @@ Global
 		{175B5041-C2ED-42DC-8057-31663812E41A}.Debug|Win32.Build.0 = Debug|Win32
 		{175B5041-C2ED-42DC-8057-31663812E41A}.Release|Win32.ActiveCfg = Release|Win32
 		{175B5041-C2ED-42DC-8057-31663812E41A}.Release|Win32.Build.0 = Release|Win32
+		{3530B408-C3B4-4ED0-AA3B-76DC5F5D6F62}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3530B408-C3B4-4ED0-AA3B-76DC5F5D6F62}.Debug|Win32.Build.0 = Debug|Win32
+		{3530B408-C3B4-4ED0-AA3B-76DC5F5D6F62}.Release|Win32.ActiveCfg = Release|Win32
+		{3530B408-C3B4-4ED0-AA3B-76DC5F5D6F62}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
