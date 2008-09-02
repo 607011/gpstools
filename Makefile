@@ -22,7 +22,7 @@ all:
 	make -C trkcompare
 	make -C splittrack
 	make -C gpxtimeshift
-	make -C Qeo
+	make -C areameter
 
 clean:
 	make -C tinyxml clean
@@ -32,7 +32,7 @@ clean:
 	make -C trkcompare clean
 	make -C splittrack clean
 	make -C gpxtimeshift clean
-	make -C Qeo clean
+	make -C areameter clean
 
 doc:
 	make -C gpslib doc

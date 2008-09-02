@@ -1,4 +1,4 @@
-// $Id: Timestamp.h c546ffd259f3 2008/08/29 15:38:11 Oliver Lau <ola@ct.heise.de> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <ooliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 

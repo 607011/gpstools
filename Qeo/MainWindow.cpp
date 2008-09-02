@@ -1,4 +1,4 @@
-// $Id: MainWindow.cpp b1c70e73719f 2008/08/28 15:26:05 Oliver Lau <ola@ct.heise.de> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 

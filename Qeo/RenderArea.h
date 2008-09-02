@@ -1,4 +1,4 @@
-// $Id: RenderArea.h 2fdec9f78c60 2008/08/12 15:27:55 Oliver Lau <oliver@ersatzworld.net> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <ola@ct.heise.de>, Heise Zeitschriften Verlag.
 // Alle Rechte vorbehalten.
 

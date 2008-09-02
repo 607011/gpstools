@@ -1,4 +1,4 @@
-// $Id: ElevationProfileRenderArea.cpp 572e8ed1f764 2008/08/27 19:07:35 Oliver Lau <oliver.lau@gmail.com> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 

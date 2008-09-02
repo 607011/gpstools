@@ -1,4 +1,4 @@
-// $Id: TrackEditor.cpp a5c498e66508 2008/08/28 06:31:06 Oliver Lau <oliver.lau@gmail.com> $
+// $Id$
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 
