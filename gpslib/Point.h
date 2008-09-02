@@ -37,6 +37,9 @@ namespace GPS {
         Point(double x, double y, double z = 0.0) : _X(x), _Y(y), _Z(z)
         { /* ... */ }
 
+        /// Destruktor.
+        virtual ~Point() { /* ... */ }
+
         /// Einen Punkt von einem anderen subtrahieren.
         /// Das Ergebnis der Subtraktion ist ein Vektor.
         /// @param p1 Punkt, von dem p2 abgezogen werden soll

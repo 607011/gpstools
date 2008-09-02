@@ -16,8 +16,8 @@ AR = ar
 DOXYGEN = doxygen
 X =
 
-GPS_O  := $(foreach i,Ellipsoid GeoCoord GPSTrackFile GPXFile helper Line Point Stochastics SuuntoDatafile TCXFile Timestamp Track TrackLine Trackpoint Vector Waypoint WPL1000File,$i.o)
-GPS_H  := $(foreach i,Ellipsoid GeoCoord GPSTrackFile GPXFile helper Line MercatorCoord Point Stochastics SuuntoDatafile TCXFile Timestamp Track TrackLine Trackpoint UTMCoord Value Vector Waypoint WPL1000File,$i.h)
+GPS_O  := $(foreach i,Ellipsoid GeoCoord GPSTrackFile GPXFile helper Line Point Polygon Stochastics SuuntoDatafile TCXFile Timestamp Track TrackLine Trackpoint Vector Waypoint WPL1000File,$i.o)
+GPS_H  := $(foreach i,Ellipsoid GeoCoord GPSTrackFile GPXFile helper Line MercatorCoord Point Polygon Stochastics SuuntoDatafile TCXFile Timestamp Track TrackLine Trackpoint UTMCoord Value Vector Waypoint WPL1000File,$i.h)
 
 all: $(PROJ)
 
