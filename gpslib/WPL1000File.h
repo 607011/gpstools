@@ -16,13 +16,29 @@
 namespace GPS {
 
     struct WPL1000Time {
-        unsigned int s:6;
-        unsigned int i:6;
-        unsigned int h:5;
-        unsigned int d:5;
-        unsigned int m:4;
-        unsigned int Y:6;
-        WPL1000Time(void) : s(0), i(0), h(0), d(0), m(0), Y(0) { /* ... */ }
+        union _wpl1000time
+        {
+            struct _bitfield
+            {
+                unsigned int s:6;
+                unsigned int i:6;
+                unsigned int h:5;
+                unsigned int d:5;
+                unsigned int m:4;
+                unsigned int Y:6;
+            } t;
+            unsigned int tval;
+        } t ;
+        WPL1000Time(void)
+        {
+            t.tval = 0;
+        }
+        inline unsigned int secs(void) const { return t.t.s; }
+        inline unsigned int mins(void) const { return t.t.i; }
+        inline unsigned int hours(void) const { return t.t.h; }
+        inline unsigned int day(void) const { return t.t.d; }
+        inline unsigned int month(void) const { return t.t.m; }
+        inline unsigned int year(void) const { return t.t.Y + 2000; }
     };
 
 
@@ -40,6 +56,7 @@ namespace GPS {
         WPL1000Trackpoint(const WPL1000Trackpoint& other) : Trackpoint(other)
         { /* ... */ }
         inline unsigned char type(void) const { return _Type; }
+        inline bool isNull(void) const { return _T.t.tval == 0; }
         int readFrom(std::fstream& fs);
         enum _ReadStatus {
             READ_OK = 0,
