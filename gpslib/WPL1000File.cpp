@@ -18,16 +18,29 @@ namespace GPS {
     { /* ... */ }
 
 
-#define readWPL1000TrackpointData(_Stream, _W) _Stream.read(reinterpret_cast<char*>(&_W), sizeof(_W))
+    template <typename T>
+    inline bool readWPL1000TrackpointData(fstream& fs, T data)
+    {
+        fs.read(reinterpret_cast<char*>(&data), sizeof(T));
+        return fs.eof();
+    }
+
 
     int WPL1000Trackpoint::readFrom(fstream& fs)
     {
-        readWPL1000TrackpointData(fs, _Type);
-        readWPL1000TrackpointData(fs, _Unknown);
-        readWPL1000TrackpointData(fs, _T);
-        readWPL1000TrackpointData(fs, _WPL1000lat);
-        readWPL1000TrackpointData(fs, _WPL1000lon);
-        readWPL1000TrackpointData(fs, _WPL1000ele);
+        bool eof;
+        eof = readWPL1000TrackpointData(fs, _Type);
+        if (eof) return READ_ERROR;
+        eof = readWPL1000TrackpointData(fs, _Unknown);
+        if (eof) return READ_ERROR;
+        eof = readWPL1000TrackpointData(fs, _T);
+        if (eof) return READ_ERROR;
+        eof = readWPL1000TrackpointData(fs, _WPL1000lat);
+        if (eof) return READ_ERROR;
+        eof = readWPL1000TrackpointData(fs, _WPL1000lon);
+        if (eof) return READ_ERROR;
+        eof = readWPL1000TrackpointData(fs, _WPL1000ele);
+        if (eof) return READ_ERROR;
         if (_Type != CONTAINS_TRACKPOINT_DATA)
         {
             setLatitude((double) _WPL1000lat / 10000000.0f);
