@@ -20,7 +20,7 @@ void CalibrationPointDelegate::paint(QPainter* painter, const QStyleOptionViewIt
         if (option.state & QStyle::State_Selected)
             painter->fillRect(option.rect, option.palette.highlight());
         QColor color = index.model()->data(index, Qt::DisplayRole).value<QColor>();
-        double radius = 0.5 * (double) qMin(option.rect.width(), option.rect.height());
+        double radius = 0.5 * (double) qMin<int>(option.rect.width(), option.rect.height());
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing, true);
         painter->setPen(Qt::NoPen);

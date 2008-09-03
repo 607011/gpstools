@@ -11,6 +11,7 @@
 #include <QPolygonF>
 #include <QClipboard>
 #include <QStatusBar>
+#include <QtGlobal>
 
 #ifdef _DEBUG
 #include <QtDebug>

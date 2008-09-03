@@ -22,6 +22,7 @@ namespace GPS {
         unsigned int d:5;
         unsigned int m:4;
         unsigned int Y:6;
+        WPL1000Time(void) : s(0), i(0), h(0), d(0), m(0), Y(0) { /* ... */ }
     };
 
 
@@ -34,15 +35,16 @@ namespace GPS {
         unsigned short _WPL1000ele;
         WPL1000Time _T;
     public:
-        WPL1000Trackpoint(void) : Trackpoint()
+        WPL1000Trackpoint(void) : Trackpoint(), _Type(0), _Unknown(0), _WPL1000lat(0), _WPL1000lon(0), _WPL1000ele(0)
         { /* ... */ }
         WPL1000Trackpoint(const WPL1000Trackpoint& other) : Trackpoint(other)
         { /* ... */ }
         inline unsigned char type(void) const { return _Type; }
         int readFrom(std::fstream& fs);
         enum _ReadStatus {
-            READ_ERROR = -1,
-            READ_OK    = 0
+            READ_OK = 0,
+            READ_ERROR,
+            READ_EOF
         };
         enum _PointType {
             TRACK_START = 0x01,
