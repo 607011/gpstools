@@ -13,7 +13,7 @@ namespace GPS {
         : _P1(p1), _P2(p2)
     { /* ... */ }
 
-    Trackpoint* TrackLine::interpolated(void)
+    Trackpoint* TrackLine::interpolated(void) const
     {
         Trackpoint* t = NULL;
         if (_P1 != NULL && _P2 != NULL)
