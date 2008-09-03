@@ -1,0 +1,22 @@
+NOTIZEN
+=======
+
+Converting UTM to Latitude and Longitude (Or Vice Versa)
+    http://www.uwgb.edu/dutchs/UsefulData/UTMFormulas.htm
+    (mit Formeln)
+
+Converting Latitude/Longitude to Universal Transverse Mercator (UTM)
+	http://www.gpsy.com/gpsinfo/geotoutm/
+	(mit Quellcode)
+
+Convert Lat/Lon to UTM Coordinates or UTM to Lat/Lon Coordinates
+	http://www.rcn.montana.edu/resources/tools/coordinates.aspx
+
+Understanding Geospatial Geometry
+	http://www.mathworks.com/access/helpdesk/help/toolbox/map/index.html?/access/helpdesk/help/toolbox/map/f5-6923.html
+
+
+GEOTRANS (Geographic Translator) is an application program which
+allows you to easily convert geographic coordinates among a wide
+variety of coordinate systems, map projections, and datums.
+	http://earth-info.nga.mil/GandG/geotrans/

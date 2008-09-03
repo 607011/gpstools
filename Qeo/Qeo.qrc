@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="/Qeo" >
+    <file>Resources/edit_add.png</file>
+    <file>Resources/edit_remove.png</file>
+    <file>Resources/closetab.png</file>
+  </qresource>
+</RCC>
