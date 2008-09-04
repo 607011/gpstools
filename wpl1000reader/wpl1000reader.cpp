@@ -112,6 +112,7 @@ int main(int argc, char* argv[])
     string gpxFilename = argv[optind++];
     GPXFile gpxFile;
     gpxFile.setTracks(wpl1000File.tracks());
+    gpxFile.setWaypoints(wpl1000File.waypoints());
     if (gpxFile.tracks().size() > 0) {
         if (!quiet && verbose > 0) {
             cout << "Track(s) @ ";

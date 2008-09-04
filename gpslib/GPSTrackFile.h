@@ -13,7 +13,6 @@
 #include "Track.h"
 
 
-
 #if !defined(WIN32) && !defined(errno_t)
 #define errno_t int
 #endif
@@ -22,7 +21,7 @@ namespace GPS {
 
 
     /// (Teil-)Abstrakte Klasse zur Verwaltung von Dateien, die GPS-Tracks enthalten.
-    class GPSTrackFile { // TODO: Die Klasse müsste eigentlich GPSFile heißen und nicht GPSTrackFile.
+    class GPSTrackFile { // TODO: Die Klasse müsste eigentlich GPSFile heißen.
 
     protected:
         /// GPS-Track
@@ -81,47 +80,94 @@ namespace GPS {
 
         /// Namen der GPS-Datei zurückgeben.
         /// @return Name der GPS-Datei
-        inline std::string& filename(void) { return _Filename; }
+        inline std::string& filename(void)
+        {
+            return _Filename;
+        }
 
         /// Track zurückgeben.
         /// @return Track
-        inline Track* track(void) { return _Trk; } 
+        inline Track* track(void)
+        {
+            return _Trk;
+        }
 
         /// Track zurückgeben.
         /// @return Track
-        inline const Track* track(void) const { return _Trk; } 
+        inline const Track* track(void) const
+        {
+            return _Trk;
+        } 
 
         /// Track-Liste zurückgeben.
         /// @return Track-Liste
-        inline TrackList& tracks(void) { return _TrkList; }
+        inline TrackList& tracks(void)
+        {
+            return _TrkList;
+        }
 
         /// Track-Liste zurückgeben.
         /// @return Track-Liste
-        inline const TrackList& tracks(void) const { return _TrkList; }
+        inline const TrackList& tracks(void) const
+        {
+            return _TrkList;
+        }
 
         /// Wegpunkte-Liste zurückgeben.
         /// @return Wegpunkte-Liste
-        inline WaypointList& waypoints(void) { return _Waypoints; }
+        inline WaypointList& waypoints(void)
+        {
+            return _Waypoints;
+        }
 
         /// Wegpunkte-Liste zurückgeben.
         /// @return Wegpunkte-Liste
-        inline const WaypointList& waypoints(void) const { return _Waypoints; }
+        inline const WaypointList& waypoints(void) const
+        {
+            return _Waypoints;
+        }
+
+        /// Wegpunkt-Liste setzen.
+        /// @param wptList Wegpunkt-Liste
+        inline void setWaypoints(const WaypointList& wptList)
+        {
+            _Waypoints = wptList;
+        }
+
+        /// Einen Wegpunkt zur Liste der Wegpunkte hinzufügen.
+        /// @param Wegpunkt
+        inline void addWaypoint(Waypoint* wpt)
+        {
+            _Waypoints.push_back(wpt);
+        }
 
         /// Routen-Liste zurückgeben.
         /// @return Routen-Liste
-        inline RouteList& routes(void) { return _Routes; }
+        inline RouteList& routes(void)
+        {
+            return _Routes;
+        }
 
         /// Routen-Liste zurückgeben.
         /// @return Routen-Liste
-        inline const RouteList& routes(void) const { return _Routes; }
+        inline const RouteList& routes(void) const
+        {
+            return _Routes;
+        }
 
         /// Track setzen.
         /// @param trk Track
-        inline void setTrack(Track* trk) { _Trk = trk; }
+        inline void setTrack(Track* trk)
+        {
+            _Trk = trk;
+        }
 
         /// Track-Liste setzen.
         /// @param trkList Track-Liste
-        inline void setTracks(const TrackList& trkList) { _TrkList = trkList; }
+        inline void setTracks(const TrackList& trkList)
+        {
+            _TrkList = trkList;
+        }
 
         /// Track zur Trackliste hinzufügen
         /// @param trk Track; wenn Track = NULL, dann wird _Trk hinzugefügt.

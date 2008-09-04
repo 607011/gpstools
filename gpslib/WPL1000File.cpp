@@ -19,33 +19,38 @@ namespace GPS {
 
 
     template <typename T>
-    inline void readWPL1000TrackpointData(fstream& fs, T* data) 
+    inline void readField(fstream& fs, T* data) 
     {
         fs.read(reinterpret_cast<char*>(data), sizeof(T));
     }
 
 
-    int WPL1000Trackpoint::readFrom(fstream& fs)
+    int WPL1000Data::readFrom(fstream& fs)
     {
-        readWPL1000TrackpointData<unsigned char>(fs, &_Type);
-        readWPL1000TrackpointData<unsigned char>(fs, &_Unknown);
-        readWPL1000TrackpointData<GPS::WPL1000Time>(fs, &_T);
-        readWPL1000TrackpointData<unsigned int>(fs, &_WPL1000lat);
-        readWPL1000TrackpointData<unsigned int>(fs, &_WPL1000lon);
-        readWPL1000TrackpointData<unsigned short>(fs, &_WPL1000ele);
-        if (_Type != CONTAINS_TRACKPOINT_DATA)
+        readField<unsigned char>(fs, &_Type);
+        readField<unsigned char>(fs, &_Unknown);
+        readField<GPS::WPL1000Time>(fs, &_T);
+        readField<int>(fs, &_WPL1000lat);
+        readField<int>(fs, &_WPL1000lon);
+        readField<short>(fs, &_WPL1000ele);
+        switch (_Type)
         {
-            double lat = (double) _WPL1000lat / 10000000.0;
-            double lon = (double) _WPL1000lon / 10000000.0;
-            double ele = (double) _WPL1000ele;
-            if (lat > 90)  { lat = 360 - lat; }
-            setLatitude(lat);
-            setLongitude(lon);
-            setElevation(ele);
-            setTimestamp(Timestamp(_T.year(), _T.month(), _T.day(), _T.hours(), _T.mins(), _T.secs()));
-            return READ_OK;
+        case WAYPOINT:
+            /* fall-through */
+        case TRACKPOINT:
+            /* fall-through */
+        case TRACK_START:
+            {
+                setLatitude(1e-7 * (double) _WPL1000lat);
+                setLongitude(1e-7 * (double) _WPL1000lon);
+                setElevation((double) _WPL1000ele);
+                setTimestamp(Timestamp(_T.year(), _T.month(), _T.day(), _T.hours(), _T.mins(), _T.secs()));
+            }
+            break;
+        default:
+            break;
         }
-        return READ_ERROR;
+        return _Type;
     }
 
 
@@ -53,7 +58,7 @@ namespace GPS {
     {
         if (filename != "")
             _Filename = filename;
-        WPL1000Trackpoint point;
+        WPL1000Data point;
         fstream nvpipe;
         nvpipe.open(_Filename.c_str(), ios::binary | ios::in);
         if (nvpipe.bad())
@@ -62,20 +67,47 @@ namespace GPS {
         if (nvpipe.eof())
             return EOF;
         _Trk = NULL;
-        while (point.readFrom(nvpipe) == WPL1000Trackpoint::READ_OK && !nvpipe.eof())
+        while (!nvpipe.eof())
         {
-            if (_Trk == NULL)
-                _Trk = new Track;
-            if (!point.isNull())
+            int rc = point.readFrom(nvpipe);
+            if (rc == WPL1000Data::END_OF_LOG)
             {
-                Trackpoint* trkpt = new Trackpoint(point);
-                if ((point.type() == WPL1000Trackpoint::TRACK_START) && (_Trk->points().size() > 0))
-                {
+                if (_Trk != NULL && _Trk->points().size() > 0)
                     addTrack(_Trk);
-                    _Trk = NULL;
+                break;
+            }
+            switch (rc)
+            {
+            case WPL1000Data::TRACK_START:
+                /* fall-through */
+            case WPL1000Data::TRACKPOINT:
+                {
+                    if (_Trk == NULL)
+                        _Trk = new Track;
+                    if (!point.isNull())
+                    {
+                        Trackpoint* trkpt = new Trackpoint(point);
+                        if ((point.type() == WPL1000Data::TRACK_START) && (_Trk->points().size() > 0))
+                        {
+                            addTrack(_Trk);
+                            _Trk = NULL;
+                        }
+                        if (_Trk != NULL)
+                            _Trk->append(trkpt);
+                    }
                 }
-                if (_Trk != NULL)
-                    _Trk->append(trkpt);
+                break;
+            case WPL1000Data::WAYPOINT:
+                {
+                    if (!point.isNull())
+                    {
+                        Waypoint* wpt = new Waypoint(point);
+                        addWaypoint(wpt);
+                    }
+                }
+                break;
+            default:
+                break;
             }
         }
         nvpipe.close();
