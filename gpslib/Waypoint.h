@@ -34,11 +34,20 @@ namespace GPS {
         /// Name des Wegpunkts. Sollte möglichst kurz sein.
         std::string _Name;
 
+        /// (Optionaler) Kommentar zum Wegpunkt. Darf beliebig lange sein.
+        std::string _Comment;
+
         /// (Optionale) Beschreibung des Wegpunkts. Darf etwas länger sein als der Name.
         std::string _Description;
 
-        /// (Optionaler) Kommentar zum Wegpunkt. Darf beliebig lange sein.
-        std::string _Comment;
+        /// (Optionaler) Link zu einer Webseite, die mehr Informationen über den Wegpunkt enthält.
+        std::string _Link;
+
+        /// (Optionale) Informationen zur Herkunft des Wegpunkts, zum Beispiel "Garmin GPSmap 60 CSx"
+        std::string _Src;
+
+        /// Höhe (in Metern) des Geoids (Normal Null) über dem WGS84-Ellipsoid (aus NMEA-GGA-Satz).
+        FloatValue _GeoidHeight;
 
     public:
         /// Konstruktor.
@@ -97,6 +106,21 @@ namespace GPS {
         /// @see _Comment
         inline std::string comment(void) const { return _Comment; }
 
+        /// Link auf weiterführende Informationen über den Wegpunkt zurückliefern.
+        /// @return Link
+        /// @see _Link
+        inline std::string link(void) const { return _Link; }
+
+        /// Informationen über die Herkunft des Wegpunkts zurückliefern.
+        /// @return Text mit Informationen über die Herkunft des Wegpunkts
+        /// @see _Src
+        inline std::string source(void) const { return _Src; }
+
+        /// Höhe des Geoids über dem WGS84-Ellipsoid zurückliefern.
+        /// @return Geoid-Höhe in Metern
+        /// @see _GeoidHeight
+        inline const FloatValue& GeoidHeight(void) const { return _GeoidHeight; }
+
         /// Horizontal Dilusion of Precision setzen.
         /// @see _HDOP
         inline void setHDOP(float HDOP) { _HDOP = HDOP; }
@@ -124,6 +148,18 @@ namespace GPS {
         /// Kommentar zum Wegpunkt setzen.
         /// @see _Comment
         inline void setComment(std::string comment) { _Comment = comment; }
+
+        /// Informationen über die Herkunft des Wegpunkts setzen.
+        /// @see _Src
+        inline void setSource(std::string src) { _Src = src; }
+
+        /// Link auf weiterführende Informationen über den Wegpunkt setzen.
+        /// @see _Link
+        inline void setLink(std::string link) { _Link = link; }
+
+        /// Höhe des Geoids über dem WGS84-Ellipsoid setzen.
+        /// @see _GeoidHeight
+        inline void setGeoidHeight(float GeoidHeight) { _GeoidHeight = GeoidHeight; }
 
         /// Zeitstempel setzen.
         /// @see _Timestamp

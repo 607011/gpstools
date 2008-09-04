@@ -11,6 +11,22 @@
 #include "Timestamp.h"
 
 
+#ifdef _MSC_VER
+#define int8_t     __int8
+#define int16_t    __int16
+#define int32_t    __int32
+#define int64_t    __int64
+#define uint8_t    unsigned __int8
+#define uint16_t   unsigned __int16
+#define uint32_t   unsigned __int32
+#define uint64_t   unsigned __int64
+#else
+#include <inttypes.h>
+#endif
+
+
+#define UNUSED(x) (void)x
+
 /// Pi
 const double PI = 3.1415926535897932384626433832795L;
 

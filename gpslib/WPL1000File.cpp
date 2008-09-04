@@ -27,15 +27,18 @@ namespace GPS {
 
     int WPL1000Data::readFrom(fstream& fs)
     {
-        readField<unsigned char>(fs, &_Type);
-        readField<unsigned char>(fs, &_Unknown);
+        // Reverse Engineering mit freundlicher Unterstützung von Eckhard Zemp, Berlin (www.zemp.ch)
+        readField<uint8_t>(fs, &_Type);
+        readField<uint8_t>(fs, &_Unknown);
         readField<GPS::WPL1000Time>(fs, &_T);
-        readField<int>(fs, &_WPL1000lat);
-        readField<int>(fs, &_WPL1000lon);
-        readField<short>(fs, &_WPL1000ele);
+        readField<int32_t>(fs, &_WPL1000lat);
+        readField<int32_t>(fs, &_WPL1000lon);
+        readField<int16_t>(fs, &_WPL1000ele);
+        Timestamp ts(_T.year(), _T.month(), _T.day(), _T.hours(), _T.mins(), _T.secs());
         switch (_Type)
         {
         case WAYPOINT:
+            setName(ts.toString());
             /* fall-through */
         case TRACKPOINT:
             /* fall-through */
@@ -44,7 +47,7 @@ namespace GPS {
                 setLatitude(1e-7 * (double) _WPL1000lat);
                 setLongitude(1e-7 * (double) _WPL1000lon);
                 setElevation((double) _WPL1000ele);
-                setTimestamp(Timestamp(_T.year(), _T.month(), _T.day(), _T.hours(), _T.mins(), _T.secs()));
+                setTimestamp(ts);
             }
             break;
         default:
@@ -70,6 +73,11 @@ namespace GPS {
         while (!nvpipe.eof())
         {
             int rc = point.readFrom(nvpipe);
+#ifdef _DEBUG
+            std::cout << point.time().year() << "-" << point.time().month() << "-" << point.time().day()
+                << " " << point.time().hours() << ":" << point.time().mins() << ":" << point.time().secs()
+                << " @ " << point.lon() << "/" << point.lat() << "/" << endl;
+#endif
             if (rc == WPL1000Data::END_OF_LOG)
             {
                 if (_Trk != NULL && _Trk->points().size() > 0)
@@ -81,29 +89,25 @@ namespace GPS {
             case WPL1000Data::TRACK_START:
                 /* fall-through */
             case WPL1000Data::TRACKPOINT:
+                if (_Trk == NULL)
+                    _Trk = new Track;
+                if (!point.isNull())
                 {
-                    if (_Trk == NULL)
-                        _Trk = new Track;
-                    if (!point.isNull())
+                    Trackpoint* trkpt = new Trackpoint(point);
+                    if ((point.type() == WPL1000Data::TRACK_START) && (_Trk->points().size() > 0))
                     {
-                        Trackpoint* trkpt = new Trackpoint(point);
-                        if ((point.type() == WPL1000Data::TRACK_START) && (_Trk->points().size() > 0))
-                        {
-                            addTrack(_Trk);
-                            _Trk = NULL;
-                        }
-                        if (_Trk != NULL)
-                            _Trk->append(trkpt);
+                        addTrack(_Trk);
+                        _Trk = NULL;
                     }
+                    if (_Trk != NULL)
+                        _Trk->append(trkpt);
                 }
                 break;
             case WPL1000Data::WAYPOINT:
+                if (!point.isNull())
                 {
-                    if (!point.isNull())
-                    {
-                        Waypoint* wpt = new Waypoint(point);
-                        addWaypoint(wpt);
-                    }
+                    Waypoint* wpt = new Waypoint(point);
+                    addWaypoint(wpt);
                 }
                 break;
             default:
@@ -120,9 +124,4 @@ namespace GPS {
     }
 
 
-    errno_t WPL1000File::write(const std::string& /* filename */, bool /* onlyKept */)
-    {
-        // it's futile to write a track to a NVPIPE.DAT file
-        return 0;
-    }
 };
