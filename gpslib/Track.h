@@ -374,9 +374,14 @@ namespace GPS {
         /// @return Trackpunkt-Iterator
         TrackpointList::iterator getMatchingTrackpointIter(double lon, double lat, double maxRange = MAX_DBL);
     
+        /// Den Trackpunkt suchen, der der übergebenen Strecke am nächsten liegt.
+        /// @param line Strecke
         /// @return Trackpunkt-Iterator
         TrackpointList::iterator getMatchingTrackpointIter(const TrackLine& line);
 
+        /// Einen Trackpunkt einfügen.
+        /// @param i Stelle, an der der Trackpunkt in den Track eingefügt werden soll.
+        /// @param t Einzufügender Trackpunkt.
         void insert(TrackpointList::iterator i, Trackpoint* t);
 
         /// Die Verbindungslinie zwischen zwei Trackpunkten suchen, die dem übergebenen 
@@ -384,8 +389,7 @@ namespace GPS {
         /// @param r Referenz-Trackpunkt
         /// @param maxRange der zu suchende Punkt darf nicht weiter als maxRange Meter vom
         /// übergebenen entfernt liegen
-        /// @return Vektor der Verbindungslinie. Achtung, der Vektor enthält nicht etwa
-        /// Mercator-Koordinaten, sondern geografische Koordinaten (Längen- und breitengrad)
+        /// @return Verbindungslinie
         TrackLine getMatchingLine(Trackpoint* const r, double maxRange) const;
 
         /// Die Verbindungslinie zwischen zwei Trackpunkten suchen, die dem übergebenen 
@@ -394,10 +398,17 @@ namespace GPS {
         /// @param lat Breitengrad des Trackpunkts
         /// @param maxRange der zu suchende Punkt darf nicht weiter als maxRange Meter vom
         /// übergebenen entfernt liegen
-        /// @return Vektor der Verbindungslinie. Achtung, der Vektor enthält nicht etwa
-        /// Mercator-Koordinaten, sondern geografische Koordinaten (Längen- und breitengrad)
+        /// @return Verbindungslinie
         TrackLine getMatchingLine(double lon, double lat, double maxRange) const;
 
+        /// Die Verbindungslinie zwischen zwei Trackpunkten suchen, die dem übergebenen 
+        /// Trackpunkt am nächsten liegt. Gerechnet wird nicht mit Längen- und Breitengraden,
+        /// sondern mit Rechts- und Hochwerten (kartesisches Koordinatensystem).
+        /// @param x x-Koordinate
+        /// @param y y-Koordinate
+        /// @param maxRange der zu suchende Punkt darf nicht weiter als maxRange Einheiten vom
+        /// übergebenen entfernt liegen
+        /// @return Verbindungslinie
         TrackLine getMatchingLineXY(double x, double y, double maxRange) const;
 
         /// Die Übereinstimmung des Tracks zu einem Referenztrack mit einfachen statistischen

@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir)"
+				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\getopt"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -115,7 +115,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="$(SolutionDir)"
+				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\getopt"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -169,6 +169,10 @@
 		<ProjectReference
 			ReferencedProjectIdentifier="{4784F06D-B978-431C-88CF-2CC825848B01}"
 			RelativePathToProject=".\gpslib\gpslib.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{FB10A353-C026-45E9-BC20-1FC81B036C03}"
+			RelativePathToProject=".\getopt\getopt.vcproj"
 		/>
 	</References>
 	<Files>
