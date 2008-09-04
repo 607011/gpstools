@@ -26,7 +26,9 @@ namespace GPS {
     static const double MAX_DBL = +1e30;
 #endif
 
-    class Route;
+    typedef std::vector<Waypoint*> Route;
+    typedef std::vector<Waypoint*> WaypointList;
+
     class Track;
 
     typedef std::vector<Trackpoint*> TrackpointList;
@@ -183,21 +185,6 @@ namespace GPS {
         /// zwischen den zwei Trackpunkten zurückgelegt wurde.
         void calculateSpeeds(double metersInterval = DEFAULT_METERS_INTERVAL);
 
-        /// Einen Trackpunkt an den Track anhängen.
-        /// @param trkpt Anzuhängender Trackpunkt. NULL-Zeiger werden ignoriert.
-        inline void append(Trackpoint* trkpt)
-        {
-            if (trkpt != NULL)
-                samples.push_back(trkpt);
-        }
-
-        /// Einen Trackpunkt aus dem Track entfernen.
-        /// @param trkpt Zu entfernender Trackpunkt.
-        inline void erase(TrackpointList::iterator trkpt)
-        {
-            samples.erase(trkpt);
-        }
-
         /// Werte aus einem anderen Track übertragen.
         /// @param other Track, aus dem die Werte geholt werden sollen. 
         /// @param what Flag: gibt an, welche Werte übertragen 
@@ -215,19 +202,31 @@ namespace GPS {
 
         /// Kumulierte Anstiege (in Metern) zurückgeben.
         /// @return Kumulierte Anstiege (in Metern)
-        const DoubleValue& ascent(void) const { return _Ascent; }
+        const DoubleValue& ascent(void) const
+        {
+            return _Ascent;
+        }
 
         /// Kumulierte Abstiege (in Metern) zurückgeben.
         /// @return Kumulierte Abstiege (in Metern)
-        const DoubleValue& descent(void) const { return _Descent; }
+        const DoubleValue& descent(void) const
+        {
+            return _Descent;
+        }
 
         /// Höhe (in Metern üNN) des niedrigsten Punkts zurückgeben.
         /// @return geringste Höhe (in Metern üNN)
-        const DoubleValue& minElevation(void) const { return _MinElevation; }
+        const DoubleValue& minElevation(void) const
+        {
+            return _MinElevation;
+        }
 
         /// Höhe (in Metern üNN) des höchsten Punkts zurückgeben.
         /// @return größte Höhe (in Metern üNN)
-        const DoubleValue& maxElevation(void) const { return _MaxElevation; }
+        const DoubleValue& maxElevation(void) const
+        {
+            return _MaxElevation;
+        }
 
         /// Entfernung in Metern zurückgeben.
         /// @return Entfernung in Metern
@@ -437,7 +436,10 @@ namespace GPS {
 
         /// Ermitteln, ob die Trackpunkt-Liste Trackpunkte enthält.
         /// @return true, wenn die Trackpunkt-Liste leer ist.
-        inline bool isEmpty(void) const { return samples.size() == 0; }
+        inline bool isEmpty(void) const
+        {
+            return samples.size() == 0;
+        }
 
         /// @return true, wenn der Track Herzfrequenzdaten enthält.
         bool hasHeartrate(void) const;
@@ -455,27 +457,39 @@ namespace GPS {
         bool hasTimestamps(void) const;
 
         /// Namen des Tracks zurückgeben.
-        inline std::string& name(void) { return _Name; }
+        inline const std::string& name(void) const
+        {
+            return _Name;
+        }
 
         /// Namen des Tracks setzen.
-        inline void setName(std::string name) { _Name = name; }
+        inline void setName(std::string name)
+        {
+            _Name = name;
+        }
 
         /// Track-Daten löschen.
-        inline void clear(void) { samples.clear(); }
+        inline void clear(void)
+        {
+            samples.clear();
+        }
+
+        /// Einen Trackpunkt aus dem Track entfernen.
+        /// @param trkpt Zu entfernender Trackpunkt.
+        inline void erase(TrackpointList::iterator trkpt)
+        {
+            samples.erase(trkpt);
+        }
+
+        /// Einen Trackpunkt an den Track anhängen.
+        /// @param trkpt Anzuhängender Trackpunkt. NULL-Zeiger werden ignoriert.
+        inline void append(Trackpoint* trkpt)
+        {
+            if (trkpt != NULL)
+                samples.push_back(trkpt);
+        }
+
     };
-
-
-    class WaypointList : public Track {
-    public:
-        WaypointList(void) { /* ... */ }
-    };
-
-
-    class Route : public Track {
-    public:
-        Route(void) { /* ... */ }
-    };
-
 
 
 };

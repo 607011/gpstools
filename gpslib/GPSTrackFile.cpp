@@ -25,8 +25,8 @@ namespace GPS {
     {
         _Trk = NULL;
         _Filename = filename;
-        metadataLinkUrl = "http://www.ctmagazin.de/";
-        metadataLinkText = "c't computer magazin";
+        metadataLinkUrl = "http://von-und-fuer-lau.de/";
+        metadataLinkText = "von und fuer lau";
         creator = "gpslib";
         encoding = "UTF-8";
     }

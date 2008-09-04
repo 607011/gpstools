@@ -99,12 +99,24 @@ namespace GPS {
             << "  <text>" << metadataLinkText << "</text>" << endl
             << " </link>" << endl
             << "</metadata>" << endl;
+        // TODO: also save routes contained in GPX file
+        for (WaypointList::const_iterator j = _Waypoints.begin(); j != _Waypoints.end(); ++j)
+        {
+            os << setprecision(14)
+                << "<wpt lat=\"" << (*j)->latitude() << "\" lon=\"" << (*j)->longitude() << "\">" << endl;
+            if (!(*j)->name().empty())
+                os << " <name>" << (*j)->name() << "</name>" << endl;
+            if ((*j)->elevation().defined())
+                os << setprecision(4) << " <ele>" << (*j)->elevation() << "</ele>" << endl;
+            if (!(*j)->timestamp().isNull())
+                os <<" <time>" << (*j)->timestamp().toString() << "</time>" << endl;
+            os << "</wpt>" << endl;
+        }
         for (TrackList::const_iterator j = _TrkList.begin(); j != _TrkList.end(); ++j)
         {
             os << "<trk>" << endl;
-            if (!(*j)->name().empty()) {
+            if (!(*j)->name().empty())
                 os << " <name>" << (*j)->name() << "</name>" << endl;
-            }
             os << " <trkseg>" << endl;
             const TrackpointList& points = (*j)->points();
             for (TrackpointList::const_iterator i = points.begin(); i != points.end(); ++i)
@@ -112,13 +124,10 @@ namespace GPS {
                 if ((onlyKept && (*i)->kept()) || !onlyKept) {
                     os << setprecision(14)
                         << "  <trkpt lat=\"" << (*i)->latitude() << "\" lon=\"" << (*i)->longitude() << "\">" << endl;
-                    if ((*i)->elevation().defined()) {
-                        os << setprecision(4)
-                            << "   <ele>" << (*i)->elevation() << "</ele>" << endl;
-                    }
-                    if (!(*i)->timestamp().isNull()) {
+                    if ((*i)->elevation().defined())
+                        os << setprecision(4) << "   <ele>" << (*i)->elevation() << "</ele>" << endl;
+                    if (!(*i)->timestamp().isNull())
                         os <<"   <time>" << (*i)->timestamp().toString() << "</time>" << endl;
-                    }
                     os << "  </trkpt>" << endl;
                 }
             }
@@ -126,7 +135,6 @@ namespace GPS {
                 << "</trk>" << endl;
         }
         os << "</gpx>" << endl;
-        // TODO: also save waypoints and routes contained in GPX file
         os.close();
         return 0;
     }

@@ -42,30 +42,28 @@ namespace GPS {
     };
 
 
-    class WPL1000Trackpoint : public Trackpoint {
+    class WPL1000Data : public Trackpoint {
     private:
         unsigned char _Type;
         unsigned char _Unknown;
-        unsigned int _WPL1000lat;
-        unsigned int _WPL1000lon;
-        unsigned short _WPL1000ele;
+        int _WPL1000lat;
+        int _WPL1000lon;
+        short _WPL1000ele;
         WPL1000Time _T;
     public:
-        WPL1000Trackpoint(void) : Trackpoint(), _Type(0), _Unknown(0), _WPL1000lat(0), _WPL1000lon(0), _WPL1000ele(0)
+        WPL1000Data(void) : Trackpoint(), _Type(0), _Unknown(0), _WPL1000lat(0), _WPL1000lon(0), _WPL1000ele(0)
         { /* ... */ }
-        WPL1000Trackpoint(const WPL1000Trackpoint& other) : Trackpoint(other)
+        WPL1000Data(const WPL1000Data& other) : Trackpoint(other)
         { /* ... */ }
         inline unsigned char type(void) const { return _Type; }
         inline bool isNull(void) const { return _T.t.tval == 0; }
         int readFrom(std::fstream& fs);
-        enum _ReadStatus {
-            READ_OK = 0,
-            READ_ERROR,
-            READ_EOF
-        };
         enum _PointType {
+            TRACKPOINT = 0x00,
             TRACK_START = 0x01,
-            CONTAINS_TRACKPOINT_DATA = 0xff
+            WAYPOINT = 0x02,
+            END_OF_LOG = 0xff,
+            ERROR = -1
         };
     };
 
