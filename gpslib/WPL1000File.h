@@ -5,10 +5,12 @@
 #ifndef __WPL1000FILE_H_
 #define __WPL1000FILE_H_
 
-#include <errno.h>
+#include <cstdlib>
+#include <cerrno>
 #include <ctime>
 #include <string>
 
+#include "helper.h"
 #include "GPSTrackFile.h"
 
 #include <sys/types.h>
@@ -27,35 +29,40 @@ namespace GPS {
                 unsigned int m:4;
                 unsigned int Y:6;
             } t;
-            unsigned int tval;
+            uint32_t tval;
         } t ;
-        WPL1000Time(void)
-        {
-            t.tval = 0;
-        }
         inline unsigned int secs(void) const { return t.t.s; }
         inline unsigned int mins(void) const { return t.t.i; }
         inline unsigned int hours(void) const { return t.t.h; }
         inline unsigned int day(void) const { return t.t.d; }
         inline unsigned int month(void) const { return t.t.m; }
         inline unsigned int year(void) const { return t.t.Y + 2000; }
+        WPL1000Time(void)
+        {
+            t.tval = 0;
+        }
     };
 
 
     class WPL1000Data : public Trackpoint {
     private:
-        unsigned char _Type;
-        unsigned char _Unknown;
-        int _WPL1000lat;
-        int _WPL1000lon;
-        short _WPL1000ele;
+        uint8_t _Type;
+        uint8_t _Unknown;
+        int32_t _WPL1000lat;
+        int32_t _WPL1000lon;
+        int16_t _WPL1000ele;
         WPL1000Time _T;
     public:
         WPL1000Data(void) : Trackpoint(), _Type(0), _Unknown(0), _WPL1000lat(0), _WPL1000lon(0), _WPL1000ele(0)
         { /* ... */ }
         WPL1000Data(const WPL1000Data& other) : Trackpoint(other)
         { /* ... */ }
-        inline unsigned char type(void) const { return _Type; }
+        inline uint8_t type(void) const { return _Type; }
+        inline uint8_t unknown(void) const { return _Unknown; }
+        inline int32_t lat(void) const { return _WPL1000lat; }
+        inline int32_t lon(void) const { return _WPL1000lon; }
+        inline int32_t ele(void) const { return _WPL1000ele; }
+        inline const WPL1000Time& time(void) const { return _T; }
         inline bool isNull(void) const { return _T.t.tval == 0; }
         int readFrom(std::fstream& fs);
         enum _PointType {
@@ -88,7 +95,13 @@ namespace GPS {
         /// GPS-Datei speichern.
         /// @param filename Name der Datei, in die gespeichert werden soll.
         /// @param onlyKept nur Trackpoints schreiben, die als _Keep markiert sind.
-        errno_t write(const std::string& filename, bool onlyKept = false);
+        inline errno_t write(const std::string& filename, bool onlyKept = false)
+        {
+            UNUSED(filename);
+            UNUSED(onlyKept);
+            // it's futile to write a track to a NVPIPE.DAT file
+            return -1;
+        }
     };
 
 };

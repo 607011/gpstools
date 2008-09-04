@@ -106,10 +106,16 @@ namespace GPS {
                 << "<wpt lat=\"" << (*j)->latitude() << "\" lon=\"" << (*j)->longitude() << "\">" << endl;
             if (!(*j)->name().empty())
                 os << " <name>" << (*j)->name() << "</name>" << endl;
-            if ((*j)->elevation().defined())
-                os << setprecision(4) << " <ele>" << (*j)->elevation() << "</ele>" << endl;
             if (!(*j)->timestamp().isNull())
                 os <<" <time>" << (*j)->timestamp().toString() << "</time>" << endl;
+            if ((*j)->elevation().defined())
+                os << setprecision(4) << " <ele>" << (*j)->elevation() << "</ele>" << endl;
+            if ((*j)->HDOP().defined())
+                os << setprecision(3) << " <hdop>" << (*j)->HDOP() << "</hdop>" << endl;
+            if ((*j)->VDOP().defined())
+                os << setprecision(3) << " <vdop>" << (*j)->VDOP() << "</vdop>" << endl;
+            if ((*j)->PDOP().defined())
+                os << setprecision(3) << " <pdop>" << (*j)->PDOP() << "</pdop>" << endl;
             os << "</wpt>" << endl;
         }
         for (TrackList::const_iterator j = _TrkList.begin(); j != _TrkList.end(); ++j)
@@ -128,6 +134,12 @@ namespace GPS {
                         os << setprecision(4) << "   <ele>" << (*i)->elevation() << "</ele>" << endl;
                     if (!(*i)->timestamp().isNull())
                         os <<"   <time>" << (*i)->timestamp().toString() << "</time>" << endl;
+                    if ((*i)->HDOP().defined())
+                        os << setprecision(3) << " <hdop>" << (*i)->HDOP() << "</hdop>" << endl;
+                    if ((*i)->VDOP().defined())
+                        os << setprecision(3) << " <vdop>" << (*i)->VDOP() << "</vdop>" << endl;
+                    if ((*i)->PDOP().defined())
+                        os << setprecision(3) << " <pdop>" << (*i)->PDOP() << "</pdop>" << endl;
                     os << "  </trkpt>" << endl;
                 }
             }

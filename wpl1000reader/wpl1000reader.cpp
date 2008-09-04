@@ -19,7 +19,8 @@ enum _long_options {
     SELECT_HELP,
     SELECT_DEBUG,
     SELECT_QUIET,
-    SELECT_VERBOSE
+    SELECT_VERBOSE,
+    SELECT_VERSION
 };
 
 
@@ -27,10 +28,12 @@ static struct option long_options[] = {
     { "help",      no_argument,       0, SELECT_HELP },
     { "quiet",     no_argument,       0, SELECT_QUIET },
     { "verbose",   no_argument,       0, SELECT_VERBOSE },
+    { "version",   no_argument,       0, SELECT_VERSION },
     { 0,           0,                 0, 0 }
 };
 
 
+const std::string VERSION = "0.9.2";
 bool quiet = false;
 int verbose = 0;
 
@@ -86,6 +89,11 @@ int main(int argc, char* argv[])
         case 'q':
             quiet = true;
             break;
+        case SELECT_VERSION:
+            disclaimer();
+            cout << "Version: " << VERSION;
+            exit(EXIT_SUCCESS);
+            break;
         default:
             usage();
             exit(EXIT_FAILURE);
@@ -128,7 +136,8 @@ int main(int argc, char* argv[])
         }
     }
     else {
-        cout << "Die Datei enthaelt keine Tracks!";
+        cout << "Die Datei enthaelt keine Tracks!" << endl;
+        return EXIT_FAILURE;
     }
     cout << endl;
     if (!quiet)
