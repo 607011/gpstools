@@ -106,7 +106,8 @@ namespace GPS {
                 os << " <name>" << (*j)->name() << "</name>" << endl;
             }
             os << " <trkseg>" << endl;
-            for (TrackpointList::const_iterator i = (*j)->points().begin(); i != (*j)->points().end(); ++i)
+            const TrackpointList& points = (*j)->points();
+            for (TrackpointList::const_iterator i = points.begin(); i != points.end(); ++i)
             {
                 if ((onlyKept && (*i)->kept()) || !onlyKept) {
                     os << setprecision(14)
