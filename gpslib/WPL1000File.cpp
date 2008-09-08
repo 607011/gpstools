@@ -73,11 +73,6 @@ namespace GPS {
         while (!nvpipe.eof())
         {
             int rc = point.readFrom(nvpipe);
-#ifdef _DEBUG
-            std::cout << point.time().year() << "-" << point.time().month() << "-" << point.time().day()
-                << " " << point.time().hours() << ":" << point.time().mins() << ":" << point.time().secs()
-                << " @ " << point.lon() << "/" << point.lat() << "/" << endl;
-#endif
             if (rc == WPL1000Data::END_OF_LOG)
             {
                 if (_Trk != NULL && _Trk->points().size() > 0)
