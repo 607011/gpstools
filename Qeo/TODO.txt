@@ -2,6 +2,13 @@ TODO
 
 [ ] Wegpunkte auf Karte darstellen
 
+[ ] Geotagging-Funktion
+
+[ ] Trackpunkte mit Höhendaten aus der SRTM aufmöbeln
+
+    Interne Notiz: Überarbeitete Daten von http://srtm.csi.cgiar.org/ liegen auf BENSLEY im ARCINFO-ASCII-Format vor (http://docs.codehaus.org/display/GEOTOOLS/ArcInfo+ASCII+Grid+format)
+    "The vertical error of the SRTM DEM's is reported to be less than 16m."
+
 [ ] Karte nebst Kalibrierungsdaten in GeoTIFF-Dateien verwalten, http://www.remotesensing.org/geotiff/
 
 [ ] Geografische Position eines Kalibrierungspunktes nicht nur mit
@@ -17,4 +24,5 @@ Längen- und Breitengrad angeben, sondern auch als UTM-Koordinaten u.ä.
     [ ] in verschiedenen Formaten: GPX, KML, ...
     [ ] Splitten nach x Punkten (Vorgabe: 500)
     [ ] Splitten nach Pausen
-    
+
+[ ] Evaluieren, was sich mit http://geoserver.org/display/GEOS/Features anfangen lässt
