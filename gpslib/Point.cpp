@@ -14,7 +14,7 @@ namespace GPS {
 
     std::string Point::toString(void) const
     {
-        return dtos(_X) + " / " + dtos(_Y);
+        return tos(_X) + " / " + tos(_Y);
     }
 
 

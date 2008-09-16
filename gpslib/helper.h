@@ -7,6 +7,8 @@
 
 #include <cstdlib>
 #include <string>
+#include <sstream>
+#include <limits>
 
 #include "Timestamp.h"
 
@@ -30,20 +32,9 @@
 /// Pi
 const double PI = 3.1415926535897932384626433832795L;
 
-/// Grad in Radians wandeln.
-/// @param _Deg Gradangabe
-/// @return Radians
-extern double deg2rad(double deg);
-
 /// Convert unsigned integer to Google Chart API extended encoding.
 /// @see http://code.google.com/apis/chart/#extended
 extern const char* encode_extended(size_t val);
-
-/// Convert int to string.
-extern std::string itos(int _Val);
-
-/// Convert double to string.
-extern std::string dtos(double d);
 
 /// Convert seconds into W3C timestamp
 extern std::string secs2timestamp(time_t dur);
@@ -58,7 +49,7 @@ namespace GPS {
 
     template <typename T> std::string convert(T v)
     {
-        enum { bsize = std::numeric_limits<T>::digits10 + 3 };
+        const bsize = 64;
         char buffer[bsize];
         const char digits[11] = "0123456789";
         bool neg = v < 0;
@@ -74,6 +65,22 @@ namespace GPS {
             *--tmp = '-';   
         return std::string(tmp);
     }
+
+
+    inline double deg2rad(double deg)
+    {
+        return deg * PI / 180.0;
+    }
+
+
+    template <typename T>
+    inline std::string tos(T i)
+    {
+        std::stringstream s;
+        s << i;
+        return s.str();
+    }
+
 
 };
 

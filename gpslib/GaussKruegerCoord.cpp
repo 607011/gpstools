@@ -20,13 +20,4 @@ namespace GPS {
         ell.choose("WGS84");
     }
 
-
-    /// Grad in Radians wandeln.
-    /// @param _Deg Gradangabe
-    /// @return Radians
-    static inline double deg2rad(double _Deg)
-    {
-        return _Deg * PI / 180.0;
-    }
-
 };
