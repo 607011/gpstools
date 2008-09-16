@@ -157,7 +157,7 @@ int main(int argc, char* argv[])
     gpxOut.setTracks(allTracks);
     int npos = trkFile.find_last_of('.');
     string trkOutFile = trkFile;
-    trkOutFile.insert(npos, "-split" + itos(pointCount));
+    trkOutFile.insert(npos, "-split" + tos(pointCount));
     gpxOut.write(trkOutFile);
 
     if (verbose > 0 && !quiet)

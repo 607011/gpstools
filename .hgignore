@@ -1,6 +1,8 @@
 syntax: glob
+*~
 *.obj
 *.o
+*.a
 *.idb
 *.pdb
 *.embed.manifest*
