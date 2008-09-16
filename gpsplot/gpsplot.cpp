@@ -105,8 +105,12 @@ int main(int argc, char* argv[])
     if (!quiet)
         disclaimer();
 
-    if (configFile != "")
-        loadConfiguration();
+    if (configFile == "") {
+      usage();
+      exit(EXIT_FAILURE);
+    }
+
+    loadConfiguration();
 
     if (eleFileCmdline != "")
         eleFile = eleFileCmdline;

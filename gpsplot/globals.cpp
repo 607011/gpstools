@@ -20,7 +20,7 @@ string eleFile;
 string hrFile;
 string eleFileCmdline;
 string hrFileCmdline;
-string configFile = "./config.xml";
+string configFile;
 string title;
 string url;
 string authorName;
@@ -67,6 +67,7 @@ bool kmlMarkFinish = true;
 int kmlKmTicks = 5;
 string googleMapsFile;
 smoothedTrack_t smoothedTrack;
+
 
 void errmsg(std::string str, int rc, bool _usage)
 {
@@ -258,7 +259,7 @@ void disclaimer(void)
 
 void usage(void)
 {
-    std::cout << "Usage: gpsplot --config <Konfigurationsdatei> [Optionen]" << endl
+    std::cout << "Aufruf: gpsplot --config <Konfigurationsdatei> [Optionen]" << endl
         << "Optionen:" << endl
         << "  --ele=GPX-Datei_mit_Höheninformationen" << endl
         << "     Eintrag input/elevation/file aus Konfigurationsdatei überschreiben" << endl
