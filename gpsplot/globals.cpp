@@ -127,20 +127,22 @@ void loadConfiguration(void)
     TiXmlNode* calcSmoothing = cfgRoot.FirstChild("calculations").FirstChild("smoothing").Node();
     while (calcSmoothing != NULL)
     {
-        SmoothingOptions* opt = new SmoothingOptions;
         TiXmlElement* calcEle = calcSmoothing->ToElement();
-        opt->id = calcEle->Attribute("id");
-        if (calcEle->FirstChildElement("algorithm") != NULL && calcEle->FirstChildElement("algorithm")->GetText() != NULL)
-            opt->algorithm = calcEle->FirstChildElement("algorithm")->GetText();
-        if (calcEle->FirstChildElement("gnuplotOption") != NULL && calcEle->FirstChildElement("gnuplotOption")->GetText() != NULL)
-            opt->gnuplotOption = calcEle->FirstChildElement("gnuplotOption")->GetText();
-        if (calcEle->FirstChildElement("param") != NULL && calcEle->FirstChildElement("param")->GetText() != NULL)
-            opt->param = atof(calcEle->FirstChildElement("param")->GetText());
-        if (calcEle->FirstChildElement("draw") != NULL) {
-            string draw = (calcEle->FirstChildElement("draw")->GetText() != NULL)? calcEle->FirstChildElement("draw")->GetText() : "";
-            opt->draw = (draw == "true");
+        if (calcEle != NULL) {
+            SmoothingOptions* opt = new SmoothingOptions;
+            opt->id = calcEle->Attribute("id");
+            if (calcEle->FirstChildElement("algorithm") != NULL && calcEle->FirstChildElement("algorithm")->GetText() != NULL)
+                opt->algorithm = calcEle->FirstChildElement("algorithm")->GetText();
+            if (calcEle->FirstChildElement("gnuplotOption") != NULL && calcEle->FirstChildElement("gnuplotOption")->GetText() != NULL)
+                opt->gnuplotOption = calcEle->FirstChildElement("gnuplotOption")->GetText();
+            if (calcEle->FirstChildElement("param") != NULL && calcEle->FirstChildElement("param")->GetText() != NULL)
+                opt->param = atof(calcEle->FirstChildElement("param")->GetText());
+            if (calcEle->FirstChildElement("draw") != NULL) {
+                string draw = (calcEle->FirstChildElement("draw")->GetText() != NULL)? calcEle->FirstChildElement("draw")->GetText() : "";
+                opt->draw = (draw == "true");
+            }
+            smoothings.push_back(opt);
         }
-        smoothings.push_back(opt);
         calcSmoothing = calcSmoothing->NextSibling();
     }
 
