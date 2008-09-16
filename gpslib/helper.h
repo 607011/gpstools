@@ -49,7 +49,7 @@ namespace GPS {
 
     template <typename T> std::string convert(T v)
     {
-        const bsize = 64;
+        const int bsize = 64;
         char buffer[bsize];
         const char digits[11] = "0123456789";
         bool neg = v < 0;
