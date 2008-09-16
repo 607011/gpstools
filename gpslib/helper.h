@@ -49,7 +49,7 @@ namespace GPS {
 
     template <typename T> std::string convert(T v)
     {
-        const int bsize = 64;
+        enum { bsize = std::numeric_limits<T>::digits10 + 3 };
         char buffer[bsize];
         const char digits[11] = "0123456789";
         bool neg = v < 0;

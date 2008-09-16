@@ -20,6 +20,7 @@ enum _long_options {
     SELECT_DEBUG,
     SELECT_QUIET,
     SELECT_VERBOSE,
+    SELECT_MULTI,
     SELECT_VERSION
 };
 
@@ -29,12 +30,14 @@ static struct option long_options[] = {
     { "quiet",     no_argument,       0, SELECT_QUIET },
     { "verbose",   no_argument,       0, SELECT_VERBOSE },
     { "version",   no_argument,       0, SELECT_VERSION },
+    { "multi",     no_argument,       0, SELECT_MULTI },
     { 0,           0,                 0, 0 }
 };
 
 
-const std::string VERSION = "0.9.2";
+const std::string VERSION = "0.9.3";
 bool quiet = false;
+bool multi = false;
 int verbose = 0;
 
 
@@ -54,10 +57,12 @@ void disclaimer(void)
 
 void usage(void)
 {
-    cout << "Aufruf: wpl1000reader [-v] <nvpipe.dat> <ausgabedatei.gpx>" << endl
-        << endl
-        << "Optionen:" << endl
-        << "  -v       Mehr Information ueber Verarbeitungsschritte ausgeben" << endl
+    cout << "Aufruf: wpl1000reader [Optionen] <nvpipe.dat> <ausgabedatei.gpx>" << endl
+	 << endl
+	 << "Optionen:" << endl
+	 << "  -v       Mehr Information ueber Verarbeitungsschritte ausgeben" << endl
+	 << "  --multi |" << endl
+	 << "  -m       Jeden Track in eine separate Datei schreiben" << endl
         << endl;
 }
 
@@ -89,6 +94,11 @@ int main(int argc, char* argv[])
         case 'q':
             quiet = true;
             break;
+        case SELECT_MULTI:
+	  /* fall-through */
+	case 'm':
+	  multi = true;
+	  break;
         case SELECT_VERSION:
             disclaimer();
             cout << "Version: " << VERSION;
@@ -104,43 +114,58 @@ int main(int argc, char* argv[])
     disclaimer();
 
     if ((argc - optind) < 2) {
-        usage();
-        return EXIT_FAILURE;
+      usage();
+      return EXIT_FAILURE;
     }
 
     string wpl1000Filename = argv[optind++];
     if (!quiet)
-        cout << "Laden von " << wpl1000Filename << " .." << endl;
+      cout << "Laden von " << wpl1000Filename << " .." << endl;
     WPL1000File wpl1000File;
     errno_t rc = wpl1000File.load(wpl1000Filename);
     if (rc != 0) {
-        cout << "FEHLER: Laden von " << wpl1000Filename << " fehlgeschlagen." << endl;
-        return rc;
+      cout << "FEHLER: Laden von " << wpl1000Filename << " fehlgeschlagen." << endl;
+      return rc;
     }
     string gpxFilename = argv[optind++];
     GPXFile gpxFile;
     gpxFile.setTracks(wpl1000File.tracks());
     gpxFile.setWaypoints(wpl1000File.waypoints());
+
     if (gpxFile.tracks().size() > 0) {
-        if (!quiet && verbose > 0) {
-            cout << "Track(s) @ ";
-            for (GPS::TrackList::const_iterator i = gpxFile.tracks().begin(); i != gpxFile.tracks().end(); ++i)
-                cout << (*i)->name() << " ";
-        }
+      if (multi) {
+	int n = 0;
+	for (GPS::TrackList::const_iterator i = gpxFile.tracks().begin(); i != gpxFile.tracks().end(); ++i) {
+	  std::string outFilename = gpxFilename;
+	  int npos = gpxFilename.find_last_of('.');
+	  outFilename.insert(npos, "-" + GPS::tos(n++));
+	  GPS::GPXFile outFile;
+	  outFile.addTrack(*i);
+	  if (!quiet)
+	    cout << "Speichern von " << outFilename << " .." << endl;
+	  outFile.write(outFilename);
+	}
+      }
+      else {
+	if (!quiet && verbose > 0) {
+	  cout << "Track(s) @ ";
+	  for (GPS::TrackList::const_iterator i = gpxFile.tracks().begin(); i != gpxFile.tracks().end(); ++i)
+	    cout << (*i)->name() << " ";
+	}
         if (!quiet)
-            cout << "Speichern unter " << gpxFilename << " .." << endl;
+	  cout << "Speichern unter " << gpxFilename << " .." << endl;
         rc = gpxFile.write(gpxFilename);
         if (rc != 0) {
-            cout << "FEHLER: Speichern von " << gpxFilename << " fehlgeschlagen." << endl;
-            return rc;
+	  cout << "FEHLER: Speichern von " << gpxFilename << " fehlgeschlagen." << endl;
+	  return rc;
         }
+      }
     }
     else {
-        cout << "Die Datei enthaelt keine Tracks!" << endl;
-        return EXIT_FAILURE;
+      cout << "Die Datei enthaelt keine Tracks!" << endl;
+      return EXIT_FAILURE;
     }
-    cout << endl;
     if (!quiet)
-        cout << endl;
+      cout << endl << endl;
     return EXIT_SUCCESS;
 }

@@ -21,6 +21,8 @@ LIBS := $(foreach i,../gpslib/libgps ../tinyxml/libtinyxml,$i.a)
 
 all: $(PROJ)
 
+release: all
+
 clean:
 	$(RM) $(PROJ_O)
 	$(RM) $(PROJ)
