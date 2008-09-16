@@ -386,7 +386,7 @@ namespace GPS {
             while (i < samples.size()) 
             {
                 Track* trk = new Track;
-                trk->setName(_Name + " (" + itos(partNum++) + ")");
+                trk->setName(_Name + " (" + tos(partNum++) + ")");
                 for (size_t j = 0; j < n && i < samples.size(); ++j)
                     trk->append(new Trackpoint(*samples.at(i++)));
                 tracks->push_back(trk);

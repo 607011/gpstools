@@ -3,19 +3,11 @@
 // Alle Rechte vorbehalten.
 
 #include <iostream>
-#include <sstream>
 #include <algorithm>
-#include <limits>
 
 #include "helper.h"
 
 static const char* GOOGLE_CHART_API_ENCODING = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.";
-
-
-double deg2rad(double deg)
-{
-    return deg * PI / 180.0;
-}
 
 
 const char* encode_extended(size_t val)
@@ -24,22 +16,6 @@ const char* encode_extended(size_t val)
     code[0] = GOOGLE_CHART_API_ENCODING[val / 64];
     code[1] = GOOGLE_CHART_API_ENCODING[val % 64];
     return (const char*) code;
-}
-
-
-std::string itos(int i)
-{
-    std::stringstream s;
-    s << i;
-    return s.str();
-}
-
-
-std::string dtos(double d)
-{
-    std::stringstream s;
-    s << d;
-    return s.str();
 }
 
 
