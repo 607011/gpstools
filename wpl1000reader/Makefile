@@ -38,3 +38,7 @@ tinyxml:
 
 $(PROJ): $(PROJ_O) $(LIBS) Makefile
 	$(CXX) -o $(PROJ)$(X) $(LDFLAGS) $(PROJ_O) $(LIBS)
+
+test: $(PROJ)
+	./$(PROJ) Testdaten/NVPIPE-zemp.DAT Testdaten/zemp.gpx
+	./$(PROJ) --multi Testdaten/NVPIPE-zemp.DAT Testdaten/zemp.gpx

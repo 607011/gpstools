@@ -35,7 +35,7 @@ static struct option long_options[] = {
 };
 
 
-const std::string VERSION = "0.9.3";
+const string VERSION = "0.9.4";
 bool quiet = false;
 bool multi = false;
 int verbose = 0;
@@ -128,29 +128,35 @@ int main(int argc, char* argv[])
         return rc;
     }
     string gpxFilename = argv[optind++];
-    GPXFile gpxFile;
-    gpxFile.setTracks(wpl1000File.tracks());
-    gpxFile.setWaypoints(wpl1000File.waypoints());
-
-    if (gpxFile.tracks().size() > 0)
+    if (wpl1000File.tracks().size() > 0)
     {
         if (multi)
         {
-            int n = 0;
-            for (GPS::TrackList::const_iterator i = gpxFile.tracks().begin(); i != gpxFile.tracks().end(); ++i) {
-                std::string outFilename = (*i)->startTimestamp().toString("%Y%m%d-%H%M") + "-" + gpxFilename;
-                GPS::GPXFile outFile;
-                outFile.addTrack(*i);
+            for (TrackList::const_iterator i = wpl1000File.tracks().begin(); i != wpl1000File.tracks().end(); ++i) {
+                GPXFile trkFile;
+                trkFile.addTrack(*i);
+                int spos = gpxFilename.find_last_of('/');
+                string trkFilename = gpxFilename;
+                trkFilename.insert(spos+1, (*i)->startTimestamp().toString("%Y%m%d-%H%M") + "-");
                 if (!quiet)
-                    cout << "Speichern von " << outFilename << " .." << endl;
-                outFile.write(outFilename);
+                    cout << "Speichern von " << trkFilename << " .." << endl;
+                trkFile.write(trkFilename);
             }
+            GPXFile wptFile;
+            wptFile.setWaypoints(wpl1000File.waypoints());
+            string wptFilename = gpxFilename;
+            int ppos = gpxFilename.find_last_of('.');
+            wptFilename.insert(ppos, "-waypoints");
+            wptFile.write(wptFilename);
         }
         else // !multi
         {   
+            GPXFile gpxFile;
+            gpxFile.setTracks(wpl1000File.tracks());
+            gpxFile.setWaypoints(wpl1000File.waypoints());
             if (!quiet && verbose > 0) {
                 cout << "Track(s) @ ";
-                for (GPS::TrackList::const_iterator i = gpxFile.tracks().begin(); i != gpxFile.tracks().end(); ++i)
+                for (TrackList::const_iterator i = gpxFile.tracks().begin(); i != gpxFile.tracks().end(); ++i)
                     cout << (*i)->name() << " ";
             }
             if (!quiet)
