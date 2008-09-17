@@ -8,92 +8,83 @@ OPTIMIZE=-O2 -finline-functions
 DEBUGFLAGS=-DDEBUG -D_DEBUG -ggdb -g3
 CFLAGS=$(OPTIMIZE) $(INC) -Wall
 CXXFLAGS=$(OPTIMIZE) $(INC) -w -Wall -fPIC
-LDFLAGS=-lstdc++ -fexceptions
+LDFLAGS=$(CXXFLAGS) -lstdc++ -fexceptions
 CC=gcc
 CXX=g++
 LD=ld
 AR=ar
-DOXYGEN=doxygen
-OUTDIR=.
-O=.o
-X=
 MKDIR=mkdir -p
 MV=mv
+LIPO=lipo
+DOXYGEN=doxygen
+O=.o
+X=
 
-GPS_O := $(foreach i,Ellipsoid GeoCoord GPSTrackFile GPXFile helper Line Point Polygon Stochastics SuuntoDatafile TCXFile Timestamp Track TrackLine Trackpoint Vector Waypoint WPL1000File,$i.o)
+GPS_O := $(foreach i,Ellipsoid GeoCoord GPSTrackFile GPXFile helper Line Point Polygon Stochastics SuuntoDatafile TCXFile Timestamp Track TrackLine Trackpoint Vector Waypoint WPL1000File,$i$(O))
 GPS_H := $(foreach i,Ellipsoid GeoCoord GPSTrackFile GPXFile helper Line MercatorCoord Point Polygon Stochastics SuuntoDatafile TCXFile Timestamp Track TrackLine Trackpoint UTMCoord Value Vector Waypoint WPL1000File,$i.h)
 
 
 all: $(PROJ)
 
 macosx-release-universal:
+	$(RM) -R x86
+	$(RM) -R ppc
+	$(MKDIR) x86
+	$(MKDIR) ppc
+	@echo "**************************************"
+	@echo "************ X86 RELEASE *************"
+	@echo "**************************************"
 	$(MAKE) clean
 	$(MAKE) macosx-release-x86
-	$(MKDIR) x86
-	$(RM) i386/*
 	$(MV) $(PROJ) x86
+	@echo "**************************************"
+	@echo "************ PPC RELEASE *************"
+	@echo "**************************************"
 	$(MAKE) clean
 	$(MAKE) macosx-release-ppc
-	$(MKDIR) ppc
-	$(RM) ppc/*
 	$(MV) $(PROJ) ppc
-	lipo -create ppc/$(PROJ) x86/$(PROJ) -output libgps.a
-
-macosx-debug-universal:
-	$(MAKE) clean
-	$(MAKE) macosx-debug-x86
-	$(MKDIR) x86
-	$(RM) i386/*
-	$(MV) $(PROJ) x86
-	$(MAKE) clean
-	$(MAKE) macosx-debug-ppc
-	$(MKDIR) ppc
-	$(RM) ppc/*
-	$(MV) $(PROJ) ppc
-	lipo -create ppc/$(PROJ) x86/$(PROJ) -output libgps.a
+	@echo "**************************************"
+	@echo "********** UNIVERSAL BINARY **********"
+	@echo "**************************************"
+	$(LIPO) -create ppc/$(PROJ) x86/$(PROJ) -output $(PROJ)
 
 macosx-release-x86:
-	$(MAKE) release O="$(O)" \
-	        CFLAGS="$(CFLAGS)" \
-        	CXXFLAGS="$(CXXFLAGS) -arch i386" \
-        	LDFLAGS="$(LDFLAGS)"
+	$(MAKE) release \
+	    O="$(O)" \
+            CFLAGS="$(CFLAGS) -arch i386" \
+	    CXXFLAGS="$(CXXFLAGS) -arch i386" \
+	    LDFLAGS="$(LDFLAGS) -arch i386"
 
 macosx-release-ppc:
-	$(MAKE) release O="$(O)" \
-		CFLAGS="$(CFLAGS)" \
-		CXXFLAGS="$(CXXFLAGS) -arch ppc" \
-		LDFLAGS="$(LDFLAGS)"
-
-macosx-debug-x86:
-	$(MAKE) debug O="$(O)" \
-	        CFLAGS="$(CFLAGS)" \
-        	CXXFLAGS="$(CXXFLAGS) -arch i386" \
-        	LDFLAGS="$(LDFLAGS)"
-
-macosx-debug-ppc:
-	$(MAKE) debug O="$(O)" \
-		CFLAGS="$(CFLAGS)" \
-		CXXFLAGS="$(CXXFLAGS) -arch ppc" \
-		LDFLAGS="$(LFLAGS)"
+	$(MAKE) release \
+	    O="$(O)" \
+	    CFLAGS="$(CFLAGS) -arch ppc" \
+	    CXXFLAGS="$(CXXFLAGS) -arch ppc" \
+	    LDFLAGS="$(LDFLAGS) -arch ppc"
 
 release:
 	$(RM) $(PROJ)
-	$(MAKE) all O="$(O)" \
-		CFLAGS="$(CFLAGS)" \
-		CXXFLAGS="$(CXXFLAGS)" \
-		LDFLAGS="$(LDFLAGS)" \
-	$(MAKE) doc
+	$(MAKE) all \
+	  O="$(O)" \
+	  CFLAGS="$(CFLAGS)" \
+	  CXXFLAGS="$(CXXFLAGS)" \
+	  LDFLAGS="$(LDFLAGS)"
 
 debug:
 	$(RM) $(PROJ)
-	$(MAKE) all O="$(O)" \
-		CFLAGS="$(CFLAGS) $(DEBUGFLAGS)" \
-		CXXFLAGS="$(CXXFLAGS) $(DEBUGFLAGS)" \
-		LDFLAGS="$(LDFLAGS)"
+	$(MAKE) all \
+	  O="$(O)" \
+	  CFLAGS="$(CFLAGS) $(DEBUGFLAGS)" \
+	  CXXFLAGS="$(CXXFLAGS) $(DEBUGFLAGS)" \
+	  LDFLAGS="$(LDFLAGS) $(DEBUGFLAGS)"
 
 clean:
 	$(RM) $(GPS_O)
 	$(RM) $(PROJ)
+
+distclean: clean
+	$(RM) -R ppc
+	$(RM) -R x86
 
 %.o: %.cpp $(GPS_H) Makefile
 	$(CXX) -c $(CXXFLAGS) -o $@ $<

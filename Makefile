@@ -2,6 +2,7 @@
 # Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 # Alle Rechte vorbehalten.
 
+PROJ=gpstools
 INC=-I.. -I.
 OPTIMIZE=-O2 -finline-functions
 DEBUGFLAGS=-DDEBUG -D_DEBUG -ggdb -g3
@@ -9,12 +10,17 @@ LDFLAGS=
 CC=gcc
 CXX=g++
 LD=ld
+TAR=tar
+MV=mv
+CP=cp
+MKDIR=mkdir -p
 X=
 O=.o
 CFLAGS=$(OPTIMIZE) $(INC) -Wall
 CXXFLAGS=$(OPTIMIZE) $(INC) -Wall -fPIC
 
 PROJECTS:=tinyxml gpslib gpsplot splittrack trkcompare wpl1000reader areameter gpxtimeshift
+FILES := $(foreach i,gpsplot splittrack trkcompare wpl1000reader areameter gpxtimeshift,$i/$i)
 
 all:
 	for i in $(PROJECTS); do \
@@ -26,39 +32,31 @@ all:
 	done
 
 macosx-release-universal:
-	$(MAKE) macosx-release-universal \
+	for i in $(PROJECTS); do \
+	  $(MAKE) -C "$${i}" macosx-release-universal \
 	    O="$(O)" \
 	    CFLAGS="$(CFLAGS)" \
             CXXFLAGS="$(CXXFLAGS)" \
-            LDFLAGS="$(LDFLAGS)"
+            LDFLAGS="$(LDFLAGS)" ; \
+	done
 
 macosx-release-x86:
-	$(MAKE) release \
+	for i in $(PROJECTS); do \
+	  $(MAKE) -C "$${i}" macosx-release-x86 \
 	    O="$(O)" \
-	    CFLAGS="$(CFLAGS) -arch i386" \
-            CXXFLAGS="$(CXXFLAGS) -arch i386" \
-            LDFLAGS="$(LDFLAGS) -arch i386"
-
-macosx-debug-x86:
-	$(MAKE) debug \
-	    O="$(O)" \
-	    CFLAGS="$(CFLAGS) -arch i386" \
-            CXXFLAGS="$(CXXFLAGS) -arch i386" \
-            LDFLAGS="$(LDFLAGS) -arch i386"
+	    CFLAGS="$(CFLAGS)" \
+            CXXFLAGS="$(CXXFLAGS)" \
+            LDFLAGS="$(LDFLAGS)" ; \
+	done
 
 macosx-release-ppc:
-	$(MAKE) release \
+	for i in $(PROJECTS); do \
+	  $(MAKE) -C "$${i}" macosx-release-ppc \
 	    O="$(O)" \
-	    CFLAGS="$(CFLAGS) -arch ppc" \
-            CXXFLAGS="$(CXXFLAGS) -arch ppc" \
-            LDFLAGS="$(LDFLAGS) -arch ppc"
-
-macosx-debug-ppc:
-	$(MAKE) debug \
-	    O="$(O)" \
-	    CFLAGS="$(CFLAGS) -arch ppc" \
-            CXXFLAGS="$(CXXFLAGS) -arch ppc" \
-            LDFLAGS="$(LDFLAGS) -arch ppc"
+	    CFLAGS="$(CFLAGS)" \
+            CXXFLAGS="$(CXXFLAGS)" \
+            LDFLAGS="$(LDFLAGS)" ; \
+	done
 
 debug:
 	$(MAKE) all \
@@ -75,4 +73,26 @@ release:
             LDFLAGS="$(LDFLAGS)"
 
 clean:
-	for i in $(PROJECTS); do $(MAKE) -C "$${i}" clean; done
+	for i in $(PROJECTS); do \
+	    $(MAKE) -C "$${i}" clean \
+	; \
+	done
+
+dist: 
+	$(MKDIR) $(PROJ)
+	for i in $(FILES); do \
+	    $(CP) "$${i}" $(PROJ) \
+	; \
+	done
+	$(TAR) -czvf $(PROJ).tar.gz $(PROJ)/*
+
+dist-bz2:
+	$(MKDIR) $(PROJ)
+	for i in $(FILES); do \
+	    $(CP) "$${i}" $(PROJ) \
+	; \
+	done
+	$(TAR) -cjvf $(PROJ).tar.bz2 $(PROJ)/*
+
+distclean: clean
+	$(RM) -R $(PROJ)
