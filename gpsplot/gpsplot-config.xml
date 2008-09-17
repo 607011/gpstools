@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+
+<!-- config ist das Wurzelelement der Konfigurationsdatei. Die Angabe
+     des Attributs version="1.0" ist Pflicht. -->
+<config version="1.0">
+
+ <!-- allgemeine Einstellungen -->
+ <general>
+
+  <!-- Dieser Text wird oberhalb der erzeugten Grafik angezeigt und als
+       Dateiname der erzeugten Grafik verwendet. Sonderzeichen werden im
+       Dateinamen durch Unterstriche ersetzt, die Dateiendung wird
+       automatisch hinzugefügt.
+  -->
+  <title>Grafik-Überschrift</title>
+
+  <!-- Link zu einer Webseite, die mit den GPS-Daten in Beziehung steht,
+       zum Beispiel die Homepage einer Lauf- oder Wanderveranstaltung -->
+  <url>http://www.example.com/</url>
+
+  <!-- Informationen über den Sammler der GPS-Daten -->
+  <author>
+   <name>Mein Name</name>
+   <email>mein.name@example.com</email>
+   <url>http://www.example.com/</url>
+  </author>
+
+  <!-- legt die Kodierung der erzeugten Text-Dateien fest -->
+  <encoding>UTF-8</encoding>
+ </general>
+
+ <!-- Eingabedateien -->
+ <input>
+
+  <!-- Angaben zur Datei, die die Höheninformationen enthält -->
+  <elevation>
+   <!-- Dateiname, entweder absolut oder relativ zum aktuellen
+        Verzeichnis -->
+   <file>MeinTrack.gpx</file>
+   <!-- Angabe in Stunden, Minuten und Sekunden, um welches Maß die
+        Zeitstempel der Trackpunkte in die Zukunft ("+") oder die
+        Vergangenheit ("-") verschoben werden sollen. Typischerweise
+        muss man nichts ändern, weshalb die Zeitstempel im Beispiel
+        unangetastet bleiben. -->
+   <offset>+00:00:00</offset>
+  </elevation>
+
+  <!-- Angaben zur Datei, die die Herzfrequenzdaten enthält. Zurzeit werden
+       nur SDF-Dateien aus der Suunto-t6-Uhr unterstützt. -->
+  <heartrate>
+   <file>MeineHF.sdf</file>
+   <!-- Angabe, um welches Maß die Zeitstempel der Trackpunkte verschoben
+        werden sollen (siehe auch input/elevation/offset).  
+        Ist die HF-Messuhr beispielsweise auf mitteleuropäische Zeit
+        eingestellt, passt sie eine Verschiebung um zwei Stunden in die
+        Vergangenheit an die im GPS verwendete UTC-Zeit an. -->
+   <offset>-02:00:00</offset>
+  </heartrate>
+ </input>
+
+ <calculations>
+
+  <!-- Die Kennung "Original" zeigt an, dass sich die folgenden
+       Einstellungen auf die unverarbeiteten Originaldaten aus der
+       Datei mit den Höheninformationen beziehen -->
+  <smoothing id="Original">
+
+   <!-- Die Originaldaten sollen als Kurve ausgegeben werden. Ist das nicht
+        gewünscht, muss man anstelle von "true" den Wert "false" angeben. -->
+   <draw>true</draw>
+
+   <!-- Optionen zur Gestalt der Kurve, die in die gnuplot-Steuerdatei
+        geschrieben werden. Der Beispielparameter besagt, dass die Kurve
+        eine zusammenhängende Linie ist (with lines) mit einer Breite von
+        zwei Pixeln (lw 2) in einem Rotton (lc rgb "#E77171"). -->
+   <gnuplotOption>with lines lw 2 lc rgb "#E77171"</gnuplotOption>
+  </smoothing>
+
+  <!-- Unerwünschte Fehler im ursprünglichen Höhenprofil kann man
+       mit Hilfe zweier Verfahren eliminieren. Der Schwellwertalgorithmus
+       berücksichtigt nur Höhenunterschiede von einem Trackpunkt zu einem
+  	   folgenden, die einen bestimmten Schwellwert überschreiten. In der
+       Praxis führt ein Schwellwert von drei Metern zu realitätsnahen
+       Resultaten. Der Douglas-Peucker-Algorithmus bereinigt das Höhenprofil
+       durch Punktausdünnung, ebenfalls in Abhängigkeit von einem Schwell-
+       wert. Die Kontur der Kurve wird dabei beibehalten. Für Strecken mit
+       einer durchschnittlichen Steigung von mehr als fünf Prozent ist ein
+       Schwellwert von 5 bis 8 Meter praktikabel, bei weniger als fünf Prozent
+       ein Schwellwert von 3 bis 5 Meter. -->
+  <smoothing id="Threshold (3m)">
+
+   <!-- Angabe des Algorithmus: Möglich sind "threshold" für das Schwellwert-
+        verfahren und "douglas_peucker" für den Douglas-Peucker-Algorithmus.
+        -->
+   <algorithm>threshold</algorithm>
+
+   <!-- Schwellwert in Metern -->
+   <param>3</param>
+
+   <!-- Es sollen zwar Berechnungen mit diesem Verfahren angestellt werden,
+        aber die resultierende Kurve soll nicht in der Grafik erscheinen,
+        womit auch der Parameter gnuplotOption entfallen darf. -->
+   <draw>false</draw>
+  </smoothing>
+
+  <!-- Das Douglas-Peucker-Verfahren mit einem Schwellwert von 3 Metern auf
+       die Original-Höhendaten anwenden, die Kurve aber nicht zeichnen. -->
+  <smoothing id="Douglas-Peucker (3m)">
+   <algorithm>douglas_peucker</algorithm>
+   <param>3</param>
+   <draw>false</draw>
+  </smoothing>
+
+  <!-- Das Douglas-Peucker-Verfahren mit einem Schwellwert von 8 Metern auf
+       die Original-Höhendaten anwenden. Die übrig bleibenden Punkte sollen
+       Punkt für Punkt in die Grafik eingezeichnet werden. -->
+  <smoothing id="Douglas-Peucker (8m)">
+   <algorithm>douglas_peucker</algorithm>
+   <param>8</param>
+   <draw>true</draw>
+   <gnuplotOption>with points pt 5 ps 0.3</gnuplotOption>
+  </smoothing>
+ </calculations>
+
+ <!-- Im Folgenden legt man alle Einstellungen für den Aufruf von gnuplot
+      fest. -->
+ <gnuplot>
+
+  <!-- Pfad zum gnuplot-Executable -->
+  <executable>D:\Programme\gnuplot\bin\wgnuplot.exe</executable>
+
+  <!-- Angabe des Ausgabeformat. Das Folgende bedeutet: Erzeuge eine Grafik
+       im PNG-Format mit einer Breite von 1024 und einer Höhe von 768
+       Pixeln. Weiteres siehe die Dokumentation zu gnuplot. -->
+  <format>png small size 1024,768 enhanced interlace</format>
+
+  <!-- Angabe der Endung der zu schreibenden Grafikdatei -->
+  <suffix>png</suffix>
+
+  <!-- Angabe der x-Achsen-Skalierung. Mögliche Werte sind: distance (das
+       Höhenprofil wird auf die Strecke abgetragen), duration (das Höhenprofil
+       wird auf die seit dem Start verstrichene Zeit abgetragen) und datetime
+       (das Höhenprofil wird auf Datum und Uhrzeit abgetragen). -->
+  <xaxis>distance</xaxis>
+
+  <!-- GPS-Positionen kranken an ihrer Ungenauigkeit, die im Bereich von
+       einigen (zehn) Metern liegt. Ermittelt man die Geschwindigkeit
+       zwischen zwei Trackpunkten durch Differenzierung der Strecke nach der
+       Zeit, erhält man unrealistisch starke Schwankungen. Mit Hilfe 
+       dieses Parameters stellt man die Dauer oder die Strecke ein, über die
+       die Geschwindigkeit gemittelt wird, was zu geringeren Schwankungen und
+       damit typischerweise realistischeren Angaben führt. 
+       Mögliche Werte für das Attribut unit sind: seconds (Mitteln über 
+       die angegebene Anzahl Sekunden), meters (Mitteln über die angegebene
+       Strecke in Metern). -->
+  <speedInterval unit="seconds">120</speedInterval>
+
+  <!-- Um die Abschnitt calculations deklarierten Kurven besser wiedererkennen
+       zu können, kann man eine Legende in die Grafik einblenden.
+       Die Beschriftungen der Kurven ergeben sich aus dem Wert des Attributs
+       id im smoothing-Parameter. -->
+  <legend>true</legend>
+
+  <!-- gpsplot kann mehrere Kurven in einer Grafik untereinander darstellen.
+       Zuoberst befindet sich stets das Höhenprofil. -->
+  <elevation>
+
+   <!-- Wie viel Prozent der Gesamthöhe der Grafik soll die Darstellung
+        des Höhenprofils einnehmen? Gültig sind Werte von 0 bis 100. -->
+   <height>55</height>
+
+   <!-- Standardmäßig bestimmt gnuplot die obere und untere Grenze der
+        y-Achsen-Skalierung automatisch. Möchte man das nicht, kann man
+        einen unteren (lo) und oberen (hi) Wert vorgeben.
+        Zulässig sind beliebige Dezimalzahlen. -->
+   <range>
+    <lo></lo>
+    <hi></hi>
+   </range>
+  </elevation>
+
+  <!-- Wenn gewünscht, kann unterhalb des Höhenprofils der Geschwindigkeits-
+       verlauf dargestellt werden. Wie beim Höhenprofil bestimmt der Parameter
+       height den Anteil der Grafik in Prozent an der Gesamthöhe, über den
+       range-Parameter -->
+  <speed>
+   <height>15</height>
+   <range>
+    <lo></lo>
+    <hi></hi>
+   </range>
+
+   <!-- Auf Wunsch ermittelt gpsplot die Durchschnittsgeschwindigkeit über den
+        gesamten Track und zeichnet sie als feine horizontale Linie in das
+        Geschwindigkeitsprofil ein. -->
+   <average>true</average>
+  </speed>
+
+  <!-- Liegen zum Track Herzfrequenzdaten vor, kann man auch diese als Kurve
+       darstellen lassen. -->
+  <hr>
+   <height>15</height>
+   <range>
+    <lo>80</lo>
+    <hi>190</hi>
+   </range>
+   <average>true</average>
+  </hr>
+
+  <!-- Auch das Steigungsprofil lässt sich darstellen. Im mathematischen Sinne
+       ist das die erste Ableitung des Höhenprofils. -->
+  <slope>
+   <height>15</height>
+   <range>
+    <lo>-25</lo>
+    <hi>25</hi>
+   </range>
+   <!-- Als Datenquelle für das Steigungsprofil verwendet gpsplot standard-
+        mäßig die Originaldaten. Aber wie die Darstellung des Geschwindigkeits-
+        profils ist auch das Steigungsprofil aufgrund der GPS-typischen 
+        Ungenauigkeiten starken Schwankungen unterworfen. Deshalb bietet es
+        sich an, nur Steigungen zwischen den Punkten zu berechnen, die nach
+        der Ausdünnung mit Hilfe des Douglas-Peucker-Verfahrens übrig 
+        geblieben sind. Im Folgenden verwendet gpsplot die aus dem smoothing-
+        Abschitt mit der Kennung "Douglas-Peucker (8m)" hervorgegangenen
+        Kurvendaten. -->
+   <source>Douglas-Peucker (8m)</source>
+  </slope>
+  
+  <!-- Etwas Leerraum zwischen den einfügen. Voreinstellung: false -->
+  <padding>true</padding>
+ </gnuplot>
+
+ <!-- gpsplot kann eine Zusammenfassung aller Berechnungen in eine Textdatei
+      schreiben, deren Namen man im Parameter file angibt. -->
+ <dump>
+  <file>MeinTrack.dump.txt</file>
+ </dump>
+
+ <!-- Auf Wunsch erzeugt gpsplot aus den Trackdaten eine KML-Datei, die außer
+      dem Track auch Wegpunkte (placemarks) für den Start und das Ende der
+      Aufzeichnung sowie in Abständen von soundso vielen Kilometern
+      enthält. KML-Dateien lassen sich etwa in Google Maps oder Google Earth
+      anzeigen. -->
+ <kml>
+ 
+  <!-- Name der zu generierenden KML-Datei. -->
+  <file>MeinTrack.kml</file>
+  
+  <!-- Wenn true, erzeuge einen Wegpunkt am Start der Trackaufzeichnung. -->
+  <start>true</start>
+
+  <!-- Wenn true, erzeuge einen Wegpunkt am Ende der Trackaufzeichnung. -->
+  <finish>true</finish>
+
+  <!-- Setzen von Wegpunkten in Abständen von 5 Kilometern. -->
+  <ticks>5</ticks>
+ </kml>
+
+ <!-- Die Google Maps lassen sich in die eigene Website einbinden. 
+      Welche Inhalte dargestellt werden, kann man zum Beispiel über ein
+      in die Webseite einzubettendes JavaScript festlegen. Wenn gewünscht,
+      generiert gpsplot den Code und schreibt ihn in die angegebene Datei.
+      Wie man den JavaScript-Code einbettet und aufruft, steht unter
+      http://von-und-fuer-lau.de/gpsplot.html -->
+ <googlemaps>
+  <file>MeinTrack.js</file>
+ </googlemaps>
+
+</config>

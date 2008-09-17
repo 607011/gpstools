@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="von-und-fuer-lau.de" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+
+  <trk>
+    <name>Feldrunde</name>
+    <trkseg>
+      <trkpt lat="52.46210708008046" lon="10.05205836312231" />
+      <trkpt lat="52.46203485521953" lon="10.06683376101260" />
+      <trkpt lat="52.46233715819955" lon="10.06989462738383" />
+      <trkpt lat="52.46659692370304" lon="10.06860524622809" />
+      <trkpt lat="52.46561951935778" lon="10.05887431338611" />
+      <trkpt lat="52.46452505411487" lon="10.05135268003463" />
+      <trkpt lat="52.46210708008046" lon="10.05205836312231" />
+    </trkseg>
+  </trk>
+
+</gpx>
