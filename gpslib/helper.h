@@ -41,12 +41,27 @@ extern std::string secs2timestamp(time_t dur);
 
 namespace GPS {
 
+    /// Kleineren Wert zweier Zahlen ermitteln.
+    /// @param a erste Zahl
+    /// @param b zweite Zahl
+    /// @return kleineren der beiden Werte a und b
     template <typename T>
     inline const T &min(const T &a, const T &b) { if (a < b) return a; return b; }
 
+
+    /// Größeren Wert zweier Zahlen ermitteln.
+    /// @param a erste Zahl
+    /// @param b zweite Zahl
+    /// @return Größeren der beiden Werte a und b
     template <typename T>
     inline const T &max(const T &a, const T &b) { if (a > b) return a; return b; }
 
+
+    /// Eine Ganzzahl in einen String wandeln.
+    /// @param v die zu wandelnde Zahl
+    /// @param padTo auf so viele Stelle soll der resultierende String nach links aufgefüllt werden.
+    /// @param padChar mit diesem Zeichen soll der resultierende String nach links aufgefüllt werden.
+    /// @return String-Repräsentation der Ganzzahl
     template <typename T>
     std::string convert(T v, int padTo = 0, char padChar = '0')
     {
@@ -73,17 +88,32 @@ namespace GPS {
     }
 
 
+    /// Gradmaß in Bogenmaß umwandeln.
+    /// @param rad Gradmaß
+    /// @return Bogenmaß
     inline double deg2rad(double deg)
     {
         return deg * PI / 180.0;
     }
 
 
+    /// Bogenmaß in Gradmaß umwandeln.
+    /// @param rad Bogenmaß
+    /// @return Gradmaß
+    inline double rad2deg(double rad)
+    {
+        return rad / PI * 180.0;
+    }
+
+
+    /// Eine beliebigen Wert via std::stringstream in einen String umwandeln.
+    /// @param zu wandelnder Wert
+    /// @return String-Repräsentation des Wertes 
     template <typename T>
-    inline std::string tos(T i)
+    inline std::string tos(T v)
     {
         std::stringstream s;
-        s << i;
+        s << v;
         return s.str();
     }
 
