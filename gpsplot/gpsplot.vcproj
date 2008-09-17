@@ -242,7 +242,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\gpsplot-config-schema.xml"
+				RelativePath=".\gpsplot-config.xsd"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"

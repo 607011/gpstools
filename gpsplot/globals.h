@@ -5,7 +5,7 @@
 #ifndef __GLOBALS_H_
 #define __GLOBALS_H_
 
-#define VERSION "1.0.1"
+#define VERSION "1.0.2"
 
 #include <string>
 #include <vector>
@@ -63,6 +63,7 @@ extern std::string gnuplotXAxis;
 extern time_t gnuplotSpeedIntervalSeconds;
 extern double gnuplotSpeedIntervalMeters;
 extern bool gnuplotLegend;
+extern bool gnuplotPadding;
 extern double gnuplotElevationPct;
 extern GPS::IntValue gnuplotElevationLo;
 extern GPS::IntValue gnuplotElevationHi;
