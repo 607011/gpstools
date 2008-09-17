@@ -47,9 +47,12 @@ namespace GPS {
     template <typename T>
     inline const T &max(const T &a, const T &b) { if (a > b) return a; return b; }
 
-    template <typename T> std::string convert(T v)
+    template <typename T>
+    std::string convert(T v, int padTo = 0, char padChar = '0')
     {
-        enum { bsize = std::numeric_limits<T>::digits10 + 3 };
+        const int bsize = 256;
+        if (padTo > bsize)
+            return std::string();
         char buffer[bsize];
         const char digits[11] = "0123456789";
         bool neg = v < 0;
@@ -62,7 +65,10 @@ namespace GPS {
         for (; v > 0; v /= 10)
             *--tmp = digits[v % 10];
         if (neg)
-            *--tmp = '-';   
+            *--tmp = '-';
+        int padding = padTo - (buffer + bsize - tmp);
+        while (padding-- > 0)
+            *--tmp = padChar;
         return std::string(tmp);
     }
 

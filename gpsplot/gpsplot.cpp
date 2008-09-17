@@ -250,6 +250,12 @@ int main(int argc, char* argv[])
     double gnuplotSpeedOrigin     = gnuplotSlopePct;
     double gnuplotSlopeOrigin     = 0.0;
 
+    if (gnuplotPadding) {
+        gnuplotHeartratePct /= 1.16;
+        gnuplotSpeedPct     /= 1.16;
+        gnuplotSlopePct     /= 1.16;
+    }
+
     string outputFile(title);
     outputFile += "." + gnuplotSuffix;
 

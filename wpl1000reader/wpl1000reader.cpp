@@ -138,9 +138,7 @@ int main(int argc, char* argv[])
         {
             int n = 0;
             for (GPS::TrackList::const_iterator i = gpxFile.tracks().begin(); i != gpxFile.tracks().end(); ++i) {
-                std::string outFilename = gpxFilename;
-                int npos = gpxFilename.find_last_of('.');
-                outFilename.insert(npos, "-" + GPS::tos(n++));
+                std::string outFilename = (*i)->startTimestamp().toString("%Y%m%d-%H%M") + "-" + gpxFilename;
                 GPS::GPXFile outFile;
                 outFile.addTrack(*i);
                 if (!quiet)

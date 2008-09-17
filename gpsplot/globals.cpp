@@ -42,6 +42,7 @@ string gnuplotXAxis = "distance";
 time_t gnuplotSpeedIntervalSeconds = 60;
 double gnuplotSpeedIntervalMeters = 100;
 bool gnuplotLegend = true;
+bool gnuplotPadding = false;
 double gnuplotElevationPct = 0;
 IntValue gnuplotElevationLo;
 IntValue gnuplotElevationHi;
