@@ -27,10 +27,36 @@ namespace GPS {
     { /* ... */ }
 
 
+    inline void swapBytes(char& a, char& b)
+    {
+        char t = b;
+        b = a;
+        a = t;
+    }
+
+
     template <typename T>
     inline void readField(fstream& fs, T* data) 
     {
-        fs.read(reinterpret_cast<char*>(data), sizeof(T));
+        char *d = reinterpret_cast<char*>(data);
+        fs.read(d, sizeof T);
+        if (is_bigendian())
+        {
+            switch (sizeof T)
+            {
+            case 32:
+                swapBytes(d[0], d[3]);
+                swapBytes(d[1], d[2]);
+                break;
+            case 16:
+                swapBytes(d[0], d[1]);
+                break;
+            case 8:
+                /* fall-through */
+            default:
+                break;
+            }
+        }
     }
 
 

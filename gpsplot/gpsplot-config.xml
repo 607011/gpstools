@@ -1,8 +1,11 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 
-<!-- config ist das Wurzelelement der Konfigurationsdatei. Die Angabe
-     des Attributs version="1.0" ist Pflicht. -->
-<config version="1.0">
+<!-- config ist das Wurzelelement der Konfigurationsdatei. -->
+<config xmlns="http://von-und-fuer-lau.de/gpsplot/1/0" 
+        version="1.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://von-und-fuer-lau.de/gpsplot/1/0 http://von-und-fuer-lau.de/gpsplot-config-schema.xml">
+
 
  <!-- allgemeine Einstellungen -->
  <general>
@@ -12,7 +15,7 @@
        Dateinamen durch Unterstriche ersetzt, die Dateiendung wird
        automatisch hinzugefügt.
   -->
-  <title>Grafik-Überschrift</title>
+  <title>Grafik-Titel</title>
 
   <!-- Link zu einer Webseite, die mit den GPS-Daten in Beziehung steht,
        zum Beispiel die Homepage einer Lauf- oder Wanderveranstaltung -->
@@ -173,10 +176,12 @@
         y-Achsen-Skalierung automatisch. Möchte man das nicht, kann man
         einen unteren (lo) und oberen (hi) Wert vorgeben.
         Zulässig sind beliebige Dezimalzahlen. -->
+   <!-- 
    <range>
     <lo></lo>
     <hi></hi>
    </range>
+    -->
   </elevation>
 
   <!-- Wenn gewünscht, kann unterhalb des Höhenprofils der Geschwindigkeits-
@@ -185,15 +190,28 @@
        range-Parameter -->
   <speed>
    <height>15</height>
+   <!-- 
    <range>
     <lo></lo>
     <hi></hi>
    </range>
+    -->
 
    <!-- Auf Wunsch ermittelt gpsplot die Durchschnittsgeschwindigkeit über den
         gesamten Track und zeichnet sie als feine horizontale Linie in das
         Geschwindigkeitsprofil ein. -->
    <average>true</average>
+   
+   <!-- Als Datenquelle für das Geschwindigkeitssprofil verwendet gpsplot standard-
+        mäßig die Originaldaten. Aber wie die Darstellung des Steigungsprofils
+        ist auch das Geschwindigkeitssprofil aufgrund der GPS-typischen 
+        Ungenauigkeiten starken Schwankungen unterworfen. Deshalb bietet es
+        sich an, nur Steigungen zwischen den Punkten zu berechnen, die nach
+        der Ausdünnung mit Hilfe des Douglas-Peucker-Verfahrens übrig 
+        geblieben sind. Im Folgenden verwendet gpsplot die aus dem smoothing-
+        Abschitt mit der Kennung "Douglas-Peucker (5m)" hervorgegangenen
+        Kurvendaten. -->
+   <source>Douglas-Peucker (5m)</source>
   </speed>
 
   <!-- Liegen zum Track Herzfrequenzdaten vor, kann man auch diese als Kurve
@@ -227,7 +245,7 @@
    <source>Douglas-Peucker (8m)</source>
   </slope>
   
-  <!-- Etwas Leerraum zwischen den einfügen. Voreinstellung: false -->
+  <!-- Etwas Leerraum zwischen den Grafiken einfügen. Voreinstellung: false -->
   <padding>true</padding>
  </gnuplot>
 

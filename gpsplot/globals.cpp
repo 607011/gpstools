@@ -159,10 +159,6 @@ void loadConfiguration(void)
             gnuplotSuffix = cfgGnuplot.FirstChild("suffix").Element()->GetText();
         if (cfgGnuplot.FirstChild("xaxis").Element() != NULL && cfgGnuplot.FirstChild("xaxis").Element()->GetText() != NULL)
             gnuplotXAxis = cfgGnuplot.FirstChild("xaxis").Element()->GetText();
-        if (cfgGnuplot.FirstChild("padding").Element() != NULL && cfgGnuplot.FirstChild("padding").Element()->GetText() != NULL) {
-            string str = cfgGnuplot.FirstChild("padding").Element()->GetText();
-            gnuplotPadding = (str == "true");
-        }
         if (cfgGnuplot.FirstChild("speedInterval").Element() != NULL && cfgGnuplot.FirstChild("speedInterval").Element()->GetText() != NULL) {
             string str = cfgGnuplot.FirstChild("speedInterval").Element()->GetText();
             if (cfgGnuplot.FirstChild("speedInterval").Element()->Attribute("unit") != NULL) {
@@ -177,6 +173,10 @@ void loadConfiguration(void)
                 }
                 else errmsg("Unbekannte Einheit in <speedInterval unit=\"" + unit + "\"");
             }
+        }
+        if (cfgGnuplot.FirstChild("padding").Element() != NULL && cfgGnuplot.FirstChild("padding").Element()->GetText() != NULL) {
+            string str = cfgGnuplot.FirstChild("padding").Element()->GetText();
+            gnuplotPadding = (str == "true");
         }
         if (cfgGnuplot.FirstChild("legend").Element() != NULL && cfgGnuplot.FirstChild("legend").Element()->GetText() != NULL) {
             string str = cfgGnuplot.FirstChild("legend").Element()->GetText();
