@@ -39,19 +39,20 @@ namespace GPS {
     inline void readField(fstream& fs, T* data) 
     {
         char *d = reinterpret_cast<char*>(data);
-        fs.read(d, sizeof(T));
+        int sz = sizeof(T);
+        fs.read(d, sz);
         if (is_bigendian())
         {
-  	    switch (sizeof(T))
+            switch (sz)
             {
-            case 32:
+            case 4:
                 swapBytes(d[0], d[3]);
                 swapBytes(d[1], d[2]);
                 break;
-            case 16:
+            case 2:
                 swapBytes(d[0], d[1]);
                 break;
-            case 8:
+            case 1:
                 /* fall-through */
             default:
                 break;
