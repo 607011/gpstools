@@ -7,12 +7,6 @@
 #include "helper.h"
 #include "WPL1000File.h"
 
-#ifdef _MSC_VER
-#include <Winsock2.h>
-#else
-#include <netinet/in.h>
-#endif
-
 
 using namespace std;
 
@@ -38,12 +32,11 @@ namespace GPS {
     template <typename T>
     inline void readField(fstream& fs, T* data) 
     {
-        char *d = reinterpret_cast<char*>(data);
-        int sz = sizeof(T);
-        fs.read(d, sz);
+        char* d = reinterpret_cast<char*>(data);
+        fs.read(d, sizeof(T));
         if (is_bigendian())
         {
-            switch (sz)
+            switch (sizeof(T))
             {
             case 4:
                 swapBytes(d[0], d[3]);
