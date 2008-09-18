@@ -106,8 +106,8 @@ int main(int argc, char* argv[])
         disclaimer();
 
     if (configFile == "") {
-      usage();
-      exit(EXIT_FAILURE);
+        usage();
+        exit(EXIT_FAILURE);
     }
 
     loadConfiguration();
@@ -250,7 +250,8 @@ int main(int argc, char* argv[])
     double gnuplotSpeedOrigin     = gnuplotSlopePct;
     double gnuplotSlopeOrigin     = 0.0;
 
-    if (gnuplotPadding) {
+    if (gnuplotPadding)
+    {
         gnuplotHeartratePct /= 1.16;
         gnuplotSpeedPct     /= 1.16;
         gnuplotSlopePct     /= 1.16;
