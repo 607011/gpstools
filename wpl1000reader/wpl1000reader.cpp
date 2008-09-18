@@ -10,6 +10,8 @@
 #include "gpslib/WPL1000File.h"
 #include "gpslib/GPXFile.h"
 
+// gettext-Dummy
+#define _(s) s
 
 using namespace std;
 using namespace GPS;
@@ -45,11 +47,11 @@ void disclaimer(void)
 {
     if (!quiet)
     {
-        cout << "wpl1000reader - Tracks aus einem GPS-Logger vom Typ 'Wintec WPL-1000" << endl
-            << "                (Easy Showily)' oder 'Navilock NL-456DL Easy Logger'" << endl
-            << "                auslesen und als GPX-Datei speichern." << endl
-            << "Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>" << endl
-            << "Alle Rechte vorbehalten." << endl
+        cout << _("wpl1000reader - Tracks aus einem GPS-Logger vom Typ 'Wintec WPL-1000\n"
+            << "                (Easy Showily)' oder 'Navilock NL-456DL Easy Logger'\n"
+            << "                auslesen und als GPX-Datei speichern.\n")
+            << _("Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>") << endl
+            << _("Alle Rechte vorbehalten.") << endl
             << endl;
     }
 }
@@ -57,13 +59,14 @@ void disclaimer(void)
 
 void usage(void)
 {
-    cout << "Aufruf: wpl1000reader [Optionen] <nvpipe.dat> <ausgabedatei.gpx>" << endl
+    cout << _("Aufruf: wpl1000reader [Optionen] <nvpipe.dat> <ausgabedatei.gpx>") << endl
         << endl
-        << "Optionen:" << endl
-        << "  -v       Mehr Information ueber Verarbeitungsschritte ausgeben" << endl
-        << "  --multi |" << endl
-        << "  -m       Jeden Track in eine separate Datei schreiben" << endl
-        << endl;
+        << _("Optionen:\n"
+        << "  -v            Mehr Information über Verarbeitungsschritte ausgeben\n"
+        << "  -m  --multi   Jeden Track in eine separate Datei schreiben\n"
+        << "  -q            Sämtliche Ausgaben unterdrücken\n"
+        << "  --version     Versionsinformationen ausgeben")
+        << endl << endl;
 }
 
 
@@ -113,6 +116,10 @@ int main(int argc, char* argv[])
 
     disclaimer();
 
+#ifdef _DEBUG
+    cout << "Dieser Computer verwendet " << (is_bigendian()? "Big" : "Little") << " Endian." << endl << endl;
+#endif
+
     if ((argc - optind) < 2) {
         usage();
         return EXIT_FAILURE;
@@ -120,11 +127,11 @@ int main(int argc, char* argv[])
 
     string wpl1000Filename = argv[optind++];
     if (!quiet)
-        cout << "Laden von " << wpl1000Filename << " .." << endl;
+        cout << _("Laden von ") << wpl1000Filename << " .." << endl;
     WPL1000File wpl1000File;
     errno_t rc = wpl1000File.load(wpl1000Filename);
     if (rc != 0) {
-        cout << "FEHLER: Laden von " << wpl1000Filename << " fehlgeschlagen." << endl;
+        cout << _("FEHLER: Laden von ") << wpl1000Filename << _(" fehlgeschlagen.") << endl;
         return rc;
     }
     string gpxFilename = argv[optind++];
@@ -132,14 +139,15 @@ int main(int argc, char* argv[])
     {
         if (multi)
         {
-            for (TrackList::const_iterator i = wpl1000File.tracks().begin(); i != wpl1000File.tracks().end(); ++i) {
+            for (TrackList::const_iterator i = wpl1000File.tracks().begin(); i != wpl1000File.tracks().end(); ++i)
+            {
                 GPXFile trkFile;
                 trkFile.addTrack(*i);
                 int spos = gpxFilename.find_last_of('/');
                 string trkFilename = gpxFilename;
                 trkFilename.insert(spos+1, (*i)->startTimestamp().toString("%Y%m%d-%H%M") + "-");
                 if (!quiet)
-                    cout << "Speichern von " << trkFilename << " .." << endl;
+                    cout << _("Speichern von ") << trkFilename << " .." << endl;
                 trkFile.write(trkFilename);
             }
             GPXFile wptFile;
@@ -160,17 +168,17 @@ int main(int argc, char* argv[])
                     cout << (*i)->name() << " ";
             }
             if (!quiet)
-                cout << "Speichern unter " << gpxFilename << " .." << endl;
+                cout << _("Speichern unter ") << gpxFilename << " .." << endl;
             rc = gpxFile.write(gpxFilename);
             if (rc != 0) {
-                cout << "FEHLER: Speichern von " << gpxFilename << " fehlgeschlagen." << endl;
+                cout << _("FEHLER: Speichern von ") << gpxFilename << _(" fehlgeschlagen.") << endl;
                 return rc;
             }
         }
     }
     else
     {
-        cout << "Die Datei enthaelt keine Tracks!" << endl;
+        cout << _("Die Datei enthält keine Tracks!") << endl;
         return EXIT_FAILURE;
     }
     if (!quiet)
