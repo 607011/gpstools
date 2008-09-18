@@ -4,9 +4,18 @@
 
 #include <fstream>
 
+#include "helper.h"
 #include "WPL1000File.h"
 
+#ifdef _MSC_VER
+#include <Winsock2.h>
+#else
+#include <netinet/in.h>
+#endif
+
+
 using namespace std;
+
 
 namespace GPS {
 

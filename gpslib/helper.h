@@ -36,8 +36,11 @@ const double PI = 3.1415926535897932384626433832795L;
 /// @see http://code.google.com/apis/chart/#extended
 extern const char* encode_extended(size_t val);
 
-/// Convert seconds into W3C timestamp
+/// Convert seconds into W3C timestamp.
 extern std::string secs2timestamp(time_t dur);
+
+/// Determine if platform is big-endian.
+extern bool is_bigendian(void);
 
 namespace GPS {
 
