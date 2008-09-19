@@ -35,26 +35,26 @@ namespace GPS {
 
 
 #ifdef _DEBUG
-  inline std::string toHex(unsigned char c)
-  {
-    char buf[3];
-    static const char digits[17] = "0123456789abcdef";
-    buf[2] = 0;
-    buf[1] = digits[c & 0x0f];
-    buf[0] = digits[c >> 4];
-    return std::string(buf);
-  }
-
-  inline std::string toBin(unsigned char c)
-  {
-    char buf[9];
-    for (int i = 7; i >= 0; --i) {
-      buf[i] = (c & 1) + '0';
-      c >>= 1;
+    inline std::string toHex(unsigned char c)
+    {
+        char buf[3];
+        static const char digits[17] = "0123456789abcdef";
+        buf[2] = 0;
+        buf[1] = digits[c & 0x0f];
+        buf[0] = digits[c >> 4];
+        return std::string(buf);
     }
-    buf[8] = 0;
-    return std::string(buf);
-  }
+
+    inline std::string toBin(unsigned char c)
+    {
+        char buf[9];
+        for (int i = 7; i >= 0; --i) {
+            buf[i] = (c & 1) + '0';
+            c >>= 1;
+        }
+        buf[8] = 0;
+        return std::string(buf);
+    }
 #endif // _DEBUG
 
 
@@ -68,18 +68,26 @@ namespace GPS {
             switch (sizeof(T))
             {
             case 4:
+#ifdef _DEBUG   
+                cout << "orig: ";
+                cout << "0x" << setw(8) << setfill('0') << left << hex << *(reinterpret_cast<int*>(data)) << "  ";
+                cout << toHex(d[0]) << " " << toHex(d[1]) << " " << toHex(d[2]) << " " << toHex(d[3]) << "  ";
+                cout << toBin(d[0]) << " " << toBin(d[1]) << " " << toBin(d[2]) << " " << toBin(d[3]) << endl;
+#endif // _DEBUG
                 swapBytes(d[0], d[3]);
                 swapBytes(d[1], d[2]);
 #ifdef _DEBUG
-		cout << toHex(d[0]) << " " << toHex(d[1]) << " " << toHex(d[2]) << " " << toHex(d[3]) << "  ";
-		cout << toBin(d[0]) << " " << toBin(d[1]) << " " << toBin(d[2]) << " " << toBin(d[3]) << endl;
+                cout << "swap: ";
+                cout << "0x" << setw(8) << setfill('0') << left << hex << *(reinterpret_cast<int*>(data)) << "  ";
+                cout << toHex(d[0]) << " " << toHex(d[1]) << " " << toHex(d[2]) << " " << toHex(d[3]) << "  ";
+                cout << toBin(d[0]) << " " << toBin(d[1]) << " " << toBin(d[2]) << " " << toBin(d[3]) << endl;
 #endif // _DEBUG
                 break;
             case 2:
-	        swapBytes(d[0], d[1]);
+                swapBytes(d[0], d[1]);
                 break;
             case 1:
-	        break;
+                break;
             default:
                 break;
             }
