@@ -118,6 +118,7 @@ int main(int argc, char* argv[])
 
 #ifdef _DEBUG
     cout << "Dieser Computer verwendet " << (is_bigendian()? "Big" : "Little") << " Endian." << endl << endl;
+    cout << "sizeof(GPS::WPL1000Time) = " << sizeof(GPS::WPL1000Time) << endl << endl;
 #endif
 
     if ((argc - optind) < 2) {
