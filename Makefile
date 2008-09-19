@@ -17,7 +17,7 @@ MKDIR=mkdir -p
 X=
 O=.o
 CFLAGS=$(OPTIMIZE) $(INC) -Wall
-CXXFLAGS=$(OPTIMIZE) $(INC) -Wall -fPIC
+CXXFLAGS=$(OPTIMIZE) $(INC) -Wall -fPIC -Wno-long-double
 
 PROJECTS:=tinyxml gpslib gpsplot splittrack trkcompare wpl1000reader areameter gpxtimeshift
 FILES := $(foreach i,gpsplot splittrack trkcompare wpl1000reader areameter gpxtimeshift,$i/$i)

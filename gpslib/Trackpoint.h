@@ -185,8 +185,6 @@ namespace GPS {
         /// Umwandeln der geografischen Koordinaten des Trackpunkts in UTM-Koordinaten.
         inline operator UTMCoord() { return toUTM(); }
 
-        /// Umwandeln der geografischen Koordinaten des Trackpunkts via UTM-Koordinaten in ein Point-Objekt.
-        inline operator Point() { return toUTM(); }
     };
 
 };
