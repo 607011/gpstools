@@ -241,29 +241,21 @@
 				RelativePath=".\conf\20080816-STUNT100.xml"
 				>
 			</File>
+		</Filter>
+		<Filter
+			Name="XML Schema"
+			Filter="schema.xml"
+			>
 			<File
-				RelativePath=".\gpsplot-config.xsd"
+				RelativePath=".\gpsplot-config-schema.xml"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Generating XHTML documentation from $(InputFileName) ..."
-						CommandLine="$(InputDir)\Microsoft\msxsl.exe $(InputFileName) $(InputDir)\xs3p-1.1.3\xs3p.xsl &gt; $(InputDir)\gpsplot-config.html&#x0D;&#x0A;"
-						AdditionalDependencies="$(InputDir)\Microsoft\msxsl.exe"
-						Outputs="$(InputDir)\$(InputName).html"
-					/>
-				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32"
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						Description="Generating XHTML documentation from $(InputFileName) ..."
-						CommandLine="$(InputDir)\Microsoft\msxsl.exe $(InputFileName) $(InputDir)\xs3p-1.1.3\xs3p.xsl &gt; $(InputDir)\gpsplot-config.html&#x0D;&#x0A;"
-						AdditionalDependencies="$(InputPath);$(InputDir)\Microsoft\msxsl.exe"
-						Outputs="$(InputName).html"
+						CommandLine="$(ProjectDir)\Microsoft\msxsl.exe &quot;$(InputPath)&quot; &quot;$(ProjectDir)\xs3p-1.1.3\xs3p.xsl&quot; -v -o &quot;$(ProjectDir)\$(InputName).html&quot;"
+						Outputs="&quot;$(ProjectDir)\$(InputName).html&quot;"
 					/>
 				</FileConfiguration>
 			</File>
