@@ -7,7 +7,7 @@ INC=-I..
 OPTIMIZE=-O2 -finline-functions
 DEBUGFLAGS = -DDEBUG -D_DEBUG -ggdb -g3
 CFLAGS=$(OPTIMIZE) $(INC) -Wall
-CXXFLAGS=$(OPTIMIZE) $(INC) -Wall
+CXXFLAGS=$(OPTIMIZE) $(INC) -Wall -fPIC -Wno-long-double
 LDFLAGS=$(CXXFLAGS) -lstdc++ -fexceptions
 CC=gcc
 CXX=g++
@@ -98,3 +98,6 @@ $(PROJ): $(PROJ_O) $(LIBS) Makefile
 test: $(PROJ)
 	./$(PROJ) Testdaten/NVPIPE-zemp.DAT Testdaten/zemp.gpx
 	./$(PROJ) --multi Testdaten/NVPIPE-zemp.DAT Testdaten/zemp.gpx
+
+test2: $(PROJ)
+	./$(PROJ) -m Testdaten/NVPIPE-mehldau.DAT Testdaten/mehldau.gpx

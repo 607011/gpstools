@@ -48,10 +48,10 @@ namespace GPS {
     private:
         uint8_t _Type;
         uint8_t _Unknown;
+        WPL1000Time _T;
         int32_t _WPL1000lat;
         int32_t _WPL1000lon;
         int16_t _WPL1000ele;
-        WPL1000Time _T;
     public:
         WPL1000Data(void) : Trackpoint(), _Type(0), _Unknown(0), _WPL1000lat(0), _WPL1000lon(0), _WPL1000ele(0)
         { /* ... */ }
