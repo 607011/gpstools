@@ -135,7 +135,7 @@ namespace GPS {
         }
 
         /// Einen Wegpunkt zur Liste der Wegpunkte hinzufügen.
-        /// @param Wegpunkt
+        /// @param wpt Wegpunkt
         inline void addWaypoint(Waypoint* wpt)
         {
             _Waypoints.push_back(wpt);

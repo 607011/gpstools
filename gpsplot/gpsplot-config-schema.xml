@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema targetNamespace="http://von-und-fuer-lau.de/gpsplot-config" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://von-und-fuer-lau.de/gpsplot-config">
+<?xml version="1.0" encoding="utf-8" ?>
+<xsd:schema targetNamespace="http://von-und-fuer-lau.de/gpsplot/1/0" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://von-und-fuer-lau.de/gpsplot/1/0">
 
     <xsd:annotation>
         <xsd:documentation>
@@ -15,15 +15,22 @@
 
     <xsd:complexType name="generalParametersType">
         <xsd:sequence>
-            <xsd:element name="title" type="xsd:string" maxOccurs="1" minOccurs="0">
-			    <xsd:annotation>
-			        <xsd:documentation>
-			            Dieser Text erscheint als Überschrift in der erzeugten Grafik.
-			        </xsd:documentation>
-			    </xsd:annotation>
-            </xsd:element>
-            <xsd:element name="url" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
-            <xsd:element name="author" type="authorType" maxOccurs="1" minOccurs="0"></xsd:element>
+        	<xsd:element name="title" type="xsd:string" maxOccurs="1"
+        		minOccurs="0">
+        		<xsd:annotation>
+        			<xsd:documentation>
+        				Dieser Text erscheint als Überschrift in der
+        				erzeugten Grafik.
+        			</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        	<xsd:element name="url" type="xsd:string" maxOccurs="1"
+        		minOccurs="0">
+        	</xsd:element>
+        	<xsd:element name="author" type="authorType" maxOccurs="1"
+        		minOccurs="0">
+        	</xsd:element>
+        	<xsd:element name="encoding" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
         </xsd:sequence>
     </xsd:complexType>
 
@@ -143,7 +150,7 @@
         	<xsd:element name="xaxis" type="xaxisType" maxOccurs="1"
         		minOccurs="1">
         	</xsd:element>
-        	<xsd:element name="speedinterval" type="speedIntervalType"
+        	<xsd:element name="speedInterval" type="speedIntervalType"
         		maxOccurs="1" minOccurs="1">
         	</xsd:element>
         	<xsd:element name="legend" type="xsd:boolean" maxOccurs="1"
