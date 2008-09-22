@@ -63,17 +63,18 @@ namespace GPS {
     {
         char* d = reinterpret_cast<char*>(data);
         fs.read(d, sizeof(T));
-        if (is_bigendian())
+        switch (sizeof(T))
         {
-            switch (sizeof(T))
-            {
-            case 4:
-#ifdef _DEBUG   
-                cout << "orig: ";
-                cout << "0x" << setw(8) << setfill('0') << left << hex << *(reinterpret_cast<int*>(data)) << "  ";
-                cout << toHex(d[0]) << " " << toHex(d[1]) << " " << toHex(d[2]) << " " << toHex(d[3]) << "  ";
-                cout << toBin(d[0]) << " " << toBin(d[1]) << " " << toBin(d[2]) << " " << toBin(d[3]) << endl;
+        case 4:
+#ifdef _DEBUG
+            cout << "orig: ";
+            cout << "0x" << setw(8) << setfill('0') << left << hex << *(reinterpret_cast<int*>(data)) << "  ";
+            cout << toHex(d[0]) << " " << toHex(d[1]) << " " << toHex(d[2]) << " " << toHex(d[3]) << "  ";
+            cout << toBin(d[3]) << toBin(d[2]) << toBin(d[1]) << toBin(d[0]) << " -> "; 
+            cout << toBin(d[0]) << toBin(d[1]) << toBin(d[2]) << toBin(d[3]) << endl;
 #endif // _DEBUG
+            if (is_bigendian())
+            {
                 swapBytes(d[0], d[3]);
                 swapBytes(d[1], d[2]);
 #ifdef _DEBUG
@@ -82,29 +83,31 @@ namespace GPS {
                 cout << toHex(d[0]) << " " << toHex(d[1]) << " " << toHex(d[2]) << " " << toHex(d[3]) << "  ";
                 cout << toBin(d[0]) << " " << toBin(d[1]) << " " << toBin(d[2]) << " " << toBin(d[3]) << endl;
 #endif // _DEBUG
-                break;
-            case 2:
-                swapBytes(d[0], d[1]);
-                break;
-            case 1:
-                break;
-            default:
-                break;
             }
+            break;
+        case 2:
+            if (is_bigendian())
+                swapBytes(d[0], d[1]);
+            break;
+        default:
+            break;
         }
     }
 
 
     int WPL1000Data::readFrom(fstream& fs)
     {
-        // Reverse Engineering mit freundlicher Unterstützung von Eckhard Zemp, Berlin (www.zemp.ch)
+        // Reverse Engineering mit freundlicher Unterstuetzung von
+        // Eckhard Zemp, Berlin (www.zemp.ch)
         readField<uint8_t>(fs, &_Type);
         readField<uint8_t>(fs, &_Unknown);
         readField<GPS::WPL1000Time>(fs, &_T);
         readField<int32_t>(fs, &_WPL1000lat);
         readField<int32_t>(fs, &_WPL1000lon);
         readField<int16_t>(fs, &_WPL1000ele);
-        Timestamp ts(_T.year(), _T.month(), _T.day(), _T.hours(), _T.mins(), _T.secs());
+        Timestamp ts = (is_bigendian())
+	  ? Timestamp(_T.t.big.Y + 2000, _T.t.big.m, _T.t.big.d, _T.t.big.h, _T.t.big.i, _T.t.big.s)
+	  : Timestamp(_T.t.little.Y + 2000, _T.t.little.m, _T.t.little.d, _T.t.little.h, _T.t.little.i, _T.t.little.s);
         switch (_Type)
         {
         case WAYPOINT:
@@ -131,6 +134,7 @@ namespace GPS {
     {
         if (filename != "")
             _Filename = filename;
+	WPL1000Time tt;
         WPL1000Data point;
         fstream nvpipe;
         nvpipe.open(_Filename.c_str(), ios::binary | ios::in);
@@ -143,6 +147,9 @@ namespace GPS {
         while (!nvpipe.eof())
         {
             int rc = point.readFrom(nvpipe);
+            cout << point.timestamp().toString()
+                << " @ " << point.latitude() << " / " << point.longitude()
+                << " (" << point.elevation() << ")" << endl;
             if (rc == WPL1000Data::END_OF_LOG)
             {
                 if (_Trk != NULL && _Trk->points().size() > 0)

@@ -20,23 +20,26 @@ namespace GPS {
     struct WPL1000Time {
         union _wpl1000time
         {
-            struct _bitfield
+            struct _datetime_big_endian
             {
-                unsigned int s:6;
-                unsigned int i:6;
-                unsigned int h:5;
-                unsigned int d:5;
-                unsigned int m:4;
-                unsigned int Y:6;
-            } t;
+                unsigned int s:6; // secs
+                unsigned int i:6; // mins
+                unsigned int h:5; // hours
+                unsigned int d:5; // day of month
+                unsigned int m:4; // month
+                unsigned int Y:6; // year (-2000)
+            } little;
+            struct _datetime_little_endian
+            {
+                unsigned int Y:6; // year (-2000)
+                unsigned int m:4; // month
+                unsigned int d:5; // day of month
+                unsigned int h:5; // hours
+                unsigned int i:6; // mins
+                unsigned int s:6; // secs
+            } big;
             uint32_t tval;
         } t ;
-        inline unsigned int secs(void) const { return t.t.s; }
-        inline unsigned int mins(void) const { return t.t.i; }
-        inline unsigned int hours(void) const { return t.t.h; }
-        inline unsigned int day(void) const { return t.t.d; }
-        inline unsigned int month(void) const { return t.t.m; }
-        inline unsigned int year(void) const { return t.t.Y + 2000; }
         WPL1000Time(void)
         {
             t.tval = 0;
@@ -99,7 +102,7 @@ namespace GPS {
         {
             UNUSED(filename);
             UNUSED(onlyKept);
-            // it's futile to write a track to a NVPIPE.DAT file
+            // it's futile to write a track to an NVPIPE.DAT file
             return -1;
         }
     };
