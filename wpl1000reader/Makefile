@@ -7,7 +7,7 @@ INC=-I..
 OPTIMIZE=-O2 -finline-functions
 DEBUGFLAGS = -DDEBUG -D_DEBUG -ggdb -g3
 CFLAGS=$(OPTIMIZE) $(INC) -Wall
-CXXFLAGS=$(OPTIMIZE) $(INC) -Wall -fPIC -Wno-long-double
+CXXFLAGS=$(OPTIMIZE) $(INC) -Wall -fPIC
 LDFLAGS=$(CXXFLAGS) -lstdc++ -fexceptions
 CC=gcc
 CXX=g++
@@ -21,7 +21,7 @@ OUTDIR=.
 STRIP=strip
 LIPO=lipo
 
-PROJ_O  := $(foreach i,wpl1000reader,$i$(O))
+PROJ_O := $(foreach i,wpl1000reader,$i$(O))
 LIBS := $(foreach i,../gpslib/$(OUTDIR)/libgps ../tinyxml/$(OUTDIR)/libtinyxml,$i.a)
 
 all: $(PROJ)

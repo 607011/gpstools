@@ -456,9 +456,6 @@ namespace GPS {
     /// Value<double>
     typedef Value<double> DoubleValue;
 
-    /// Value<long double>
-    typedef Value<long double> LongDoubleValue;
-
 };
 
 #endif // __VALUE_H_
