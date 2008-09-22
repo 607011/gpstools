@@ -20,7 +20,7 @@ namespace GPS {
     struct WPL1000Time {
         union _wpl1000time
         {
-            struct _datetime_big_endian
+            struct _datetime_little_endian
             {
                 unsigned int s:6; // secs
                 unsigned int i:6; // mins
@@ -29,7 +29,7 @@ namespace GPS {
                 unsigned int m:4; // month
                 unsigned int Y:6; // year (-2000)
             } little;
-            struct _datetime_little_endian
+            struct _datetime_big_endian
             {
                 unsigned int Y:6; // year (-2000)
                 unsigned int m:4; // month
@@ -68,7 +68,8 @@ namespace GPS {
         inline const WPL1000Time& time(void) const { return _T; }
         inline bool isNull(void) const { return _T.t.tval == 0; }
         int readFrom(std::fstream& fs);
-        enum _PointType {
+        enum _PointType
+        {
             TRACKPOINT = 0x00,
             TRACK_START = 0x01,
             WAYPOINT = 0x02,
