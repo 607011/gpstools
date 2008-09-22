@@ -91,6 +91,39 @@ namespace GPS {
     }
 
 
+#ifdef _DEBUG
+    inline std::string toHex(unsigned char c)
+    {
+        char buf[3];
+        static const char digits[17] = "0123456789abcdef";
+        buf[2] = 0;
+        buf[1] = digits[c & 0x0f];
+        buf[0] = digits[c >> 4];
+        return std::string(buf);
+    }
+
+    inline std::string toBin(unsigned char c)
+    {
+        char buf[9];
+        for (int i = 7; i >= 0; --i)
+        {
+            buf[i] = (c & 1) + '0';
+            c >>= 1;
+        }
+        buf[8] = 0;
+        return std::string(buf);
+    }
+#endif // _DEBUG
+
+    
+    inline void swapBytes(char& a, char& b)
+    {
+        char t = b;
+        b = a;
+        a = t;
+    }
+
+
     /// Gradmaﬂ in Bogenmaﬂ umwandeln.
     /// @param rad Gradmaﬂ
     /// @return Bogenmaﬂ
