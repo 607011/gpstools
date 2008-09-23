@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+
 
 <!-- config ist das Wurzelelement der Konfigurationsdatei. -->
-<config xmlns="http://von-und-fuer-lau.de/gpsplot/1/0" 
+<config xmlns="http://von-und-fuer-lau.de/gpsplot/1/0"
         version="1.0"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://von-und-fuer-lau.de/gpsplot/1/0 http://von-und-fuer-lau.de/gpsplot-config-schema.xml">
 
 
@@ -13,7 +14,7 @@
   <!-- Dieser Text wird oberhalb der erzeugten Grafik angezeigt und als
        Dateiname der erzeugten Grafik verwendet. Sonderzeichen werden im
        Dateinamen durch Unterstriche ersetzt, die Dateiendung wird
-       automatisch hinzugefügt.
+       automatisch hinzugefüüügt.
   -->
   <title>Grafik-Titel</title>
 
@@ -53,7 +54,7 @@
   <heartrate>
    <file>MeineHF.sdf</file>
    <!-- Angabe, um welches Maß die Zeitstempel der Trackpunkte verschoben
-        werden sollen (siehe auch input/elevation/offset).  
+        werden sollen (siehe auch input/elevation/offset).
         Ist die HF-Messuhr beispielsweise auf mitteleuropäische Zeit
         eingestellt, passt sie eine Verschiebung um zwei Stunden in die
         Vergangenheit an die im GPS verwendete UTC-Zeit an. -->
@@ -82,7 +83,7 @@
   <!-- Unerwünschte Fehler im ursprünglichen Höhenprofil kann man
        mit Hilfe zweier Verfahren eliminieren. Der Schwellwertalgorithmus
        berücksichtigt nur Höhenunterschiede von einem Trackpunkt zu einem
-  	   folgenden, die einen bestimmten Schwellwert überschreiten. In der
+       folgenden, die einen bestimmten Schwellwert überschreiten. In der
        Praxis führt ein Schwellwert von drei Metern zu realitätsnahen
        Resultaten. Der Douglas-Peucker-Algorithmus bereinigt das Höhenprofil
        durch Punktausdünnung, ebenfalls in Abhängigkeit von einem Schwell-
@@ -149,11 +150,11 @@
   <!-- GPS-Positionen kranken an ihrer Ungenauigkeit, die im Bereich von
        einigen (zehn) Metern liegt. Ermittelt man die Geschwindigkeit
        zwischen zwei Trackpunkten durch Differenzierung der Strecke nach der
-       Zeit, erhält man unrealistisch starke Schwankungen. Mit Hilfe 
+       Zeit, erhält man unrealistisch starke Schwankungen. Mit Hilfe
        dieses Parameters stellt man die Dauer oder die Strecke ein, über die
        die Geschwindigkeit gemittelt wird, was zu geringeren Schwankungen und
-       damit typischerweise realistischeren Angaben führt. 
-       Mögliche Werte für das Attribut unit sind: seconds (Mitteln über 
+       damit typischerweise realistischeren Angaben führt.
+       Mögliche Werte für das Attribut unit sind: seconds (Mitteln über
        die angegebene Anzahl Sekunden), meters (Mitteln über die angegebene
        Strecke in Metern). -->
   <speedInterval unit="seconds">120</speedInterval>
@@ -176,7 +177,7 @@
         y-Achsen-Skalierung automatisch. Möchte man das nicht, kann man
         einen unteren (lo) und oberen (hi) Wert vorgeben.
         Zulässig sind beliebige Dezimalzahlen. -->
-   <!-- 
+   <!--
    <range>
     <lo></lo>
     <hi></hi>
@@ -190,7 +191,7 @@
        range-Parameter -->
   <speed>
    <height>15</height>
-   <!-- 
+   <!--
    <range>
     <lo></lo>
     <hi></hi>
@@ -201,13 +202,13 @@
         gesamten Track und zeichnet sie als feine horizontale Linie in das
         Geschwindigkeitsprofil ein. -->
    <average>true</average>
-   
+
    <!-- Als Datenquelle für das Geschwindigkeitssprofil verwendet gpsplot standard-
         mäßig die Originaldaten. Aber wie die Darstellung des Steigungsprofils
-        ist auch das Geschwindigkeitssprofil aufgrund der GPS-typischen 
+        ist auch das Geschwindigkeitssprofil aufgrund der GPS-typischen
         Ungenauigkeiten starken Schwankungen unterworfen. Deshalb bietet es
         sich an, nur Steigungen zwischen den Punkten zu berechnen, die nach
-        der Ausdünnung mit Hilfe des Douglas-Peucker-Verfahrens übrig 
+        der Ausdünnung mit Hilfe des Douglas-Peucker-Verfahrens übrig
         geblieben sind. Im Folgenden verwendet gpsplot die aus dem smoothing-
         Abschitt mit der Kennung "Douglas-Peucker (5m)" hervorgegangenen
         Kurvendaten. -->
@@ -235,16 +236,16 @@
    </range>
    <!-- Als Datenquelle für das Steigungsprofil verwendet gpsplot standard-
         mäßig die Originaldaten. Aber wie die Darstellung des Geschwindigkeits-
-        profils ist auch das Steigungsprofil aufgrund der GPS-typischen 
+        profils ist auch das Steigungsprofil aufgrund der GPS-typischen
         Ungenauigkeiten starken Schwankungen unterworfen. Deshalb bietet es
         sich an, nur Steigungen zwischen den Punkten zu berechnen, die nach
-        der Ausdünnung mit Hilfe des Douglas-Peucker-Verfahrens übrig 
+        der Ausdünnung mit Hilfe des Douglas-Peucker-Verfahrens übrig
         geblieben sind. Im Folgenden verwendet gpsplot die aus dem smoothing-
         Abschitt mit der Kennung "Douglas-Peucker (8m)" hervorgegangenen
         Kurvendaten. -->
    <source>Douglas-Peucker (8m)</source>
   </slope>
-  
+
   <!-- Etwas Leerraum zwischen den Grafiken einfügen. Voreinstellung: false -->
   <padding>true</padding>
  </gnuplot>
@@ -261,10 +262,10 @@
       enthält. KML-Dateien lassen sich etwa in Google Maps oder Google Earth
       anzeigen. -->
  <kml>
- 
+
   <!-- Name der zu generierenden KML-Datei. -->
   <file>MeinTrack.kml</file>
-  
+
   <!-- Wenn true, erzeuge einen Wegpunkt am Start der Trackaufzeichnung. -->
   <start>true</start>
 
@@ -275,7 +276,7 @@
   <ticks>5</ticks>
  </kml>
 
- <!-- Die Google Maps lassen sich in die eigene Website einbinden. 
+ <!-- Die Google Maps lassen sich in die eigene Website einbinden.
       Welche Inhalte dargestellt werden, kann man zum Beispiel über ein
       in die Webseite einzubettendes JavaScript festlegen. Wenn gewünscht,
       generiert gpsplot den Code und schreibt ihn in die angegebene Datei.

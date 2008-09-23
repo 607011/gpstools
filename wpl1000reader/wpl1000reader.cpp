@@ -17,13 +17,21 @@ using namespace std;
 using namespace GPS;
 
 
+#ifdef WIN32
+const char PathDelimiter = '\\';
+#else
+const char PathDelimiter = '/';
+#endif
+
+
 enum _long_options {
     SELECT_HELP,
     SELECT_DEBUG,
     SELECT_QUIET,
     SELECT_VERBOSE,
     SELECT_MULTI,
-    SELECT_VERSION
+    SELECT_VERSION,
+    SELECT_SIMULATE
 };
 
 
@@ -32,14 +40,16 @@ static struct option long_options[] = {
     { "quiet",     no_argument,       0, SELECT_QUIET },
     { "verbose",   no_argument,       0, SELECT_VERBOSE },
     { "version",   no_argument,       0, SELECT_VERSION },
+    { "simulate",  no_argument,       0, SELECT_SIMULATE },
     { "multi",     no_argument,       0, SELECT_MULTI },
     { 0,           0,                 0, 0 }
 };
 
 
-const string VERSION = "0.9.4";
+const string VERSION = "0.9.5";
 bool quiet = false;
 bool multi = false;
+bool simulate = false;
 int verbose = 0;
 
 
@@ -65,6 +75,8 @@ void usage(void)
         << "  -v            Mehr Information über Verarbeitungsschritte ausgeben\n"
         << "  -m  --multi   Jeden Track in eine separate Datei schreiben\n"
         << "  -q            Sämtliche Ausgaben unterdrücken\n"
+        << "  --simulate    Nichts schreiben, sondern nur so tun als ob\n"
+        << "                (funktioniert nur zusammen mit --multi)\n"
         << "  --version     Versionsinformationen ausgeben")
         << endl << endl;
 }
@@ -102,6 +114,9 @@ int main(int argc, char* argv[])
         case 'm':
             multi = true;
             break;
+        case SELECT_SIMULATE:
+            simulate = true;
+            break;
         case SELECT_VERSION:
             disclaimer();
             cout << "Version: " << VERSION;
@@ -122,6 +137,8 @@ int main(int argc, char* argv[])
     }
 
     string wpl1000Filename = argv[optind++];
+    string gpxFilename = argv[optind++];
+
     if (!quiet)
         cout << _("Laden von ") << wpl1000Filename << " .." << endl;
     WPL1000File wpl1000File;
@@ -130,7 +147,6 @@ int main(int argc, char* argv[])
         cout << _("FEHLER: Laden von ") << wpl1000Filename << _(" fehlgeschlagen.") << endl;
         return rc;
     }
-    string gpxFilename = argv[optind++];
     if (wpl1000File.tracks().size() > 0)
     {
         if (multi)
@@ -139,19 +155,29 @@ int main(int argc, char* argv[])
             {
                 GPXFile trkFile;
                 trkFile.addTrack(*i);
-                int spos = gpxFilename.find_last_of('/');
+                int spos = gpxFilename.find_last_of(PathDelimiter);
                 string trkFilename = gpxFilename;
                 trkFilename.insert(spos+1, (*i)->startTimestamp().toString("%Y%m%d-%H%M") + "-");
                 if (!quiet)
                     cout << _("Speichern von ") << trkFilename << " .." << endl;
-                trkFile.write(trkFilename);
+                if (!simulate)
+                {
+                    rc = trkFile.write(trkFilename);
+                    if (rc != 0) {
+                        cout << _("FEHLER: Speichern von ") << gpxFilename << _(" fehlgeschlagen.") << endl;
+                        return rc;
+                    }
+                }
             }
-            GPXFile wptFile;
-            wptFile.setWaypoints(wpl1000File.waypoints());
-            string wptFilename = gpxFilename;
-            int ppos = gpxFilename.find_last_of('.');
-            wptFilename.insert(ppos, "-waypoints");
-            wptFile.write(wptFilename);
+            if (!simulate)
+            {
+                GPXFile wptFile;
+                wptFile.setWaypoints(wpl1000File.waypoints());
+                string wptFilename = gpxFilename;
+                int ppos = gpxFilename.find_last_of('.');
+                wptFilename.insert(ppos, "-waypoints");
+                wptFile.write(wptFilename);
+            }
         }
         else // !multi
         {   
