@@ -47,6 +47,7 @@ namespace GPS {
             }
             break;
         default:
+	    // ignore
             break;
         }
     }
@@ -90,11 +91,10 @@ namespace GPS {
     {
         if (filename != "")
             _Filename = filename;
-        WPL1000Time tt;
         WPL1000Data point;
         fstream nvpipe;
         nvpipe.open(_Filename.c_str(), ios::binary | ios::in);
-        if (nvpipe.bad())
+        if (!nvpipe.good())
             return EIO;
         nvpipe.seekg(0x00001000);
         if (nvpipe.eof())
@@ -103,9 +103,6 @@ namespace GPS {
         while (!nvpipe.eof())
         {
             int rc = point.readFrom(nvpipe);
-            cout << point.timestamp().toString()
-                << " @ " << point.latitude() << " / " << point.longitude()
-                << " (" << point.elevation() << ")" << endl;
             if (rc == WPL1000Data::END_OF_LOG)
             {
                 if (_Trk != NULL && _Trk->points().size() > 0)
@@ -139,6 +136,7 @@ namespace GPS {
                 }
                 break;
             default:
+	        // ignore
                 break;
             }
         }

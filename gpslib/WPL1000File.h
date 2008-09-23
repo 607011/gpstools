@@ -48,6 +48,15 @@ namespace GPS {
 
 
     class WPL1000Data : public Trackpoint {
+    public:
+        enum _PointType
+        {
+            TRACKPOINT = 0x00,
+            TRACK_START = 0x01,
+            WAYPOINT = 0x02,
+            END_OF_LOG = 0xff,
+            ERROR = -1
+        };
     private:
         uint8_t _Type;
         uint8_t _Unknown;
@@ -68,14 +77,6 @@ namespace GPS {
         inline const WPL1000Time& time(void) const { return _T; }
         inline bool isNull(void) const { return _T.t.tval == 0; }
         int readFrom(std::fstream& fs);
-        enum _PointType
-        {
-            TRACKPOINT = 0x00,
-            TRACK_START = 0x01,
-            WAYPOINT = 0x02,
-            END_OF_LOG = 0xff,
-            ERROR = -1
-        };
     };
 
 
