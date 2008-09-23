@@ -136,8 +136,8 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    string wpl1000Filename = argv[optind++];
-    string gpxFilename = argv[optind++];
+    string wpl1000Filename = argv[optind];
+    string gpxFilename = argv[++optind];
 
     if (!quiet)
         cout << _("Laden von ") << wpl1000Filename << " .." << endl;
