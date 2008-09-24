@@ -42,7 +42,7 @@ static struct option long_options[] = {
 
 void disclaimer(void)
 {
-    std::cout << "areameter - Von einem Track eingeschlossene Fläche berechnen." << endl
+    std::cout << "areameter - Von einem Track eingeschlossene Flaeche berechnen." << endl
         << "Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>" << endl
         << "Alle Rechte vorbehalten." << endl << endl;
 }
@@ -112,10 +112,15 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
-    string trkFile = argv[optind++];
+    string gpxFilename = argv[optind];
+    if (gpxFilename == "") {
+        usage();
+        exit(EXIT_FAILURE);
+    }
 
+    cout << "Laden von " << gpxFilename << " .." << endl;
     GPXFile gpxFile;
-    int rc = gpxFile.load(trkFile);
+    int rc = gpxFile.load(gpxFilename);
     if (rc != 0)
         errmsg("Kann GPX-Datei nicht laden", rc);
 
@@ -123,31 +128,25 @@ int main(int argc, char* argv[])
 
     for (TrackList::const_iterator i = gpxFile.tracks().begin(); i != gpxFile.tracks().end(); ++i)
     {
-        Track* trk = *i;
+        Track* trk = (*i);
         if (trk != NULL)
         {
             cout << "Track: " << trk->name() << endl;
 
             if (trk->isEmpty())
-                errmsg("Der Track enthält keine Trackpunkte");
-            if (!trk->hasTimestamps() && !trk->hasDistance())
-                errmsg("Der Track enthält weder Zeitstempel noch Positionsangaben");
-            if (!trk->hasElevation())
-                warnmsg("Der Track enthält keine Höhenangaben");
+                errmsg("Der Track enthaelt keine Trackpunkte");
             if (!trk->hasDistance())
-                warnmsg("Der Track enthält keine Positionsangaben");
-            if (!trk->hasTimestamps())
-                warnmsg("Der Track enthält keine Zeitstempel");
+                errmsg("Der Track enthaelt keine Positionsangaben");
 
             cout << "  Flaecheninhalt: ";
             double area = trk->area();
-            if (area > 1e6) {
+            if (area > 1e6)
                 cout << 1e-6 * area << " qkm";
-            }
-            else {
+            else
                 cout << area << " qm";
-            }
-            cout << setprecision(5) << " (" << 1e-5 * area << " ha)" << endl << endl;
+            if (area > 1e4)
+                cout << " (" << 1e-5 * area << " ha)";
+            cout << endl << endl;
         }
     }
 
