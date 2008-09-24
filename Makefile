@@ -14,7 +14,7 @@ TAR=tar
 MV=mv
 CP=cp
 MKDIR=mkdir -p
-STRIP=strip --strip-all
+STRIP=strip
 X=
 O=.o
 CFLAGS=$(OPTIMIZE) $(INC) -Wall
@@ -80,20 +80,25 @@ clean:
 	done
 
 dist: 
-	$(MKDIR) $(PROJ)
+	if [ -d "$(PROJ)" ] ; then $(RM) -R "$(PROJ)"; fi
+	$(MKDIR) "$(PROJ)"
 	for i in $(FILES); do \
-	    $(CP) "$${i}" $(PROJ) \
+	    $(CP) "$${i}" "$(PROJ)" \
 	; \
 	done
-	$(STRIP) -v $(PROJ)/*
+	$(STRIP) $(PROJ)/*
+	$(CP) LICENSE.txt $(PROJ)
 	$(TAR) -czvf $(PROJ).tar.gz $(PROJ)/*
 
 dist-bz2:
-	$(MKDIR) $(PROJ)
+	if [[ -d "$(PROJ)" ]] ; then $(RM) -R "$(PROJ)"; fi
+	$(MKDIR) "$(PROJ)"
 	for i in $(FILES); do \
-	    $(CP) "$${i}" $(PROJ) \
+	    $(CP) "$${i}" "$(PROJ)" \
 	; \
 	done
+	$(STRIP) $(PROJ)/*
+	$(CP) LICENSE.txt $(PROJ)
 	$(TAR) -cjvf $(PROJ).tar.bz2 $(PROJ)/*
 
 distclean: clean
