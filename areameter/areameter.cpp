@@ -18,6 +18,9 @@
 #include "gpslib/GPXFile.h"
 #include "gpslib/helper.h"
 
+// gettext-Dummy
+#define _(s) s
+
 using namespace std;
 using namespace GPS;
 
@@ -28,14 +31,18 @@ enum _long_options {
     SELECT_HELP,
     SELECT_DEBUG,
     SELECT_QUIET,
-    SELECT_VERBOSE
+    SELECT_VERBOSE,
+    SELECT_VERSION
 };
 
+
+static const string VERSION = "0.9.0-BETA";
 
 static struct option long_options[] = {
     { "help",      no_argument,       0, SELECT_HELP },
     { "quiet",     no_argument,       0, SELECT_QUIET },
     { "verbose",   no_argument,       0, SELECT_VERBOSE },
+    { "version",   no_argument,       0, SELECT_VERSION },
     { 0,           0,                 0, 0 }
 };
 
@@ -50,8 +57,13 @@ void disclaimer(void)
 
 void usage(void)
 {
-    std::cout << "Aufruf: areameter track.gpx" << endl
-        << endl;
+    cout << _("Aufruf: areameter track.gpx\n") << endl
+	 << endl
+	 << _("Optionen:\n"
+	     "  -v            Mehr Information über Verarbeitungsschritte ausgeben\n"
+	     "  -q            Saemtliche Ausgaben unterdruecken\n"
+	     "  --version     Versionsinformationen ausgeben")
+	 << endl << endl;
 }
 
 
@@ -96,6 +108,11 @@ int main(int argc, char* argv[])
             /* fall-through */
         case 'q':
             quiet = true;
+            break;
+        case SELECT_VERSION:
+            disclaimer();
+            cout << "Version: " << VERSION << endl << endl;
+            exit(EXIT_SUCCESS);
             break;
         default:
             usage();
