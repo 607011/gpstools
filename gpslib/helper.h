@@ -115,10 +115,11 @@ namespace GPS {
     }
 #endif // _DEBUG
 
-    
-    inline void swapBytes(char& a, char& b)
+
+    template <typename T>    
+    inline void swap(T& a, T& b)
     {
-        char t = b;
+        T t = b;
         b = a;
         a = t;
     }
