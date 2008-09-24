@@ -61,7 +61,7 @@ void usage(void)
 	 << endl
 	 << _("Optionen:\n"
 	     "  -v            Mehr Information über Verarbeitungsschritte ausgeben\n"
-	     "  -q            Saemtliche Ausgaben unterdrücken\n"
+	     "  -q            Sämtliche Ausgaben unterdrücken\n"
 	     "  --version     Versionsinformationen ausgeben")
 	 << endl << endl;
 }
