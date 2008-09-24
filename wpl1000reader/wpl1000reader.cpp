@@ -46,7 +46,7 @@ static struct option long_options[] = {
 };
 
 
-const string VERSION = "0.9.5";
+const string VERSION = "0.9.6";
 bool quiet = false;
 bool multi = false;
 bool simulate = false;
@@ -70,15 +70,15 @@ void disclaimer(void)
 void usage(void)
 {
     cout << _("Aufruf: wpl1000reader [Optionen] <nvpipe.dat> <ausgabedatei.gpx>") << endl
-        << endl
-        << _("Optionen:\n"
-        << "  -v            Mehr Information über Verarbeitungsschritte ausgeben\n"
-        << "  -m  --multi   Jeden Track in eine separate Datei schreiben\n"
-        << "  -q            Sämtliche Ausgaben unterdrücken\n"
-        << "  --simulate    Nichts schreiben, sondern nur so tun als ob\n"
-        << "                (funktioniert nur zusammen mit --multi)\n"
-        << "  --version     Versionsinformationen ausgeben")
-        << endl << endl;
+	 << endl
+	 << _("Optionen:\n"
+	      "  -v            Mehr Information über Verarbeitungsschritte ausgeben\n"
+	      "  -m  --multi   Jeden Track in eine separate Datei schreiben\n"
+	      "  -q            Saemtliche Ausgaben unterdruecken\n"
+	      "  --simulate    Nichts schreiben, sondern nur so tun als ob\n"
+	      "                (funktioniert nur zusammen mit --multi)\n"
+	      "  --version     Versionsinformationen ausgeben")
+	 << endl << endl;
 }
 
 
@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
             break;
         case SELECT_VERSION:
             disclaimer();
-            cout << "Version: " << VERSION;
+            cout << "Version: " << VERSION << endl << endl;
             exit(EXIT_SUCCESS);
             break;
         default:
@@ -138,6 +138,11 @@ int main(int argc, char* argv[])
 
     string wpl1000Filename = argv[optind];
     string gpxFilename = argv[++optind];
+
+    if (wpl1000Filename == "" || gpxFilename == "") {
+        usage();
+        return EXIT_FAILURE;
+    }
 
     if (!quiet)
         cout << _("Laden von ") << wpl1000Filename << " .." << endl;
@@ -200,7 +205,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        cout << _("Die Datei enthält keine Tracks!") << endl;
+        cout << _("Die Datei enthaelt keine Tracks!") << endl;
         return EXIT_FAILURE;
     }
     if (!quiet)

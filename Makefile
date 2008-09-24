@@ -14,6 +14,7 @@ TAR=tar
 MV=mv
 CP=cp
 MKDIR=mkdir -p
+STRIP=strip --strip-all
 X=
 O=.o
 CFLAGS=$(OPTIMIZE) $(INC) -Wall
@@ -84,6 +85,7 @@ dist:
 	    $(CP) "$${i}" $(PROJ) \
 	; \
 	done
+	$(STRIP) -v $(PROJ)/*
 	$(TAR) -czvf $(PROJ).tar.gz $(PROJ)/*
 
 dist-bz2:

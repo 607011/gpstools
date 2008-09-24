@@ -94,3 +94,6 @@ clean:
 
 $(PROJ): $(PROJ_O) $(LIBS) Makefile
 	$(CXX) $(LDFLAGS) -o $(OUTDIR)/$(PROJ)$(X) $(PROJ_O) $(LIBS)
+
+test:
+	./$(PROJ) feldrunde.gpx
