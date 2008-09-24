@@ -36,14 +36,14 @@ namespace GPS {
         case 4:
             if (is_bigendian())
             {
-                swapBytes(d[0], d[3]);
-                swapBytes(d[1], d[2]);
+                swap(d[0], d[3]);
+                swap(d[1], d[2]);
             }
             break;
         case 2:
             if (is_bigendian())
             {
-                swapBytes(d[0], d[1]);
+                swap(d[0], d[1]);
             }
             break;
         default:

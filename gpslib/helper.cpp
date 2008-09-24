@@ -29,7 +29,7 @@ const char* encode_extended(size_t val)
 
 std::string secs2timestamp(time_t dur)
 {
-    char buf[10];
+    char buf[11];
     time_t h = dur / 3600;
     time_t m = (dur - (h * 3600)) / 60;
     time_t s = dur - h * 3600 - m * 60;

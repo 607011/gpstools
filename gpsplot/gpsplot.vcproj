@@ -254,7 +254,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(ProjectDir)\Microsoft\msxsl.exe &quot;$(InputPath)&quot; &quot;$(ProjectDir)\xs3p-1.1.3\xs3p.xsl&quot; -v -o &quot;$(ProjectDir)\$(InputName).html&quot;"
+						CommandLine="$(ProjectDir)\Microsoft\msxsl.exe &quot;$(InputPath)&quot; &quot;$(ProjectDir)\xs3p-1.1.3\xs3p.xsl&quot; -v -o &quot;$(ProjectDir)\$(InputName).html&quot;&#x0D;&#x0A;"
 						Outputs="&quot;$(ProjectDir)\$(InputName).html&quot;"
 					/>
 				</FileConfiguration>
