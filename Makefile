@@ -3,6 +3,7 @@
 # Alle Rechte vorbehalten.
 
 PROJ=gpstools
+VERSION=1.0
 INC=-I.. -I.
 OPTIMIZE=-O2 -finline-functions
 DEBUGFLAGS=-DDEBUG -D_DEBUG -ggdb -g3
@@ -80,26 +81,17 @@ clean:
 	done
 
 dist: 
-	if [ -d "$(PROJ)" ] ; then $(RM) -R "$(PROJ)"; fi
-	$(MKDIR) "$(PROJ)"
-	for i in $(FILES); do \
-	    $(CP) "$${i}" "$(PROJ)" \
-	; \
-	done
-	$(STRIP) $(PROJ)/*
-	$(CP) LICENSE.txt $(PROJ)
-	$(TAR) -czvf $(PROJ).tar.gz $(PROJ)/*
 
 dist-bz2:
-	if [[ -d "$(PROJ)" ]] ; then $(RM) -R "$(PROJ)"; fi
-	$(MKDIR) "$(PROJ)"
+	if [[ -d "$(PROJ)-$(VERSION)" ]] ; then $(RM) -R $(PROJ)-$(VERSION); fi
+	$(MKDIR) $(PROJ)-$(VERSION)
 	for i in $(FILES); do \
-	    $(CP) "$${i}" "$(PROJ)" \
+	    $(CP) "$${i}" $(PROJ)-$(VERSION) \
 	; \
 	done
-	$(STRIP) $(PROJ)/*
-	$(CP) LICENSE.txt $(PROJ)
-	$(TAR) -cjvf $(PROJ).tar.bz2 $(PROJ)/*
+	$(STRIP) $(PROJ)-$(VERSION)/*
+	$(CP) LICENSE.txt "$(PROJ)-$(VERSION)"
+	$(TAR) -cjvf $(PROJ)-$(VERSION).tar.bz2 $(PROJ)-$(VERSION)/*
 
 distclean: clean
-	$(RM) -R $(PROJ)
+	$(RM) -R $(PROJ)-$(VERSION)
