@@ -21,6 +21,8 @@ O=.o
 CFLAGS=$(OPTIMIZE) $(INC) -Wall
 CXXFLAGS=$(OPTIMIZE) $(INC) -Wall -fPIC
 
+BUILD=$(PROJ)-$(VERSION)
+
 PROJECTS:=tinyxml gpslib gpsplot splittrack trkcompare wpl1000reader areameter gpxtimeshift
 FILES := $(foreach i,gpsplot splittrack trkcompare wpl1000reader areameter gpxtimeshift,$i/$i)
 
@@ -81,17 +83,26 @@ clean:
 	done
 
 dist: 
-
-dist-bz2:
-	if [[ -d "$(PROJ)-$(VERSION)" ]] ; then $(RM) -R $(PROJ)-$(VERSION); fi
-	$(MKDIR) $(PROJ)-$(VERSION)
+	if [ -d "$(BUILD)" ] ; then $(RM) -R $(BUILD); fi
+	$(MKDIR) $(BUILD)
 	for i in $(FILES); do \
-	    $(CP) "$${i}" $(PROJ)-$(VERSION) \
+	    $(CP) "$${i}" $(BUILD) \
 	; \
 	done
-	$(STRIP) $(PROJ)-$(VERSION)/*
-	$(CP) LICENSE.txt "$(PROJ)-$(VERSION)"
-	$(TAR) -cjvf $(PROJ)-$(VERSION).tar.bz2 $(PROJ)-$(VERSION)/*
+	$(STRIP) $(BUILD)/*
+	$(CP) LICENSE.txt "$(BUILD)"
+	$(TAR) -czvf $(BUILD).tar.gz $(BUILD)/*
+
+dist-bz2:
+	if [ -d "$(BUILD)" ] ; then $(RM) -R $(BUILD); fi
+	$(MKDIR) $(BUILD)
+	for i in $(FILES); do \
+	    $(CP) "$${i}" $(BUILD) \
+	; \
+	done
+	$(STRIP) $(BUILD)/*
+	$(CP) LICENSE.txt "$(BUILD)"
+	$(TAR) -cjvf $(BUILD).tar.bz2 $(BUILD)/*
 
 distclean: clean
-	$(RM) -R $(PROJ)-$(VERSION)
+	$(RM) -R $(BUILD)
