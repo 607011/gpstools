@@ -1,0 +1,25 @@
+KOMPILIEREN MIT GNU-TOOLS
+
+Die Eingabe von make übersetzt die GPS-Bibliothek im Verzeichnis gpslib und alle darauf aufbauenden Tools in den anderen Unterverzeichnissen.
+
+Getestete Systeme:
+
+*	Suse Linux 9.3 mit GCC 3.3.5 20050117 (prerelease)
+*	Ubuntu Linux 8.04 mit GCC 4.2.3
+*	Ubuntu Linux 7.10 mit GCC 4.2.1
+*	Mac OS X 10.5.4 (Leopard) mit GCC 4.0.1 (Apple Inc. build 5465)
+
+
+
+KOMPILIEREN MIT VISUAL STUDIO 2008 C++
+
+Ein Doppelklick auf die Projektmappendatei GPS.sln öffnet sämtliche Projekte in Visual Studio 2008. Darin lassen sie sich wie gewohnt übersetzen.
+
+Getestete Systeme:
+
+*	Windows XP SP2 mit Visual Studio 2008 C++ Express Edition
+*	Windows XP SP2 mit Visual Studio 2008 C++ Professional
+
+
+
+Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>

@@ -1,0 +1,5 @@
+TODO
+====
+
+[ ] Polygon-Klasse implementieren
+[ ] konvexe Hülle über Ansammlung von Geo-Koordinaten als Polygon zurückgeben

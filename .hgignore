@@ -1,0 +1,22 @@
+syntax: glob
+*~
+*.obj
+*.o
+*.a
+*.idb
+*.pdb
+*.embed.manifest*
+*.intermediate.manifest*
+BuildLog.htm
+mt.dep
+*.user
+*.dat
+gpslib/doc/html/*
+Release/*
+Release/*
+Debug/*
+Debug/*
+*/GeneratedFiles/*
+*.ncb
+*.suo
+*.orig
