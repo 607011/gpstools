@@ -1,4 +1,6 @@
 @SET DSTDIR=gpstools
+@SET ZIPFILE=gpstools
+@IF NOT %1 == "" @SET ZIPFILE=%ZIPFILE%-
 @SET TOOLDIR=win32-tools
 @IF NOT EXIST %DSTDIR% MKDIR %DSTDIR%
 @ECHO Kopieren der EXE-Dateien ...
