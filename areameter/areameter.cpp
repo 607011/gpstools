@@ -49,7 +49,7 @@ static struct option long_options[] = {
 
 void disclaimer(void)
 {
-    std::cout << "areameter - Von einem Track eingeschlossene Flaeche berechnen." << endl
+    std::cout << "areameter - Von einem Track eingeschlossene Fläche berechnen." << endl
         << "Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>" << endl
         << "Alle Rechte vorbehalten." << endl << endl;
 }
@@ -60,8 +60,8 @@ void usage(void)
     cout << _("Aufruf: areameter track.gpx\n") << endl
 	 << endl
 	 << _("Optionen:\n"
-	     "  -v            Mehr Information Ã¼ber Verarbeitungsschritte ausgeben\n"
-	     "  -q            Saemtliche Ausgaben unterdruecken\n"
+	     "  -v            Mehr Information über Verarbeitungsschritte ausgeben\n"
+	     "  -q            Saemtliche Ausgaben unterdrücken\n"
 	     "  --version     Versionsinformationen ausgeben")
 	 << endl << endl;
 }
@@ -151,18 +151,18 @@ int main(int argc, char* argv[])
             cout << "Track: " << trk->name() << endl;
 
             if (trk->isEmpty())
-                errmsg("Der Track enthaelt keine Trackpunkte");
+                errmsg("Der Track enthält keine Trackpunkte");
             if (!trk->hasDistance())
-                errmsg("Der Track enthaelt keine Positionsangaben");
+                errmsg("Der Track enthält keine Positionsangaben");
 
-            cout << "  Flaecheninhalt: ";
+            cout << "  Flächeninhalt: ";
             double area = trk->area();
             if (area > 1e6)
                 cout << 1e-6 * area << " qkm";
             else
                 cout << area << " qm";
-            if (area > 1e4)
-                cout << " (" << 1e-5 * area << " ha)";
+            if (area > 1e3)
+                cout << " (" << 1e-4 * area << " ha)";
             cout << endl << endl;
         }
     }
