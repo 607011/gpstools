@@ -10,6 +10,10 @@
 #include <ctime>
 #include "Timestamp.h"
 
+#ifdef _DEBUG
+#include <iostream>
+#endif // _DEBUG
+
 using namespace std;
 
 
@@ -28,6 +32,29 @@ namespace GPS {
     {
         *this = str.c_str();
     }
+
+
+#ifdef _MSC_VER
+#include <Windows.h>
+    time_t timegm(struct tm* tm)
+    {
+        char tz[20];
+        size_t sz = 20;
+        errno_t rc = _dupenv_s((char**)&tz, &sz, "TZ");
+        if (rc != 0)
+            return -1;
+        time_t ret;
+        SetEnvironmentVariable("TZ", "");
+        _tzset();
+        ret = mktime(tm);
+        if (tz)
+            SetEnvironmentVariable("TZ", tz);
+        else
+            SetEnvironmentVariable("TZ", NULL);
+        _tzset();
+        return ret;
+    }
+#endif
 
 
     Timestamp::Timestamp(const char* str) : ms(0)
@@ -97,7 +124,28 @@ namespace GPS {
         t.tm_wday = 0;
         t.tm_yday = 0;
         t.tm_isdst = 0;
-        return (timestamp_t) 1000 * mktime(&t);
+        timestamp_t ts = (timestamp_t) 1000 * timegm(&t);
+        return ts;
+    }
+
+
+    string Timestamp::toString(const char* fmt) const
+    {
+        if (fmt == NULL)
+            fmt = "%Y-%m-%dT%H:%M:%SZ";
+        const size_t BUFSIZE = 100;
+        char buf[BUFSIZE];
+        time_t seconds = (time_t) (ms / 1000);
+        struct tm t;
+#if defined(_WIN32) && (_MSC_VER >= 1400)
+        errno_t rc = gmtime_s(&t, &seconds);
+        if (rc != 0)
+            return string();
+#else
+        gmtime_r(&seconds, &t);
+#endif
+        strftime(buf, BUFSIZE-1, fmt, &t);
+        return string(buf);
     }
 
 
@@ -210,26 +258,6 @@ namespace GPS {
     timestamp_t Timestamp::milliseconds(void) const
     {
         return ms;
-    }
-
-
-    string Timestamp::toString(const char* fmt) const
-    {
-        if (fmt == NULL)
-            fmt = "%Y-%m-%dT%H:%M:%SZ";
-        const size_t BUFSIZE = 100;
-        char buf[BUFSIZE];
-        time_t seconds = (time_t) (ms / 1000);
-        struct tm t;
-#if defined(_WIN32) && (_MSC_VER >= 1400)
-        errno_t rc = localtime_s(&t, &seconds);
-        if (rc != 0)
-            return string();
-#else
-        localtime_r(&seconds, &t);
-#endif
-        strftime(buf, BUFSIZE-1, fmt, &t);
-        return buf;
     }
 
 

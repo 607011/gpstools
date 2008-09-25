@@ -65,6 +65,13 @@ const char PathDelimiter = '/';
 #endif
 
 
+
+#ifdef _MSC_VER
+#include <time.h>
+extern time_t timegm(struct tm *tm);
+#endif 
+
+
 /// Determine if platform is big-endian.
 extern bool is_bigendian(void);
 
