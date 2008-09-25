@@ -7,6 +7,7 @@
 
 #include <getopt.h>
 
+#include "gpslib/portable.h"
 #include "gpslib/WPL1000File.h"
 #include "gpslib/GPXFile.h"
 
@@ -15,13 +16,6 @@
 
 using namespace std;
 using namespace GPS;
-
-
-#ifdef WIN32
-const char PathDelimiter = '\\';
-#else
-const char PathDelimiter = '/';
-#endif
 
 
 enum _long_options {
@@ -58,11 +52,14 @@ void disclaimer(void)
     if (!quiet)
     {
         cout << _("wpl1000reader - Tracks aus einem GPS-Logger vom Typ 'Wintec WPL-1000\n"
-               << "(Easy Showily)' oder 'Navilock NL-456DL Easy Logger' auslesen und als\n"
-               << "GPX-Datei speichern.\n\n"
-               << "Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>\n"
-               << "Alle Rechte vorbehalten.")
-               << endl << endl;
+	     << "(Easy Showily)' oder 'Navilock NL-456DL Easy Logger' auslesen und als\n"
+	     << "GPX-Datei speichern.") << endl << endl;
+#if BYTE_ORDER == BIG_ENDIAN
+	cout << "BIG_ENDIAN" << endl;
+#endif
+	cout << _("Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>\n"
+             << "Alle Rechte vorbehalten.")
+             << endl << endl;
     }
 }
 
@@ -179,7 +176,7 @@ int main(int argc, char* argv[])
                 GPXFile wptFile;
                 wptFile.setWaypoints(wpl1000File.waypoints());
                 string wptFilename = gpxFilename;
-                int ppos = gpxFilename.find_last_of('.');
+                basic_string<char>::size_type ppos = gpxFilename.find_last_of('.');
                 if (ppos == basic_string<char>::npos)
                     ppos = gpxFilename.size();
                 wptFilename.insert(ppos, "-waypoints");

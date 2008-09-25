@@ -10,21 +10,9 @@
 #include <sstream>
 #include <limits>
 
+#include "portable.h"
+
 #include "Timestamp.h"
-
-
-#ifdef _MSC_VER
-#define int8_t     __int8
-#define int16_t    __int16
-#define int32_t    __int32
-#define int64_t    __int64
-#define uint8_t    unsigned __int8
-#define uint16_t   unsigned __int16
-#define uint32_t   unsigned __int32
-#define uint64_t   unsigned __int64
-#else
-#include <inttypes.h>
-#endif
 
 
 #define UNUSED(x) (void)x
@@ -38,9 +26,6 @@ extern const char* encode_extended(size_t val);
 
 /// Convert seconds into W3C timestamp.
 extern std::string secs2timestamp(time_t dur);
-
-/// Determine if platform is big-endian.
-extern bool is_bigendian(void);
 
 namespace GPS {
 
