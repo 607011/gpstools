@@ -54,12 +54,9 @@ void disclaimer(void)
         cout << _("wpl1000reader - Tracks aus einem GPS-Logger vom Typ 'Wintec WPL-1000\n"
 	     << "(Easy Showily)' oder 'Navilock NL-456DL Easy Logger' auslesen und als\n"
 	     << "GPX-Datei speichern.") << endl << endl;
-#if BYTE_ORDER == BIG_ENDIAN
-	cout << "BIG_ENDIAN" << endl;
-#endif
-	cout << _("Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>\n"
-             << "Alle Rechte vorbehalten.")
-             << endl << endl;
+        cout << _("Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>\n"
+         << "Alle Rechte vorbehalten.")
+         << endl << endl;
     }
 }
 
@@ -78,6 +75,8 @@ void usage(void)
 	 << endl << endl;
 }
 
+
+#include <time.h>
 
 int main(int argc, char* argv[])
 {

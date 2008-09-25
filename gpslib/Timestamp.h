@@ -54,7 +54,9 @@ namespace GPS {
         Timestamp(const std::string& str);
 
         /// Konstruktor.
-        Timestamp(int year, int month, int day, int hours, int minutes, int seconds, int offsethours = 0, int offsetminutes = 0);
+        Timestamp(int year, int month, int day,
+                  int hours, int minutes, int seconds,
+                  int offsethours = 0, int offsetminutes = 0);
 
         /// Konstruktor.
         /// @param msSinceEpoch Verstrichene Millisekunden seit dem 01.01.1970 00:00 UTC
@@ -149,8 +151,8 @@ namespace GPS {
         /// @param offsetminutes Minuten der Zeitzone
         /// @return Zeitstempel (Millisekunden)
         static timestamp_t toMs(int year, int month, int day,
-            int hours, int minutes, int seconds = 0,
-            int offsethours = 0, int offsetminutes = 0);
+                                int hours, int minutes, int seconds = 0,
+                                int offsethours = 0, int offsetminutes = 0);
 
         /// Den aktuellen Zeitstempel (Datum/Uhrzeit) als Timestamp zurückgeben.
         /// @return Datum/Uhrzeit als Zeitstempel
