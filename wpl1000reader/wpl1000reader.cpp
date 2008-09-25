@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <ctime>
 
 #include <getopt.h>
 
@@ -40,7 +41,7 @@ static struct option long_options[] = {
 };
 
 
-const string VERSION = "0.9.6";
+const string VERSION = "0.9.5";
 bool quiet = false;
 bool multi = false;
 bool simulate = false;
@@ -75,8 +76,6 @@ void usage(void)
 	 << endl << endl;
 }
 
-
-#include <time.h>
 
 int main(int argc, char* argv[])
 {
@@ -115,7 +114,7 @@ int main(int argc, char* argv[])
             break;
         case SELECT_VERSION:
             disclaimer();
-            cout << "Version: " << VERSION << endl << endl;
+            cout << _("Version: ") << VERSION << endl << endl;
             exit(EXIT_SUCCESS);
             break;
         default:
