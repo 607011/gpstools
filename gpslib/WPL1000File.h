@@ -5,15 +5,17 @@
 #ifndef __WPL1000FILE_H_
 #define __WPL1000FILE_H_
 
+#include "portable.h"
+#include "helper.h"
+#include "GPSTrackFile.h"
+
+#include <sys/types.h>
+
 #include <cstdlib>
 #include <cerrno>
 #include <ctime>
 #include <string>
 
-#include "helper.h"
-#include "GPSTrackFile.h"
-
-#include <sys/types.h>
 
 namespace GPS {
 
@@ -21,7 +23,7 @@ namespace GPS {
         union _wpl1000time
         {
             uint32_t tval;
-#ifdef __BIG_ENDIAN
+#if BYTE_ORDER == BIG_ENDIAN
             struct _datetime_big_endian
             {
                 unsigned int y:6; // year (-2000)

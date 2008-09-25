@@ -10,14 +10,6 @@
 static const char* GOOGLE_CHART_API_ENCODING = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.";
 
 
-bool is_bigendian(void)
-{
-    // taken from http://www.ibm.com/developerworks/aix/library/au-endianc/index.html?ca=drs-
-    volatile const int __i = 0x00000001;
-    return (*(char*)&__i) == 0x00;
-}
-
-
 const char* encode_extended(size_t val)
 {
     char* code = new char[2];
