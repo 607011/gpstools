@@ -87,7 +87,7 @@ namespace GPS {
         if (_Filename.empty())
             return EINVAL;
         fstream os(_Filename.c_str(), fstream::out);
-        if (os.bad())
+        if (!os.good())
             return EIO;
         os << "<?xml version=\"1.0\" encoding=\"" << encoding << "\" standalone=\"no\" ?>" << endl
             << "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\""
@@ -109,13 +109,13 @@ namespace GPS {
             if (!(*j)->timestamp().isNull())
                 os <<" <time>" << (*j)->timestamp().toString() << "</time>" << endl;
             if ((*j)->elevation().defined())
-                os << setprecision(4) << " <ele>" << (*j)->elevation() << "</ele>" << endl;
+                os << setprecision(4) << " <ele>" << (*j)->elevation().value() << "</ele>" << endl;
             if ((*j)->HDOP().defined())
-                os << setprecision(3) << " <hdop>" << (*j)->HDOP() << "</hdop>" << endl;
+                os << setprecision(3) << " <hdop>" << (*j)->HDOP().value() << "</hdop>" << endl;
             if ((*j)->VDOP().defined())
-                os << setprecision(3) << " <vdop>" << (*j)->VDOP() << "</vdop>" << endl;
+                os << setprecision(3) << " <vdop>" << (*j)->VDOP().value() << "</vdop>" << endl;
             if ((*j)->PDOP().defined())
-                os << setprecision(3) << " <pdop>" << (*j)->PDOP() << "</pdop>" << endl;
+                os << setprecision(3) << " <pdop>" << (*j)->PDOP().value() << "</pdop>" << endl;
             os << "</wpt>" << endl;
         }
         for (TrackList::const_iterator j = _TrkList.begin(); j != _TrkList.end(); ++j)
@@ -131,15 +131,15 @@ namespace GPS {
                     os << setprecision(14)
                         << "  <trkpt lat=\"" << (*i)->latitude() << "\" lon=\"" << (*i)->longitude() << "\">" << endl;
                     if ((*i)->elevation().defined())
-                        os << setprecision(4) << "   <ele>" << (*i)->elevation() << "</ele>" << endl;
+                        os << setprecision(4) << "   <ele>" << (*i)->elevation().value() << "</ele>" << endl;
                     if (!(*i)->timestamp().isNull())
                         os <<"   <time>" << (*i)->timestamp().toString() << "</time>" << endl;
                     if ((*i)->HDOP().defined())
-                        os << setprecision(3) << " <hdop>" << (*i)->HDOP() << "</hdop>" << endl;
+                        os << setprecision(3) << " <hdop>" << (*i)->HDOP().value() << "</hdop>" << endl;
                     if ((*i)->VDOP().defined())
-                        os << setprecision(3) << " <vdop>" << (*i)->VDOP() << "</vdop>" << endl;
+                        os << setprecision(3) << " <vdop>" << (*i)->VDOP().value() << "</vdop>" << endl;
                     if ((*i)->PDOP().defined())
-                        os << setprecision(3) << " <pdop>" << (*i)->PDOP() << "</pdop>" << endl;
+                        os << setprecision(3) << " <pdop>" << (*i)->PDOP().value() << "</pdop>" << endl;
                     os << "  </trkpt>" << endl;
                 }
             }

@@ -38,21 +38,11 @@ namespace GPS {
 #include <Windows.h>
     time_t timegm(struct tm* tm)
     {
-        char tz[20];
-        size_t sz = 20;
-        errno_t rc = _dupenv_s((char**)&tz, &sz, "TZ");
-        if (rc != 0)
-            return -1;
-        time_t ret;
-        SetEnvironmentVariable("TZ", "");
-        _tzset();
-        ret = mktime(tm);
-        if (tz)
-            SetEnvironmentVariable("TZ", tz);
-        else
-            SetEnvironmentVariable("TZ", NULL);
-        _tzset();
-        return ret;
+        time_t ret = mktime(tm);
+        long _Timezone;
+        _get_timezone(&_Timezone);
+        // rückgängig machen, was mktime() verbockt hat
+        return ret - _Timezone;
     }
 #endif
 
@@ -124,7 +114,7 @@ namespace GPS {
         t.tm_wday = 0;
         t.tm_yday = 0;
         t.tm_isdst = 0;
-        timestamp_t ts = (timestamp_t) 1000 * timegm(&t);
+        timestamp_t ts = 1000ULL * (timestamp_t) timegm(&t);
         return ts;
     }
 
@@ -133,8 +123,7 @@ namespace GPS {
     {
         if (fmt == NULL)
             fmt = "%Y-%m-%dT%H:%M:%SZ";
-        const size_t BUFSIZE = 100;
-        char buf[BUFSIZE];
+        char buf[100];
         time_t seconds = (time_t) (ms / 1000);
         struct tm t;
 #if defined(_WIN32) && (_MSC_VER >= 1400)
@@ -144,7 +133,7 @@ namespace GPS {
 #else
         gmtime_r(&seconds, &t);
 #endif
-        strftime(buf, BUFSIZE-1, fmt, &t);
+        strftime(buf, sizeof(buf), fmt, &t);
         return string(buf);
     }
 
