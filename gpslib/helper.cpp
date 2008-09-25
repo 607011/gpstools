@@ -21,6 +21,8 @@ bool is_bigendian(void)
 const char* encode_extended(size_t val)
 {
     char* code = new char[2];
+    if (code == NULL)
+        return NULL;
     code[0] = GOOGLE_CHART_API_ENCODING[val / 64];
     code[1] = GOOGLE_CHART_API_ENCODING[val % 64];
     return (const char*) code;

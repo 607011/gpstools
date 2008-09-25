@@ -58,11 +58,11 @@ void disclaimer(void)
     if (!quiet)
     {
         cout << _("wpl1000reader - Tracks aus einem GPS-Logger vom Typ 'Wintec WPL-1000\n"
-            << "                (Easy Showily)' oder 'Navilock NL-456DL Easy Logger'\n"
-            << "                auslesen und als GPX-Datei speichern.\n")
-            << _("Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>") << endl
-            << _("Alle Rechte vorbehalten.") << endl
-            << endl;
+               << "(Easy Showily)' oder 'Navilock NL-456DL Easy Logger' auslesen und als\n"
+               << "GPX-Datei speichern.\n\n"
+               << "Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>\n"
+               << "Alle Rechte vorbehalten.")
+               << endl << endl;
     }
 }
 
@@ -74,7 +74,7 @@ void usage(void)
 	 << _("Optionen:\n"
 	      "  -v            Mehr Information über Verarbeitungsschritte ausgeben\n"
 	      "  -m  --multi   Jeden Track in eine separate Datei schreiben\n"
-	      "  -q            Saemtliche Ausgaben unterdruecken\n"
+	      "  -q            Sämtliche Ausgaben unterdrücken\n"
 	      "  --simulate    Nichts schreiben, sondern nur so tun als ob\n"
 	      "                (funktioniert nur zusammen mit --multi)\n"
 	      "  --version     Versionsinformationen ausgeben")
@@ -180,11 +180,13 @@ int main(int argc, char* argv[])
                 wptFile.setWaypoints(wpl1000File.waypoints());
                 string wptFilename = gpxFilename;
                 int ppos = gpxFilename.find_last_of('.');
+                if (ppos == basic_string<char>::npos)
+                    ppos = gpxFilename.size();
                 wptFilename.insert(ppos, "-waypoints");
                 wptFile.write(wptFilename);
             }
         }
-        else // !multi
+        else // ! multi
         {   
             GPXFile gpxFile;
             gpxFile.setTracks(wpl1000File.tracks());
@@ -205,10 +207,10 @@ int main(int argc, char* argv[])
     }
     else
     {
-        cout << _("Die Datei enthaelt keine Tracks!") << endl;
+        cout << _("Die Datei enthält keine Tracks!") << endl;
         return EXIT_FAILURE;
     }
     if (!quiet)
-        cout << endl << endl;
+        cout << endl << _("Fertig.") << endl << endl;
     return EXIT_SUCCESS;
 }
