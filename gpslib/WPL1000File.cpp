@@ -2,15 +2,16 @@
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 
+#include "portable.h"
+#include "helper.h"
+#include "WPL1000File.h"
+
 #include <fstream>
 
 #ifdef _DEBUG
 #include <iostream>
 #include <iomanip>
 #endif // _DEBUG
-
-#include "helper.h"
-#include "WPL1000File.h"
 
 
 using namespace std;
@@ -31,7 +32,7 @@ namespace GPS {
     {
         char* d = reinterpret_cast<char*>(data);
         fs.read(d, sizeof(T));
-#ifdef _BIG_ENDIAN
+#if BYTE_ORDER == BIG_ENDIAN
         switch (sizeof(T))
         {
         case 4:
