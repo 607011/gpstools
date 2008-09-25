@@ -49,12 +49,12 @@ namespace GPS {
         {
             t.tval = 0;
         }
-        unsigned int secs(void)  { return t.t.s; }
-        unsigned int mins(void)  { return t.t.i; }
-        unsigned int hours(void) { return t.t.h; }
-        unsigned int day(void)   { return t.t.d; }
-        unsigned int month(void) { return t.t.m; }
-        unsigned int year(void)  { return t.t.y + 2000; }
+        inline unsigned int secs(void)  { return t.t.s; }
+        inline unsigned int mins(void)  { return t.t.i; }
+        inline unsigned int hours(void) { return t.t.h; }
+        inline unsigned int day(void)   { return t.t.d; }
+        inline unsigned int month(void) { return t.t.m; }
+        inline unsigned int year(void)  { return t.t.y + 2000; }
     };
 
 

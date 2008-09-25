@@ -17,8 +17,19 @@
 using namespace std;
 
 
-namespace GPS {
+#ifdef _MSC_VER
+    static inline time_t timegm(struct tm* tm)
+    {
+        time_t ret = mktime(tm);
+        long _Timezone;
+        _get_timezone(&_Timezone);
+        // rückgängig machen, was mktime() verbockt hat
+        return ret - _Timezone;
+    }
+#endif
 
+
+namespace GPS {
 
     Timestamp::Timestamp(void) : ms(0)
     { /* ... */ }
@@ -32,19 +43,6 @@ namespace GPS {
     {
         *this = str.c_str();
     }
-
-
-#ifdef _MSC_VER
-#include <Windows.h>
-    time_t timegm(struct tm* tm)
-    {
-        time_t ret = mktime(tm);
-        long _Timezone;
-        _get_timezone(&_Timezone);
-        // rückgängig machen, was mktime() verbockt hat
-        return ret - _Timezone;
-    }
-#endif
 
 
     Timestamp::Timestamp(const char* str) : ms(0)
@@ -262,10 +260,10 @@ namespace GPS {
 #else
         rc = sscanf(offset.c_str(), "%c%2d:%2d:%2d", &sign, &hours, &minutes, &seconds);
 #endif
-        if (rc == 4 || rc == 3) {
-            return (sign == '-')
-                ? -hours*3600 - minutes*60 - seconds
-                :  hours*3600 + minutes*60 + seconds;
+        if (rc == 4 || rc == 3)
+        {
+            time_t res = hours * 3600 + minutes * 60 + seconds;
+            return (sign == '-')? -res : res;
         }
         return 0;
     }
