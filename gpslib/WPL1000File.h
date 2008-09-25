@@ -20,6 +20,18 @@ namespace GPS {
     struct WPL1000Time {
         union _wpl1000time
         {
+            uint32_t tval;
+#ifdef __BIG_ENDIAN
+            struct _datetime_big_endian
+            {
+                unsigned int y:6; // year (-2000)
+                unsigned int m:4; // month
+                unsigned int d:5; // day of month
+                unsigned int h:5; // hours
+                unsigned int i:6; // mins
+                unsigned int s:6; // secs
+            } t;
+#else
             struct _datetime_little_endian
             {
                 unsigned int s:6; // secs
@@ -27,23 +39,20 @@ namespace GPS {
                 unsigned int h:5; // hours
                 unsigned int d:5; // day of month
                 unsigned int m:4; // month
-                unsigned int Y:6; // year (-2000)
-            } little;
-            struct _datetime_big_endian
-            {
-                unsigned int Y:6; // year (-2000)
-                unsigned int m:4; // month
-                unsigned int d:5; // day of month
-                unsigned int h:5; // hours
-                unsigned int i:6; // mins
-                unsigned int s:6; // secs
-            } big;
-            uint32_t tval;
+                unsigned int y:6; // year (-2000)
+            } t;
+#endif
         } t ;
         WPL1000Time(void)
         {
             t.tval = 0;
         }
+        unsigned int secs(void)  { return t.t.s; }
+        unsigned int mins(void)  { return t.t.i; }
+        unsigned int hours(void) { return t.t.h; }
+        unsigned int day(void)   { return t.t.d; }
+        unsigned int month(void) { return t.t.m; }
+        unsigned int year(void)  { return t.t.y + 2000; }
     };
 
 

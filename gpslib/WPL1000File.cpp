@@ -31,47 +31,42 @@ namespace GPS {
     {
         char* d = reinterpret_cast<char*>(data);
         fs.read(d, sizeof(T));
+#ifdef _BIG_ENDIAN
         switch (sizeof(T))
         {
         case 4:
-            if (is_bigendian())
-            {
-                swap(d[0], d[3]);
-                swap(d[1], d[2]);
-            }
+            swap(d[0], d[3]);
+            swap(d[1], d[2]);
             break;
         case 2:
-            if (is_bigendian())
-            {
-                swap(d[0], d[1]);
-            }
+            swap(d[0], d[1]);
             break;
         default:
-	    // ignore
+            // ignore
             break;
         }
+#endif
     }
 
 
     int WPL1000Data::readFrom(fstream& fs)
     {
         // Reverse Engineering mit freundlicher Unterstützung von Eckhard Zemp, Berlin (www.zemp.ch)
+        // und Gerhard Mehldau, Los Angeles (Kalifornien)
         readField<uint8_t>(fs, &_Type);
         readField<uint8_t>(fs, &_Unknown);
         readField<GPS::WPL1000Time>(fs, &_T);
         readField<int32_t>(fs, &_WPL1000lat);
         readField<int32_t>(fs, &_WPL1000lon);
         readField<int16_t>(fs, &_WPL1000ele);
-        Timestamp ts = (is_bigendian())
-            ? Timestamp(_T.t.big.Y + 2000, _T.t.big.m, _T.t.big.d, _T.t.big.h, _T.t.big.i, _T.t.big.s)
-            : Timestamp(_T.t.little.Y + 2000, _T.t.little.m, _T.t.little.d, _T.t.little.h, _T.t.little.i, _T.t.little.s);
+        Timestamp ts(_T.year(), _T.month(), _T.day(), _T.hours(), _T.mins(), _T.secs());
         switch (_Type)
         {
         case WAYPOINT:
             setName(ts.toString());
-            /* fall-through */
+            // fall-through
         case TRACKPOINT:
-            /* fall-through */
+            // fall-through
         case TRACK_START:
             {
                 setLatitude(1e-7 * (double) _WPL1000lat);
@@ -112,7 +107,7 @@ namespace GPS {
             switch (rc)
             {
             case WPL1000Data::TRACK_START:
-                /* fall-through */
+                // fall-through
             case WPL1000Data::TRACKPOINT:
                 if (_Trk == NULL)
                     _Trk = new Track;
@@ -136,7 +131,7 @@ namespace GPS {
                 }
                 break;
             default:
-	        // ignore
+                // ignore
                 break;
             }
         }
