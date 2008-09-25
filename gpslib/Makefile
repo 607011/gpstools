@@ -20,8 +20,8 @@ DOXYGEN=doxygen
 O=.o
 X=
 
-GPS_O := $(foreach i,Ellipsoid GeoCoord GPSTrackFile GPXFile helper Line Point Polygon Stochastics SuuntoDatafile TCXFile Timestamp Track TrackLine Trackpoint Vector Waypoint WPL1000File,$i$(O))
-GPS_H := $(foreach i,Ellipsoid GeoCoord GPSTrackFile GPXFile helper Line MercatorCoord Point Polygon Stochastics SuuntoDatafile TCXFile Timestamp Track TrackLine Trackpoint UTMCoord Value Vector Waypoint WPL1000File,$i.h)
+GPS_O := $(foreach i,Ellipsoid GeoCoord GPSTrackFile GPXFile helper Line Point Polygon portable Stochastics SuuntoDatafile TCXFile Timestamp Track TrackLine Trackpoint Vector Waypoint WPL1000File,$i$(O))
+GPS_H := $(foreach i,Ellipsoid GeoCoord GPSTrackFile GPXFile helper Line MercatorCoord Point Polygon portable Stochastics SuuntoDatafile TCXFile Timestamp Track TrackLine Trackpoint UTMCoord Value Vector Waypoint WPL1000File,$i.h)
 
 
 all: $(PROJ)
@@ -58,9 +58,9 @@ macosx-release-x86:
 macosx-release-ppc:
 	$(MAKE) release \
 	    O="$(O)" \
-	    CFLAGS="$(CFLAGS) -arch ppc" \
-	    CXXFLAGS="$(CXXFLAGS) -arch ppc" \
-	    LDFLAGS="$(LDFLAGS) -arch ppc"
+	    CFLAGS="$(CFLAGS) -arch ppc -faltivec" \
+	    CXXFLAGS="$(CXXFLAGS) -arch ppc -faltivec" \
+	    LDFLAGS="$(LDFLAGS) -arch ppc -faltivec"
 
 release:
 	$(RM) $(PROJ)
