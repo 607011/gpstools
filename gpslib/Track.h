@@ -361,11 +361,6 @@ namespace GPS {
         /// @return Trackpunkt-Iterator
         TrackpointList::iterator getMatchingTrackpointIter(const TrackLine& line);
 
-        /// Einen Trackpunkt einfügen.
-        /// @param i Stelle, an der der Trackpunkt in den Track eingefügt werden soll.
-        /// @param t Einzufügender Trackpunkt.
-        void insert(TrackpointList::iterator i, Trackpoint* t);
-
         /// Die Verbindungslinie zwischen zwei Trackpunkten suchen, die dem übergebenen 
         /// Trackpunkt am nächsten liegt.
         /// @param r Referenz-Trackpunkt
@@ -429,12 +424,6 @@ namespace GPS {
         /// @return true, wenn der Track Zeitstempel enthält.
         bool hasTimestamps(void) const;
 
-        /// Einen Trackpunkt aus dem Track entfernen.
-        /// @param trkpt Zu entfernender Trackpunkt.
-        inline void erase(TrackpointList::iterator trkpt)
-        {
-            samples.erase(trkpt);
-        }
 
     };
 
