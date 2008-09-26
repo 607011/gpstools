@@ -165,7 +165,7 @@ namespace GPS {
 
         /// ID of DGPS station used in differential correction.
         /// @return ID of DGPS station used in differential correction
-        inline const IntValue& DGPSStationId(void) const { _DGPSStationId; }
+        inline const IntValue& DGPSStationId(void) const { return _DGPSStationId; }
 
         /// Horizontal Dilusion of Precision setzen.
         /// @see _HDOP

@@ -25,6 +25,8 @@ namespace GPS {
     public:
         AbstractWaypointList(void) { /* ... */ };
 
+        virtual ~AbstractWaypointList(void) { /* ... */ };
+
         /// Letzten Punkt aus der Liste entfernen.
         virtual void pop(void) = 0;
 
