@@ -14,7 +14,7 @@
 
 namespace GPS {
 
-    template<class T>
+    template<class PointType>
     class AbstractWaypointList {
     protected:
         std::string _Name;
@@ -26,14 +26,14 @@ namespace GPS {
         IntValue _Number;
 
         /// Chronologisch sortierte Liste der Trackpunkte.
-        std::vector<T*> samples;
+        std::vector<PointType*> samples;
 
     public:
         AbstractWaypointList(void) { /* ... */ };
 
         virtual ~AbstractWaypointList(void) { /* ... */ };
 
-        /// Länge in Metern zurückgeben.
+        /// Entfernung zum Start in Metern zurückgeben.
         /// @return Entfernung in Metern
         virtual double distance(void) const = 0;
 
@@ -59,16 +59,34 @@ namespace GPS {
 
         /// Einen Punkt an die Liste anhängen.
         /// @param pt Anzuhängender Punkt. NULL-Zeiger werden ignoriert.
-        inline void append(T* pt)
+        inline void append(PointType* pt)
         {
             if (pt != NULL)
                 samples.push_back(pt);
         }
 
+
+        /// Einen Trackpunkt aus dem Track entfernen.
+        /// @param trkpt Zu entfernender Trackpunkt.
+        inline void erase(typename std::vector<PointType*>::iterator trkpt)
+        {
+            samples.erase(trkpt);
+        }
+
+
+        /// Einen Punkt einfügen.
+        /// @param i Stelle, an der der Punkt in die Liste eingefügt werden soll.
+        /// @param t Einzufügender Trackpunkt.
+        void insert(typename std::vector<PointType*>::iterator i, PointType* t)
+        {
+            samples.insert(i, t);
+        }
+
+
         /// Punkt-Liste zurückgeben.
         /// @return Punkt-Liste
         /// @see samples
-        inline std::vector<T*>& points(void)
+        inline std::vector<PointType*>& points(void)
         {
             return samples;
         }
@@ -79,7 +97,7 @@ namespace GPS {
         double area(void) const
         {
             GPS::Polygon p;
-            for (typename std::vector<T*>::const_iterator i = samples.begin(); i != samples.end(); ++i)
+            for (typename std::vector<PointType*>::const_iterator i = samples.begin(); i != samples.end(); ++i)
                 p << (*i)->toUTM();
             p.close();
             return p.area();

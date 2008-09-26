@@ -37,13 +37,6 @@ namespace GPS {
         /// @return Entfernung in Metern
         double distance(void) const;
 
-        /// Einen Punkt aus der Liste entfernen.
-        /// @param wpt Zu entfernender Punkt.
-        inline void erase(WaypointList::iterator wpt)
-        {
-            samples.erase(wpt);
-        }
-
     };
 
 

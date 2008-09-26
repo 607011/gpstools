@@ -620,12 +620,6 @@ namespace GPS {
     }
 
 
-    void Track::insert(TrackpointList::iterator i, Trackpoint* t)
-    {
-        samples.insert(i, t);
-    }
-
-
     TrackpointList::iterator Track::getMatchingTrackpointIter(double lon, double lat, double maxRange)
     {
         double bestRange = MAX_DBL;
