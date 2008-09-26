@@ -29,9 +29,9 @@ namespace GPS {
         std::vector<PointType*> samples;
 
     public:
-        AbstractWaypointList(void) { /* ... */ };
+        AbstractWaypointList(void) { /* ... */ }
 
-        virtual ~AbstractWaypointList(void) { /* ... */ };
+        virtual ~AbstractWaypointList(void) { /* ... */ }
 
         /// Entfernung zum Start in Metern zurückgeben.
         /// @return Entfernung in Metern

@@ -381,7 +381,7 @@ namespace GPS {
 
     Stochastics* Track::compareTo(Track* const ref) const
     {
-        if (samples.size() < 3 && ref->points().size() < 3)
+        if ((samples.size() < 3) && (ref->points().size() < 3))
             return NULL;
         Stochastics* s = new Stochastics;
         for (TrackpointList::const_iterator r = ref->points().begin(); r != ref->points().end(); ++r)
@@ -669,7 +669,7 @@ namespace GPS {
         Trackpoint* p1 = samples.front();
         for (TrackpointList::const_iterator i = samples.begin()+1; i != samples.end(); ++i)
         {
-            Trackpoint* p2 = *i;
+            Trackpoint* p2 = (*i);
             double dist = r->perpendicularDistance2D(p1, p2);
             if (dist < maxRange)
             {
@@ -699,7 +699,7 @@ namespace GPS {
         Trackpoint* p1 = samples.front();
         for (TrackpointList::const_iterator i = samples.begin()+1; i != samples.end(); ++i)
         {
-            Trackpoint* p2 = *i;
+            Trackpoint* p2 = (*i);
             if (p1->kept() && p2->kept()) 
             {
                 double dist = r.perpendicularDistanceToSegment(*p1, *p2);
