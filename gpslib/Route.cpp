@@ -21,13 +21,6 @@ namespace GPS {
     }
 
 
-    void Route::pop(void) 
-    {
-        if (!isEmpty())
-            samples.pop_back();
-    }
-
-
     double Route::distance(void) const
     {
         if (samples.size() < 2)
@@ -47,16 +40,5 @@ namespace GPS {
         }
         return dist;
     }
-
-
-    double Route::area(void) const
-    {
-        Polygon p;
-        for (WaypointList::const_iterator i = samples.begin(); i != samples.end(); ++i)
-            p << (*i)->toUTM();
-        p.close();
-        return p.area();
-    }
-
 
 };
