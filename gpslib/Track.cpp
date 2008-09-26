@@ -37,13 +37,6 @@ namespace GPS {
     }
 
 
-    void Track::pop(void) 
-    {
-        if (!isEmpty())
-            samples.pop_back();
-    }
-
-
     void Track::merge(const Track* other, int what)
     {
         if (what == 0)
@@ -75,16 +68,6 @@ namespace GPS {
         return isEmpty()
             ? 0
             : samples.back()->distance();
-    }
-
-
-    double Track::area(void) const
-    {
-        Polygon p;
-        for (TrackpointList::const_iterator i = samples.begin(); i != samples.end(); ++i)
-            p << (*i)->toUTM();
-        p.close();
-        return p.area();
     }
 
 

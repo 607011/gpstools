@@ -20,8 +20,8 @@
 namespace GPS {
 
 #ifdef _MSC_VER
-    static const double MIN_DBL = pow(10.0f, (int) DBL_MIN_10_EXP + 1);
-    static const double MAX_DBL = pow(10.0f, (int) DBL_MAX_10_EXP - 1);
+    static const double MIN_DBL = pow(10.0, (int) DBL_MIN_10_EXP + 1);
+    static const double MAX_DBL = pow(10.0, (int) DBL_MAX_10_EXP - 1);
 #else
     static const double MIN_DBL = -1e30;
     static const double MAX_DBL = +1e30;
@@ -35,7 +35,7 @@ namespace GPS {
 
 
     /// Die Klasse Track verwaltet GPS-Tracks.
-    class Track : public AbstractWaypointList {
+    class Track : public AbstractWaypointList<Trackpoint> {
     private:
         /// Den in samples enthaltenen Track nach dem Douglas-Peucker-
         /// Verfahren ausdünnen, und zwar ausschließlich unter 
@@ -79,9 +79,6 @@ namespace GPS {
         /// Wird durch Aufruf von calculateAscentDescent() ermittelt.
         DoubleValue _Descent;
 
-        /// Chronologisch sortierte Liste der Trackpunkte.
-        TrackpointList samples;
-
     public:
         /// Diese mit einem logischen Oder zu verknüpfenden Flags geben an, 
         /// welche Informationen die Methode Track::merge() in den Trackpunkt 
@@ -110,11 +107,6 @@ namespace GPS {
         /// @param other Track, dessen sämtliche Daten inklusive Kopien seiner Trackpunkte in das
         /// neue Objekt übertragen werden sollen.
         Track(const Track& other);
-
-        /// Trackpunkt-Liste zurückgeben.
-        /// @return Trackpunkt-Liste
-        /// @see samples
-        inline TrackpointList& points(void) { return samples; }
 
         /// Anzahl der im Track als "behalten" gekennzeichneten Punkte zurückgeben.
         /// @return Anzahl der Trackpunkte
@@ -227,11 +219,6 @@ namespace GPS {
         /// Entfernung in Metern zurückgeben.
         /// @return Entfernung in Metern
         double distance(void) const;
-
-        /// Durch den Track eingeschlossene Fläche in Quadratmetern zurückgeben.
-        /// UNGETESTET!
-        /// @return Fläche in Quadratmetern
-        double area(void) const;
 
         /// Dauer in Sekunden zurückgeben.
         /// @return Dauer in Sekunden.
@@ -427,16 +414,6 @@ namespace GPS {
         /// Alle Trackpunkte als "verwerfen" markieren.
         void keepNone(void);
 
-        /// Letzten Punkt aus der Trackpunkt-Liste entfernen.
-        void pop(void);
-
-        /// Ermitteln, ob die Trackpunkt-Liste Trackpunkte enthält.
-        /// @return true, wenn die Trackpunkt-Liste leer ist.
-        inline bool isEmpty(void) const
-        {
-            return samples.size() == 0;
-        }
-
         /// @return true, wenn der Track Herzfrequenzdaten enthält.
         bool hasHeartrate(void) const;
 
@@ -452,12 +429,6 @@ namespace GPS {
         /// @return true, wenn der Track Zeitstempel enthält.
         bool hasTimestamps(void) const;
 
-        /// Track-Daten löschen.
-        inline void clear(void)
-        {
-            samples.clear();
-        }
-
         /// Einen Trackpunkt aus dem Track entfernen.
         /// @param trkpt Zu entfernender Trackpunkt.
         inline void erase(TrackpointList::iterator trkpt)
@@ -465,16 +436,7 @@ namespace GPS {
             samples.erase(trkpt);
         }
 
-        /// Einen Trackpunkt an den Track anhängen.
-        /// @param trkpt Anzuhängender Trackpunkt. NULL-Zeiger werden ignoriert.
-        inline void append(Trackpoint* trkpt)
-        {
-            if (trkpt != NULL)
-                samples.push_back(trkpt);
-        }
-
     };
-
 
 };
 

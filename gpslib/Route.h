@@ -14,17 +14,12 @@
 
 #include "AbstractWaypointList.h"
 #include "Waypoint.h"
-#include "Vector.h"
 
 namespace GPS {
 
     typedef std::vector<Waypoint*> WaypointList;
 
-    class Route : public AbstractWaypointList {
-    private:
-        /// Sortierte Liste der Wegpunkte.
-        WaypointList samples;
-
+    class Route : public AbstractWaypointList<Waypoint> {
     public:
         /// Konstruktor.
         Route(void);
@@ -34,43 +29,6 @@ namespace GPS {
         /// neue Objekt übertragen werden sollen.
         Route(const Route& other);
 
-        /// Wegpunkt-Liste zurückgeben.
-        /// @return Wegpunkt-Liste
-        /// @see samples
-        inline WaypointList& points(void) { return samples; }
-
-        /// Routen-Daten löschen.
-        inline void clear(void)
-        {
-            samples.clear();
-        }
-
-        /// Ermitteln, ob die Wegpunkt-Liste Wegpunkte enthält.
-        /// @return true, wenn die Wegpunkt-Liste leer ist.
-        inline bool isEmpty(void) const
-        {
-            return samples.size() == 0;
-        }
-
-        /// Einen Wegpunkt aus der Route entfernen.
-        /// @param trkpt Zu entfernender Trackpunkt.
-        inline void erase(WaypointList::iterator wpt)
-        {
-            samples.erase(wpt);
-        }
-
-        /// Einen Wegpunkt an die Route anhängen.
-        /// @param wpt Anzuhängender Wegpunkt. NULL-Zeiger werden ignoriert.
-        inline void append(Waypoint* wpt)
-        {
-            if (wpt != NULL)
-                samples.push_back(wpt);
-        }
-
-        /// Letzten Punkt aus der Route entfernen.
-        void pop(void);
-
-
         /// Entfernung in Metern zurückgeben.
         /// Achtung: Die Entfernung wird bei jedem Aufruf über die Bildung
         /// einer Summe über die Entfernung zwischen den einzelnen Wegpunktem neu ermittelt.
@@ -79,9 +37,12 @@ namespace GPS {
         /// @return Entfernung in Metern
         double distance(void) const;
 
-        /// Durch die Punkte eingeschlossene Fläche in Quadratmetern zurückgeben.
-        /// @return Fläche in Quadratmetern
-        double area(void) const;
+        /// Einen Punkt aus der Liste entfernen.
+        /// @param wpt Zu entfernender Punkt.
+        inline void erase(WaypointList::iterator wpt)
+        {
+            samples.erase(wpt);
+        }
 
     };
 

@@ -6,12 +6,15 @@
 #ifndef __ABSTRACTWAYPOINTLIST_H_
 #define __ABSTRACTWAYPOINTLIST_H_
 
+#include <vector>
 #include <string>
 
 #include "Value.h"
+#include "Polygon.h"
 
 namespace GPS {
 
+    template<class T>
     class AbstractWaypointList {
     protected:
         std::string _Name;
@@ -22,25 +25,64 @@ namespace GPS {
         std::string _Type;
         IntValue _Number;
 
+        /// Chronologisch sortierte Liste der Trackpunkte.
+        std::vector<T*> samples;
+
     public:
         AbstractWaypointList(void) { /* ... */ };
 
         virtual ~AbstractWaypointList(void) { /* ... */ };
 
-        /// Letzten Punkt aus der Liste entfernen.
-        virtual void pop(void) = 0;
-
-        /// Ermitteln, ob die Liste Punkte enthält.
-        /// @return true, wenn die Liste leer ist.
-        virtual inline bool isEmpty(void) const = 0;
-
-        /// Entfernung in Metern zurückgeben.
+        /// Länge in Metern zurückgeben.
         /// @return Entfernung in Metern
         virtual double distance(void) const = 0;
 
+        /// Ermitteln, ob die Liste Punkte enthält.
+        /// @return true, wenn die Liste leer ist.
+        inline bool isEmpty(void) const
+        {
+            return samples.size() == 0;
+        }
+
+        /// Letzten Punkt aus der Liste entfernen.
+        inline void pop(void)
+        {
+            if (!isEmpty())
+                samples.pop_back();
+        }
+
+        /// Routen-Daten löschen.
+        inline void clear(void)
+        {
+            samples.clear();
+        }
+
+        /// Einen Punkt an die Liste anhängen.
+        /// @param pt Anzuhängender Punkt. NULL-Zeiger werden ignoriert.
+        inline void append(T* pt)
+        {
+            if (pt != NULL)
+                samples.push_back(pt);
+        }
+
+        /// Punkt-Liste zurückgeben.
+        /// @return Punkt-Liste
+        /// @see samples
+        inline std::vector<T*>& points(void)
+        {
+            return samples;
+        }
+
         /// Durch den Punkte eingeschlossene Fläche in Quadratmetern zurückgeben.
         /// @return Fläche in Quadratmetern
-        virtual double area(void) const = 0;
+        double area(void) const
+        {
+            GPS::Polygon p;
+            for (std::vector<T*>::const_iterator i = samples.begin(); i != samples.end(); ++i)
+                p << (*i)->toUTM();
+            p.close();
+            return p.area();
+        }
 
         /// Namen zurückgeben.
         inline const std::string& name(void) const { return _Name; }
