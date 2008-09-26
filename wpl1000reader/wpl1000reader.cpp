@@ -155,7 +155,7 @@ int main(int argc, char* argv[])
             {
                 GPXFile trkFile;
                 trkFile.addTrack(*i);
-                int spos = gpxFilename.find_last_of(PathDelimiter);
+                basic_string<char>::size_type spos = gpxFilename.find_last_of(PathDelimiter);
                 string trkFilename = gpxFilename;
                 trkFilename.insert(spos+1, (*i)->startTimestamp().toString("%Y%m%d-%H%M") + "-");
                 if (!quiet)
