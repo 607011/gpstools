@@ -11,6 +11,7 @@
 #include <cassert>
 #include <cmath>
 
+#include "AbstractWaypointList.h"
 #include "Stochastics.h"
 #include "Trackpoint.h"
 #include "Vector.h"
@@ -26,17 +27,15 @@ namespace GPS {
     static const double MAX_DBL = +1e30;
 #endif
 
-    typedef std::vector<Waypoint*> Route;
-    typedef std::vector<Waypoint*> WaypointList;
-
-    class Track;
 
     typedef std::vector<Trackpoint*> TrackpointList;
-    typedef std::vector<Route*> RouteList;
+
+    class Track;
     typedef std::vector<Track*> TrackList;
 
+
     /// Die Klasse Track verwaltet GPS-Tracks.
-    class Track {
+    class Track : public AbstractWaypointList {
     private:
         /// Den in samples enthaltenen Track nach dem Douglas-Peucker-
         /// Verfahren ausdünnen, und zwar ausschließlich unter 
@@ -79,9 +78,6 @@ namespace GPS {
         /// Kumulierte Abstiege in Meter.
         /// Wird durch Aufruf von calculateAscentDescent() ermittelt.
         DoubleValue _Descent;
-
-        /// Name des Tracks.
-        std::string _Name;
 
         /// Chronologisch sortierte Liste der Trackpunkte.
         TrackpointList samples;
@@ -455,18 +451,6 @@ namespace GPS {
 
         /// @return true, wenn der Track Zeitstempel enthält.
         bool hasTimestamps(void) const;
-
-        /// Namen des Tracks zurückgeben.
-        inline const std::string& name(void) const
-        {
-            return _Name;
-        }
-
-        /// Namen des Tracks setzen.
-        inline void setName(std::string name)
-        {
-            _Name = name;
-        }
 
         /// Track-Daten löschen.
         inline void clear(void)

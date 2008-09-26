@@ -15,6 +15,18 @@ using namespace std;
 
 namespace GPS {
 
+    Trackpoint::Trackpoint(void)
+        : Waypoint(),
+        _Distance(0.0),
+        _Slope(0.0),
+        _Speed(0.0),
+        _Pace(0.0),
+        _Heartrate(),
+        _Temperature(),
+        _Duration(0),
+        _Keep(true)
+    { /* ... */ }
+
     Trackpoint::Trackpoint(double lon, double lat, DoubleValue ele, Timestamp timestamp)
         : Waypoint(lon, lat, ele, timestamp),
         _Distance(0.0),
@@ -126,15 +138,15 @@ namespace GPS {
     std::string Trackpoint::paceString(void) const
     {
         double p = _Pace;
-        int min = (int) (_Pace);
+        unsigned int min = (unsigned int) (_Pace);
         if (min >= 100) { min = 99; p = 99; }
-        int sec = (int) (60 * (p - (double) min));
+        unsigned int sec = (unsigned int) (60 * (p - (double) min));
 #if defined(_WIN32) && (_MSC_VER >= 1400)
         char buf[17];
-        sprintf_s(buf, 16, "%d:%02d", min, sec);
+        sprintf_s(buf, 16, "%2u:%02u", min, sec);
 #else
         char buf[256];
-        sprintf(buf, "%d:%02d", min, sec);
+        sprintf(buf, "%2u:%02u", min, sec);
 #endif
         return buf;
     }

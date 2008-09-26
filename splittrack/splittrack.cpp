@@ -19,11 +19,11 @@
 using namespace std;
 using namespace GPS;
 
-const int DefaultPointCount = 500;
+const size_t DefaultPointCount = 500;
 
 bool quiet = false;
 int verbose = 1;
-int pointCount = DefaultPointCount;
+size_t pointCount = DefaultPointCount;
 
 enum _long_options {
     SELECT_HELP,
@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
     for (TrackList::iterator i = gpxFile.tracks().begin(); i != gpxFile.tracks().end(); ++i)
     {
         cout << "  Name : " << (*i)->name() << endl;
-        Track* trk = *i;
+        Track* trk = (*i);
 
         if (trk->isEmpty())
             errmsg("Der Track enthält keine Trackpunkte");
@@ -150,14 +150,15 @@ int main(int argc, char* argv[])
         TrackList* tl = trk->split(pointCount);
         for (TrackList::iterator j = tl->begin(); j != tl->end(); ++j)
             allTracks.push_back(*j);
-
     }
 
     GPXFile gpxOut;
     gpxOut.setTracks(allTracks);
-    int npos = trkFile.find_last_of('.');
+    basic_string<char>::size_type ppos = trkFile.find_last_of('.');
+    if (ppos == basic_string<char>::npos)
+        ppos = trkFile.size();
     string trkOutFile = trkFile;
-    trkOutFile.insert(npos, "-split" + tos(pointCount));
+    trkOutFile.insert(ppos, "-split" + tos(pointCount));
     gpxOut.write(trkOutFile);
 
     if (verbose > 0 && !quiet)

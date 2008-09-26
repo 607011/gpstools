@@ -45,7 +45,7 @@ namespace GPS {
 
     public:
         /// Default-Konstruktor.
-        Trackpoint(void) { /* ... */ }
+        Trackpoint(void);
 
         /// Konstruktor.
         Trackpoint(double lon, double lat, DoubleValue ele = DoubleValue(), Timestamp timestamp = Timestamp());

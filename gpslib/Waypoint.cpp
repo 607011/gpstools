@@ -10,14 +10,16 @@
 namespace GPS {
 
     Waypoint::Waypoint(void)
-        : GeoCoord(), _Timestamp(), _HDOP(), _VDOP(), _PDOP()
+        : GeoCoord()
     { /* ... */ }
 
+    Waypoint::Waypoint(double lon, double lat)
+        : GeoCoord(lon, lat)
+    { /* ... */ }
 
     Waypoint::Waypoint(double lon, double lat, DoubleValue ele, Timestamp timestamp)
         : GeoCoord(lon, lat, ele),
-        _Timestamp(timestamp),
-        _HDOP(), _VDOP(), _PDOP()
+        _Timestamp(timestamp)
     { /* ... */ }
 
 };

@@ -7,6 +7,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <errno.h>
+
 #include "GPXFile.h"
 
 using namespace std;
@@ -27,7 +28,88 @@ namespace GPS {
     }
 
 
-    // TODO: außer Tracks auch Wegpunkte und Routen laden
+    void GPXFile::getWptType(Waypoint* wpt, TiXmlNode* gpxWpt)
+    {
+        TiXmlElement* element = gpxWpt->ToElement();
+
+        double lat;
+        element->QueryDoubleAttribute("lat", &lat);
+        wpt->setLatitude(lat);
+
+        double lon;
+        element->QueryDoubleAttribute("lon", &lon);
+        wpt->setLongitude(lon);
+
+        TiXmlElement* timeElement = element->FirstChildElement("time");
+        if (timeElement != NULL)
+            wpt->setTimestamp(timeElement->GetText());
+
+        TiXmlElement* eleElement = element->FirstChildElement("ele");
+        if (eleElement != NULL && eleElement->GetText() != NULL)
+            wpt->setElevation(atof(eleElement->GetText()));
+
+        TiXmlElement* nameElement = element->FirstChildElement("name");
+        if (nameElement != NULL && nameElement->GetText() != NULL)
+            wpt->setName(nameElement->GetText());
+
+        TiXmlElement* cmtElement = element->FirstChildElement("cmt");
+        if (cmtElement != NULL && cmtElement->GetText() != NULL)
+            wpt->setComment(cmtElement->GetText());
+
+        TiXmlElement* descElement = element->FirstChildElement("desc");
+        if (descElement != NULL && descElement->GetText() != NULL)
+            wpt->setName(descElement->GetText());
+
+        TiXmlElement* hdopElement = element->FirstChildElement("hdop");
+        if (hdopElement != NULL && hdopElement->GetText() != NULL)
+            wpt->setHDOP(atof(hdopElement->GetText()));
+
+        TiXmlElement* pdopElement = element->FirstChildElement("pdop");
+        if (pdopElement != NULL && pdopElement->GetText() != NULL)
+            wpt->setPDOP(atof(pdopElement->GetText()));
+
+        TiXmlElement* vdopElement = element->FirstChildElement("vdop");
+        if (vdopElement != NULL && vdopElement->GetText() != NULL)
+            wpt->setVDOP(atof(vdopElement->GetText()));
+
+        TiXmlElement* srcElement = element->FirstChildElement("src");
+        if (srcElement != NULL && srcElement->GetText() != NULL)
+            wpt->setSource(srcElement->GetText());
+
+        TiXmlElement* linkElement = element->FirstChildElement("link");
+        if (linkElement != NULL && linkElement->GetText() != NULL)
+            wpt->setLink(linkElement->GetText());
+
+        TiXmlElement* geoidheightElement = element->FirstChildElement("geoidheight");
+        if (geoidheightElement != NULL && geoidheightElement->GetText() != NULL)
+            wpt->setGeoidHeight(atof(geoidheightElement->GetText()));
+
+        TiXmlElement* magvarElement = element->FirstChildElement("magvar");
+        if (magvarElement != NULL && magvarElement->GetText() != NULL)
+            wpt->setMagneticVariation(atof(magvarElement->GetText()));
+
+        TiXmlElement* fixElement = element->FirstChildElement("fix");
+        if (fixElement != NULL && fixElement->GetText() != NULL)
+            wpt->setFix(fixElement->GetText());
+
+        TiXmlElement* typeElement = element->FirstChildElement("type");
+        if (typeElement != NULL && typeElement->GetText() != NULL)
+            wpt->setType(typeElement->GetText());
+
+        TiXmlElement* satElement = element->FirstChildElement("sat");
+        if (satElement != NULL && satElement->GetText() != NULL)
+            wpt->setSatCount(atoi(satElement->GetText()));
+
+        TiXmlElement* stationElement = element->FirstChildElement("dgpsid");
+        if (stationElement != NULL && stationElement->GetText() != NULL)
+            wpt->setDGPSStationId(atoi(stationElement->GetText()));
+
+        TiXmlElement* ageElement = element->FirstChildElement("ageofdgpsdata");
+        if (ageElement != NULL && ageElement->GetText() != NULL)
+            wpt->setAgeOfDGPSData(atof(ageElement->GetText()));
+    }
+
+
     errno_t GPXFile::load(const std::string& filename)
     {
         if (!filename.empty())
@@ -37,35 +119,25 @@ namespace GPS {
         if (!gpx.LoadFile(_Filename.c_str()))
             return (errno_t) gpx.ErrorId();
         TiXmlHandle gpxHandle(&gpx);
+
+        // read tracks
         TiXmlNode* gpxTrk = gpxHandle.FirstChild("gpx").FirstChild("trk").ToNode();
         while (gpxTrk != NULL) 
         {
             _Trk = new Track;
-            TiXmlNode* nameNode = gpxTrk->FirstChild("name");
-            if (nameNode != NULL) {
-                TiXmlElement* nameElement = nameNode->ToElement();
-                if (nameElement != NULL)
-                    _Trk->setName((nameElement->GetText() != NULL)? nameElement->GetText() : "");
-            }
+
+            TiXmlElement* nameElement = gpxTrk->FirstChildElement("name");
+            if (nameElement != NULL && nameElement->GetText() != NULL)
+                _Trk->setName(nameElement->GetText());
+            
             TiXmlNode* gpxTrkSeg = gpxTrk->FirstChild("trkseg");
             while (gpxTrkSeg != NULL) {
                 TiXmlNode* gpxTrkpt = gpxTrkSeg->FirstChild("trkpt");
                 while (gpxTrkpt != NULL)
                 {
-                    TiXmlElement* trkpt = gpxTrkpt->ToElement();
-                    double lat;
-                    double lon;
-                    trkpt->QueryDoubleAttribute("lat", &lat);
-                    trkpt->QueryDoubleAttribute("lon", &lon);
-                    DoubleValue ele;
-                    TiXmlElement* gpxEle = trkpt->FirstChildElement("ele");
-                    if (gpxEle != NULL && gpxEle->GetText() != NULL)
-                        ele = atof(gpxEle->GetText());
-                    const char* timestamp = NULL;
-                    TiXmlElement* gpxTime = trkpt->FirstChildElement("time");
-                    if (gpxTime != NULL)
-                        timestamp = gpxTime->GetText();
-                    _Trk->append(new Trackpoint(lon, lat, ele, Timestamp(timestamp)));
+                    Trackpoint* trkpt = new Trackpoint;
+                    getWptType(trkpt, gpxTrkpt);
+                    _Trk->append(trkpt);
                     gpxTrkpt = gpxTrkpt->NextSibling();
                 }
                 gpxTrkSeg = gpxTrkSeg->NextSibling();
@@ -75,6 +147,40 @@ namespace GPS {
             addTrack(_Trk);
             gpxTrk = gpxTrk->NextSibling();
         }
+
+        // read waypoints
+        TiXmlNode* gpxWpt = gpxHandle.FirstChild("gpx").FirstChild("wpt").ToNode();
+        while (gpxWpt != NULL) 
+        {
+            Waypoint* wpt = new Waypoint;
+            getWptType(wpt, gpxWpt);
+            _Waypoints.push_back(wpt);
+            gpxWpt = gpxWpt->NextSibling();
+        }
+
+        // TODO: load routes
+        TiXmlNode* gpxRte = gpxHandle.FirstChild("gpx").FirstChild("rte").ToNode();
+        while (gpxRte != NULL) 
+        {
+            _Route = new Route;
+
+            TiXmlElement* nameElement = gpxTrk->FirstChildElement("name");
+            if (nameElement != NULL && nameElement->GetText() != NULL)
+                _Route->setName(nameElement->GetText());
+            
+            TiXmlNode* gpxRtept = gpxRte->FirstChild("rtept");
+            while (gpxRtept != NULL)
+            {
+                Waypoint* wpt = new Waypoint;
+                getWptType(wpt, gpxRtept);
+                _Route->append(wpt);
+                gpxRtept = gpxRtept->NextSibling();
+            }
+            _Trk->postProcess();
+            addTrack(_Trk);
+            gpxRte = gpxRte->NextSibling();
+        }
+
         return 0;
     }
 

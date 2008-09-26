@@ -11,7 +11,7 @@
 #include <string>
 
 #include "Track.h"
-
+#include "Route.h"
 
 #if !defined(WIN32) && !defined(errno_t)
 #define errno_t int
@@ -19,12 +19,16 @@
 
 namespace GPS {
 
+    class Route;
+    typedef std::vector<Route*> RouteList;
+
+
 
     /// (Teil-)Abstrakte Klasse zur Verwaltung von Dateien, die GPS-Tracks enthalten.
     class GPSTrackFile { // TODO: Die Klasse müsste eigentlich GPSFile heißen.
 
     protected:
-        /// GPS-Track
+        /// Aktueller GPS-Track.
         Track* _Trk;
 
         /// Liste von GPS-Tracks, falls GPS-Datei mehrere Tracks enthält
@@ -32,6 +36,9 @@ namespace GPS {
 
         /// Liste von Wegpunkten, falls die GPS-Datei welche enthält
         WaypointList _Waypoints;
+
+        /// Aktuelle Route.
+        Route* _Route;
 
         /// Liste von Routen, falls die GPS-Datei welche enthält
         RouteList _Routes;
@@ -170,9 +177,12 @@ namespace GPS {
         }
 
         /// Track zur Trackliste hinzufügen
-        /// @param trk Track; wenn Track = NULL, dann wird _Trk hinzugefügt.
+        /// @param trk Track; wenn trk = NULL, dann wird _Trk hinzugefügt.
         void addTrack(Track* trk = NULL);
 
+        /// Route zur Routenliste hinzufügen
+        /// @param rte Route; wenn rte = NULL, dann wird _Route hinzugefügt.
+        void addRoute(Route* rte = NULL);
     };
 
 };
