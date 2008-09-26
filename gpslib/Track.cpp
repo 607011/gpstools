@@ -31,7 +31,7 @@ namespace GPS {
         _Ascent       = o._Ascent;
         _Descent      = o._Descent;
         _Name         = o._Name;
-        // do a deeeeep copy of track points
+        // do a deeeeep copy of trackpoints
         for (TrackpointList::const_iterator i = o.samples.begin(); i != o.samples.end(); ++i)
             samples.push_back(new Trackpoint(*(*i)));
     }
@@ -464,7 +464,7 @@ namespace GPS {
             return;
         for (TrackpointList::iterator i = samples.begin(); i != samples.end(); ++i)
         {
-            Trackpoint* curr = *i;
+            Trackpoint* curr = (*i);
             if (curr != NULL && curr->kept())
             {
                 double dist = curr->rangeTo(prev);

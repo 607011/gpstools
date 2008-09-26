@@ -24,6 +24,7 @@ namespace GPS {
     void GPSTrackFile::init(const std::string& filename)
     {
         _Trk = NULL;
+        _Route = NULL;
         _Filename = filename;
         metadataLinkUrl = "http://von-und-fuer-lau.de/";
         metadataLinkText = "von und fuer lau";
@@ -59,4 +60,11 @@ namespace GPS {
         _TrkList.push_back(trk);
     }
 
+
+    void GPSTrackFile::addRoute(Route* rte)
+    {
+        if (rte == NULL)
+            rte = new Route(*_Route);
+        _Routes.push_back(rte);
+    }
 };

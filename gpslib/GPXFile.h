@@ -9,6 +9,7 @@
 #include <ctime>
 #include <string>
 
+#include "Waypoint.h"
 #include "GPSTrackFile.h"
 
 #include "tinyxml/tinyxml.h"
@@ -43,6 +44,8 @@ namespace GPS {
         /// @param onlyKept nur Trackpoints schreiben, die als _Keep markiert sind.
         errno_t write(const std::string& filename = std::string(), bool onlyKept = false);
 
+    private:
+        static void getWptType(Waypoint* wpt, TiXmlNode* gpxWpt);
     };
 
 };
