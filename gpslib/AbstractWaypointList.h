@@ -73,12 +73,13 @@ namespace GPS {
             return samples;
         }
 
+
         /// Durch den Punkte eingeschlossene Fläche in Quadratmetern zurückgeben.
         /// @return Fläche in Quadratmetern
         double area(void) const
         {
             GPS::Polygon p;
-            for (std::vector<T*>::const_iterator i = samples.begin(); i != samples.end(); ++i)
+            for (typename std::vector<T*>::const_iterator i = samples.begin(); i != samples.end(); ++i)
                 p << (*i)->toUTM();
             p.close();
             return p.area();
