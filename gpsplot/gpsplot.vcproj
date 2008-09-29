@@ -189,11 +189,27 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\dump.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\globals.cpp"
 				>
 			</File>
 			<File
+				RelativePath=".\gnuplot.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\googlemaps.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\gpsplot.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\kml.cpp"
 				>
 			</File>
 		</Filter>

@@ -16,6 +16,7 @@ const std::string DEFAULT_CHARACTER_ENCODING = "UTF-8";
 
 bool quiet = false;
 int verbose = 0;
+bool metricSystem = true;
 string eleFile;
 string hrFile;
 string eleFileCmdline;
@@ -39,8 +40,8 @@ string gnuplotExeCmdline;
 string gnuplotFormat = "png small size 640,480 enhanced interlace";
 string gnuplotSuffix = "png";
 string gnuplotXAxis = "distance";
-time_t gnuplotSpeedIntervalSeconds = 60;
-double gnuplotSpeedIntervalMeters = 100;
+time_t gnuplotSpeedIntervalSeconds = 0;
+double gnuplotSpeedIntervalMeters = 0;
 bool gnuplotLegend = true;
 bool gnuplotPadding = false;
 double gnuplotElevationPct = 0;
@@ -69,10 +70,12 @@ int kmlKmTicks = 5;
 string googleMapsFile;
 smoothedTrack_t smoothedTrack;
 
+Track* trk = NULL;
+
 
 void errmsg(std::string str, int rc, bool _usage)
 {
-    std::cerr << endl << "FEHLER (" << ((rc != 0)? rc : errno) << "): " << str << endl;
+    std::cerr << endl << _("FEHLER") << " (" << ((rc != 0)? rc : errno) << "): " << str << endl;
     if (_usage)
         usage();
     exit(EXIT_FAILURE);
@@ -81,14 +84,14 @@ void errmsg(std::string str, int rc, bool _usage)
 
 void warnmsg(std::string str)
 {
-    std::cerr << endl << "WARNUNG: " << str << endl;
+    std::cerr << endl << _("WARNUNG") << ": " << str << endl;
 }
 
 
 void loadConfiguration(void)
 {
     if (!config.LoadFile(configFile.c_str()))
-        errmsg("Kann Konfigurationsdatei '" + configFile + "' nicht laden");
+        errmsg(_("Laden der Konfigurationsdatei fehlgeschlagen"));
     TiXmlHandle configHandle(&config);
     TiXmlHandle cfgRoot = configHandle.FirstChild("config");
 
@@ -161,7 +164,7 @@ void loadConfiguration(void)
             gnuplotXAxis = cfgGnuplot.FirstChild("xaxis").Element()->GetText();
         if (cfgGnuplot.FirstChild("speedInterval").Element() != NULL && cfgGnuplot.FirstChild("speedInterval").Element()->GetText() != NULL) {
             string str = cfgGnuplot.FirstChild("speedInterval").Element()->GetText();
-            if (cfgGnuplot.FirstChild("speedInterval").Element()->Attribute("unit") != NULL) {
+            if (cfgGnuplot.FirstChild("speedInterval").Element()->Attribute("unit") != NULL) { // deprecated
                 string unit = cfgGnuplot.FirstChild("speedInterval").Element()->Attribute("unit");
                 if (unit == "meters") {
                     gnuplotSpeedIntervalMeters = atof(str.c_str());
@@ -171,7 +174,7 @@ void loadConfiguration(void)
                     gnuplotSpeedIntervalSeconds = atoi(str.c_str());
                     gnuplotSpeedIntervalMeters = 0;
                 }
-                else errmsg("Unbekannte Einheit in <speedInterval unit=\"" + unit + "\"");
+                else errmsg(_("Unbekannte Einheit in <speedInterval unit=\")") + unit + "\"");
             }
         }
         if (cfgGnuplot.FirstChild("padding").Element() != NULL && cfgGnuplot.FirstChild("padding").Element()->GetText() != NULL) {
@@ -201,6 +204,21 @@ void loadConfiguration(void)
         }
         if (cfgGnuplot.FirstChild("speed").FirstChild("source").Element() != NULL && cfgGnuplot.FirstChild("speed").FirstChild("source").Element()->GetText() != NULL)
             gnuplotSpeedSource = cfgGnuplot.FirstChild("speed").FirstChild("source").Element()->GetText();
+        if (cfgGnuplot.FirstChild("speed").FirstChild("interval").Element() != NULL && cfgGnuplot.FirstChild("speed").FirstChild("interval").Element()->GetText() != NULL) {
+            string str = cfgGnuplot.FirstChild("speed").FirstChild("interval").Element()->GetText();
+            if (cfgGnuplot.FirstChild("speed").FirstChild("interval").Element()->Attribute("unit") != NULL) {
+                string unit = cfgGnuplot.FirstChild("speed").FirstChild("interval").Element()->Attribute("unit");
+                if (unit == "meters") {
+                    gnuplotSpeedIntervalMeters = atof(str.c_str());
+                    gnuplotSpeedIntervalSeconds = 0;
+                }
+                else if (unit == "seconds") {
+                    gnuplotSpeedIntervalSeconds = atoi(str.c_str());
+                    gnuplotSpeedIntervalMeters = 0;
+                }
+                else errmsg(_("Unbekannte Einheit in <speed>/<interval unit=\")") + unit + "\">");
+            }
+        }
 
         if (cfgGnuplot.FirstChild("hr").FirstChild("height").Element() != NULL && cfgGnuplot.FirstChild("hr").FirstChild("height").Element()->GetText() != NULL)
             gnuplotHeartratePct = atof(cfgGnuplot.FirstChild("hr").FirstChild("height").Element()->GetText());
@@ -256,29 +274,29 @@ void loadConfiguration(void)
 
 void disclaimer(void)
 {
-    std::cout << "gpsplot " << VERSION << " - Höhenprofil-Plots aus GPX- oder SDF-Dateien erzeugen." << endl
+    std::cout << "gpsplot " << VERSION << " - " << _("Höhenprofil-Plots aus GPX- oder SDF-Dateien erzeugen.") << endl
         << "Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>" << endl
-        << "Alle Rechte vorbehalten." << endl << endl;
+        << _("Alle Rechte vorbehalten.") << endl << endl;
 }
 
 
 void usage(void)
 {
-    std::cout << "Aufruf: gpsplot --config <Konfigurationsdatei> [Optionen]" << endl
-        << "Optionen:" << endl
-        << "  --ele=GPX-Datei_mit_Höheninformationen" << endl
-        << "     Eintrag input/elevation/file aus Konfigurationsdatei überschreiben" << endl
-        << "  --hr=SDF-Datei_mit_HF-Informationen" << endl
-        << "     Eintrag input/hr/file aus Konfigurationsdatei überschreiben" << endl
-        << "  --gnuplot=Pfad_zu_Gnuplot-Binary" << endl
-        << "     Eintrag gnuplot/executable aus Konfigurationsdatei überschreiben" << endl
-        << "  --dump=Dump-Datei" << endl
-        << "     Eintrag dump/file aus Konfigurationsdatei überschreiben" << endl
-        << "  --quiet" << endl
-        << "     zur Laufzeit nichts in die Standardausgabe schreiben" << endl
-        << "  --verbose" << endl
-        << "     zusätzliche Infos zur Laufzeit ausgeben" << endl
-        << "  --help" << endl
-        << "     diese Hilfe ausgeben" << endl
+    std::cout << _("Aufruf: gpsplot --config <Konfigurationsdatei> [Optionen]") << endl
+        << _("Optionen:") << endl
+        << "  " << _("--ele=GPX-Datei_mit_Höheninformationen") << endl
+        << "     " << _("Eintrag input/elevation/file aus Konfigurationsdatei überschreiben") << endl
+        << "  " << _("--hr=SDF-Datei_mit_HF-Informationen") << endl
+        << "     " << _("Eintrag input/hr/file aus Konfigurationsdatei überschreiben") << endl
+        << "  " << _("--gnuplot=Pfad_zu_Gnuplot-Binary") << endl
+        << "     " << _("Eintrag gnuplot/executable aus Konfigurationsdatei überschreiben") << endl
+        << "  " << _("--dump=Dump-Datei") << endl
+        << "     " << _("Eintrag dump/file aus Konfigurationsdatei überschreiben") << endl
+        << "  " << _("--quiet") << endl
+        << "     " << _("zur Laufzeit nichts in die Standardausgabe schreiben") << endl
+        << "  " << _("--verbose") << endl
+        << "     " << _("zusätzliche Infos zur Laufzeit ausgeben") << endl
+        << "  " << _("--help") << endl
+        << "     " << _("diese Hilfe ausgeben") << endl
         << endl;
 }
