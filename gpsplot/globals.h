@@ -7,6 +7,9 @@
 
 #define VERSION "1.0.3"
 
+// gettext-Dummy
+#define _(x) x
+
 #include <string>
 #include <vector>
 #include <ctime>
@@ -32,11 +35,18 @@ extern void errmsg(std::string str, int rc = 0, bool _usage = false);
 extern void warnmsg(std::string str);
 extern void loadConfiguration(void);
 
+extern void dumpData(void);
+extern void writeGnuplotData(void);
+extern void writeKml(void);
+extern void writeGoogleMaps(void);
+extern void executeGnuplot(void);
+
 // constants & variables
 extern const double MAX_RANGE_BETWEEN_START_AND_FINISH;
 extern const std::string DEFAULT_CHARACTER_ENCODING;
 extern int verbose;
 extern bool quiet;
+extern bool metricSystem;
 extern std::string eleFile;
 extern std::string hrFile;
 extern std::string eleFileCmdline;
@@ -89,5 +99,7 @@ extern bool kmlMarkFinish;
 extern int kmlKmTicks;
 extern std::string googleMapsFile;
 extern smoothedTrack_t smoothedTrack;
+
+extern GPS::Track* trk;
 
 #endif // __GLOBALS_H_

@@ -271,7 +271,8 @@ namespace GPS {
 
     std::ostream& operator<<(std::ostream& os, const Timestamp& t)
     {
-        os << t.seconds();
+        if (os.good())
+            os << t.seconds();
         return os;
     }
 

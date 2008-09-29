@@ -118,9 +118,9 @@
   <!-- Das Douglas-Peucker-Verfahren mit einem Schwellwert von 8 Metern auf
        die Original-Höhendaten anwenden. Die übrig bleibenden Punkte sollen
        Punkt für Punkt in die Grafik eingezeichnet werden. -->
-  <smoothing id="Douglas-Peucker (8m)">
+  <smoothing id="Douglas-Peucker (5m)">
    <algorithm>douglas_peucker</algorithm>
-   <param>8</param>
+   <param>5</param>
    <draw>true</draw>
    <gnuplotOption>with points pt 5 ps 0.3</gnuplotOption>
   </smoothing>
@@ -213,6 +213,7 @@
         Abschitt mit der Kennung "Douglas-Peucker (5m)" hervorgegangenen
         Kurvendaten. -->
    <source>Douglas-Peucker (5m)</source>
+   <!-- <interval unit="meters">250</interval> -->
   </speed>
 
   <!-- Liegen zum Track Herzfrequenzdaten vor, kann man auch diese als Kurve
@@ -241,9 +242,9 @@
         sich an, nur Steigungen zwischen den Punkten zu berechnen, die nach
         der Ausdünnung mit Hilfe des Douglas-Peucker-Verfahrens übrig
         geblieben sind. Im Folgenden verwendet gpsplot die aus dem smoothing-
-        Abschitt mit der Kennung "Douglas-Peucker (8m)" hervorgegangenen
+        Abschitt mit der Kennung "Douglas-Peucker (5m)" hervorgegangenen
         Kurvendaten. -->
-   <source>Douglas-Peucker (8m)</source>
+   <source>Douglas-Peucker (5m)</source>
   </slope>
 
   <!-- Etwas Leerraum zwischen den Grafiken einfügen. Voreinstellung: false -->

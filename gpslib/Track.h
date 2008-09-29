@@ -254,7 +254,7 @@ namespace GPS {
         /// Den Track in der Horizontalen ausdünnen. Diese Methode verwendet
         /// zur Ausdünnung den Douglas-Peucker-Algorithmus.
         /// @param epsilon Schwellwert (in Metern) für den Douglas-Peucker-Algorithmus
-        /// @param ret Wenn true, werden als beibehaltenen Trackpunkte über die
+        /// @param ret Wenn true, werden die beibehaltenen Trackpunkte über die
         /// Methode remaining() zu einem neuen Track zusammengefasst und
         /// zurückgegeben. In diesem Fall ist der Aufrufer dafür verantwortlich, den
         /// Track mit delete zu löschen, falls er nicht mehr benötigt wird.
@@ -265,7 +265,7 @@ namespace GPS {
         /// Den Track in der Horizontalen und Vertikalen ausdünnen. Diese Methode verwendet
         /// zur Ausdünnung den Douglas-Peucker-Algorithmus.
         /// @param epsilon Schwellwert (in Metern) für den Douglas-Peucker-Algorithmus
-        /// @param ret Wenn true, werden als beibehaltenen Trackpunkte über die
+        /// @param ret Wenn true, werden die beibehaltenen Trackpunkte über die
         /// Methode remaining() zu einem neuen Track zusammengefasst und
         /// zurückgegeben. In diesem Fall ist der Aufrufer dafür verantwortlich, den
         /// Track mit delete zu löschen, falls er nicht mehr benötigt wird.
@@ -276,7 +276,7 @@ namespace GPS {
         /// Den Track in der Vertikalen ausdünnen. Diese Methode verwendet
         /// zur Ausdünnung den Douglas-Peucker-Algorithmus.
         /// @param epsilon Schwellwert (in Metern) für den Douglas-Peucker-Algorithmus
-        /// @param ret Wenn true, werden als beibehaltenen Trackpunkte über die
+        /// @param ret Wenn true, werden die beibehaltenen Trackpunkte über die
         /// Methode remaining() zu einem neuen Track zusammengefasst und
         /// zurückgegeben. In diesem Fall ist der Aufrufer dafür verantwortlich, den
         /// Track mit delete zu löschen, falls er nicht mehr benötigt wird.
