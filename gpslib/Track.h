@@ -16,6 +16,7 @@
 #include "Trackpoint.h"
 #include "Vector.h"
 #include "TrackLine.h"
+#include "Duration.h"
 
 namespace GPS {
 
@@ -27,6 +28,7 @@ namespace GPS {
     static const double MAX_DBL = +1e30;
 #endif
 
+    class Duration;
 
     typedef std::vector<Trackpoint*> TrackpointList;
 

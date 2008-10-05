@@ -9,6 +9,7 @@
 #include <errno.h>
 #include <ctime>
 #include "Timestamp.h"
+#include "Duration.h"
 
 #ifdef _DEBUG
 #include <iostream>
@@ -122,14 +123,14 @@ namespace GPS {
         if (fmt == NULL)
             fmt = "%Y-%m-%dT%H:%M:%SZ";
         char buf[100];
-        time_t seconds = (time_t) (ms / 1000);
+        time_t secs = seconds();
         struct tm t;
 #if defined(_WIN32) && (_MSC_VER >= 1400)
-        errno_t rc = gmtime_s(&t, &seconds);
+        errno_t rc = gmtime_s(&t, &secs);
         if (rc != 0)
             return string();
 #else
-        gmtime_r(&seconds, &t);
+        gmtime_r(&secs, &t);
 #endif
         strftime(buf, sizeof(buf), fmt, &t);
         return string(buf);
@@ -200,27 +201,33 @@ namespace GPS {
     }
 
 
-    const Timestamp operator-(const Timestamp& t1, const Timestamp& t2)
+    const Duration operator-(const Timestamp& t1, const Timestamp& t2)
     {
         if (t1 > t2)
-            return Timestamp(t1.ms - t2.ms);
+            return Duration(t1.ms - t2.ms);
         else
-            return Timestamp(t2.ms - t1.ms);
+            return Duration(t2.ms - t1.ms);
     }
 
 
-    const Timestamp operator-(const Timestamp& t1, timestamp_t msecs)
+    const Timestamp operator-(const Timestamp& t1, const Duration& t2)
+    {
+        return Timestamp(t1.ms - t2.milliseconds());
+    }
+
+
+    const Duration operator-(const Timestamp& t1, timestamp_t msecs)
     {
         if (t1.ms > msecs)
-            return Timestamp(t1.ms - msecs);
+            return Duration(t1.ms - msecs);
         else
-            return Timestamp(msecs - t1.ms);
+            return Duration(msecs - t1.ms);
     }
 
 
-    const Timestamp operator+(const Timestamp& t1, const Timestamp& t2)
+    const Timestamp operator+(const Timestamp& t1, const Duration& t2)
     {
-        return Timestamp(t1.ms + t2.ms);
+        return Timestamp(t1.ms + t2.milliseconds());
     }
 
 
@@ -233,18 +240,6 @@ namespace GPS {
     Timestamp Timestamp::current(void)
     {
         return Timestamp(1000ULL * (timestamp_t) time(0));
-    }
-
-
-    time_t Timestamp::seconds(void) const
-    {
-        return ms / 1000;
-    }
-
-
-    timestamp_t Timestamp::milliseconds(void) const
-    {
-        return ms;
     }
 
 

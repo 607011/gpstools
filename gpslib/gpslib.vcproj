@@ -169,6 +169,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\Duration.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Ellipsoid.cpp"
 				>
 			</File>
@@ -260,6 +264,10 @@
 			>
 			<File
 				RelativePath=".\AbstractWaypointList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Duration.h"
 				>
 			</File>
 			<File

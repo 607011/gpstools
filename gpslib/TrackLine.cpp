@@ -19,7 +19,7 @@ namespace GPS {
         if (_P1 != NULL && _P2 != NULL)
         {
             t = new Trackpoint(fabs(_P1->longitude() - _P2->longitude()) / 2 + GPS::min<double>(_P1->longitude(), _P2->longitude()), fabs(_P1->latitude() - _P2->latitude()) / 2 + GPS::min<double>(_P1->latitude(), _P2->latitude()));
-            t->setTimestamp(abs((long)(_P1->timestamp().milliseconds() - _P2->timestamp().milliseconds())) / 2 + GPS::min<Timestamp>(_P1->timestamp(), _P2->timestamp()));
+            t->setTimestamp(abs((long)(_P1->timestamp().milliseconds() - _P2->timestamp().milliseconds())) / 2 + GPS::min(_P1->timestamp().milliseconds(), _P2->timestamp().milliseconds()));
             t->setDistance(fabs((_P1->distance() - _P2->distance())) / 2 + GPS::min<double>(_P1->distance(), _P2->distance()));
             if (_P1->elevation().defined() && _P2->elevation().defined())
                 t->setElevation(fabs(_P1->elevation().value() - _P2->elevation().value()) / 2 + GPS::min<double>(_P1->elevation().value(), _P2->elevation().value()));

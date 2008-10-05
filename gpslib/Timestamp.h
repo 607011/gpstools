@@ -9,12 +9,15 @@
 
 namespace GPS {
 
+    class Duration;
+
     /// Typ für millisekundengenaue Zeitstempel.
     typedef unsigned long long timestamp_t;
 
     /// Die Klasse Timestamp verwaltet millisekundengenaue Zeitstempel.
     class Timestamp
     {
+
     private:
         /// Zeitstempel in Millisekunden
         timestamp_t ms;
@@ -104,15 +107,19 @@ namespace GPS {
 
         /// Differenz zweier Zeitstempel berechnen.
         /// @return Differenz
-        friend const Timestamp operator-(const Timestamp&, const Timestamp&);
+        friend const Duration operator-(const Timestamp&, const Timestamp&);
 
         /// Differenz zweier Zeitstempel berechnen.
         /// @return Differenz
-        friend const Timestamp operator-(const Timestamp&, timestamp_t);
+        friend const Timestamp operator-(const Timestamp&, const Duration&);
+
+        /// Differenz zweier Zeitstempel berechnen.
+        /// @return Differenz
+        friend const Duration operator-(const Timestamp&, timestamp_t);
 
         /// Summe zweier Zeitstempel berechnen.
         /// @return Summe
-        friend const Timestamp operator+(const Timestamp&, const Timestamp&);
+        friend const Timestamp operator+(const Timestamp&, const Duration&);
 
         /// Summe zweier Zeitstempel berechnen.
         /// @return Summe
@@ -122,15 +129,15 @@ namespace GPS {
         friend std::ostream& operator<<(std::ostream&, const Timestamp&);
 
         /// true zurückgeben, wenn Zeitstempel gleich 0
-        bool isNull(void) const { return ms == 0; }
+        inline bool isNull(void) const { return ms == 0; }
 
         /// Zeitstempel in Sekunden zurückgeben.
         /// @return Wert des Zeitstempels in Sekunden
-        time_t seconds(void) const;
+        inline time_t seconds(void) const { return ms / 1000ULL; }
 
         /// Zeitstempel in Millisekunden zurückgeben.
         /// @return Wert des Zeitstempels in Millisekunden
-        timestamp_t milliseconds(void) const;
+        inline timestamp_t milliseconds(void) const { return ms; }
 
         /// Zeitstempel vis strftime() als String formatieren und zurückgeben.
         /// Wenn kein Format-String angegeben wird, verwendet toString()
