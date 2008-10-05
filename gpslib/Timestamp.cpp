@@ -2,6 +2,7 @@
 // Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
 // Alle Rechte vorbehalten.
 
+#include <iostream>
 #include <string>
 #include <cstdio>
 #include <cstdlib>
@@ -11,9 +12,6 @@
 #include "Timestamp.h"
 #include "Duration.h"
 
-#ifdef _DEBUG
-#include <iostream>
-#endif // _DEBUG
 
 using namespace std;
 
@@ -266,8 +264,7 @@ namespace GPS {
 
     std::ostream& operator<<(std::ostream& os, const Timestamp& t)
     {
-        if (os.good())
-            os << t.seconds();
+        os << t.seconds();
         return os;
     }
 
