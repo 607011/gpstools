@@ -4,6 +4,7 @@
 
 #include <string>
 #include <ctime>
+#include <iostream>
 
 #include "Duration.h"
 #include "Timestamp.h"

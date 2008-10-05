@@ -21,7 +21,7 @@ OUTDIR=.
 STRIP=strip
 LIPO=lipo
 
-PROJ_O := $(foreach i,gpsplot globals,$i$(O))
+PROJ_O := $(foreach i,dump gnuplot googlemaps gpsplot globals kml ,$i$(O))
 PROJ_H := $(foreach i,SmoothingOptions globals,$i.h)
 LIBS := $(foreach i,../gpslib/$(OUTDIR)/libgps ../tinyxml/$(OUTDIR)/libtinyxml,$i.a)
 
@@ -90,7 +90,7 @@ distclean: clean
 	$(RM) *.js
 	$(RM) *.kml
 
-%.o: %.cpp %.h Makefile $(PROJ_H)
+%.o: %.cpp Makefile $(PROJ_H)
 	$(CXX) -c $(CXXFLAGS) $(INC) -o $@ $<
 
 ../gpslib/libgps.a:
