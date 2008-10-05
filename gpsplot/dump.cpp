@@ -21,6 +21,7 @@ void dumpData(void)
         bool circular = trk->points().front()->rangeTo(trk->points().back()) < MAX_RANGE_BETWEEN_START_AND_FINISH;
         dump << "Startzeit:        " << trk->startTimestamp().toString() << endl
              << "Zielzeit:         " << trk->finishTimestamp().toString() << endl
+             << "Dauer:            " << (trk->finishTimestamp() - trk->startTimestamp()).toString() << endl
              << setprecision(5) << noshowpoint
              << "Entfernung:       " << 1e-3*trk->distance() << "km" << endl
              << "Höhe min/max:     " << trk->minElevation().value() << "m / " << trk->maxElevation().value() << "m" << endl

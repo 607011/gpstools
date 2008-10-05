@@ -11,6 +11,7 @@
 #include "Track.h"
 #include "TrackLine.h"
 #include "Timestamp.h"
+#include "Duration.h"
 
 using namespace std;
 
@@ -742,7 +743,7 @@ namespace GPS {
             Trackpoint* trkpt = samples.front();
             if (trkpt != NULL)
             {
-                Timestamp offset = timestamp - trkpt->timestamp();
+                Duration offset = timestamp - trkpt->timestamp();
                 for (TrackpointList::iterator i = samples.begin(); i != samples.end(); ++i)
                     (*i)->setTimestamp((*i)->timestamp() - offset);
             }
