@@ -13,20 +13,6 @@ using namespace std;
 
 namespace GPS {
 
-    Duration::Duration(void) : ms(0)
-    { /* ... */ }
-
-
-    Duration::Duration(timestamp_t _MS) : ms(_MS)
-    { /* ... */ }
-
-
-    Duration::Duration(const std::string& str)
-    {
-        *this = str.c_str();
-    }
-
-
     Duration::Duration(const char* str) : ms(0)
     {
         if (str != NULL)

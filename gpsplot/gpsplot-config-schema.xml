@@ -9,7 +9,7 @@
 
     <xsd:element name="config" type="configType">
         <xsd:annotation>
-            <xsd:documentation>CONFIG is the root element in the XML file.</xsd:documentation>
+            <xsd:documentation>CONFIG ist das Wurzelelement der Konfigurationsdatei.</xsd:documentation>
         </xsd:annotation>
     </xsd:element>
 
