@@ -85,8 +85,6 @@ void usage(void)
 
 int main(int argc, char* argv[])
 {
-    if (!quiet)
-        disclaimer();
     int option_index;
     std::string amount;
     for (;;) {
@@ -139,6 +137,9 @@ int main(int argc, char* argv[])
 
     std::string gpxInFile = argv[optind++];
     std::string gpxOutFile = argv[optind++];
+
+    if (!quiet)
+        disclaimer();
 
     if (!quiet)
         cout << "Lesen von " << gpxInFile << " .. " << endl;
