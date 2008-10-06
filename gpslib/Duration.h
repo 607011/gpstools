@@ -19,7 +19,11 @@ namespace GPS {
 
     public:
         /// Konstruktor.
-        Duration(void);
+        Duration(void) : ms(0) { }
+
+        /// Konstruktor.
+        /// @param ms Millisekunden
+        Duration(timestamp_t _MS) : ms(_MS) { };
 
         /// Konstruktor.
         /// @param str Dauer als String. 
@@ -32,17 +36,16 @@ namespace GPS {
         /// Dieser Konstruktor erfüllt dieselbe Aufgabe wie Duration(const char*),
         /// @param str Dauer als String. 
         /// @see Duration(const char* str)
-        Duration(const std::string& str);
+        Duration(const std::string& str)
+        {
+            *this = str.c_str();
+        }
 
         /// Konstruktor.
         Duration(int days, int hours, int minutes, int seconds, int milliseconds = 0);
 
         /// Konstruktor.
         Duration(int hours, int minutes, int seconds);
-
-        /// Konstruktor.
-        /// @param ms Millisekunden
-        Duration(timestamp_t _MS);
 
         /// Zeitdauern addieren.
         /// @param ts Zeitstempel, der addiert werden soll.
@@ -115,8 +118,7 @@ namespace GPS {
         inline timestamp_t milliseconds(void) const { return ms; }
 
         /// Zeitdauer vis strftime() als String formatieren und zurückgeben.
-        /// Wenn kein Format-String angegeben wird, verwendet toString()
-        /// "%H:%M:%S".
+        /// Wenn kein Format-String angegeben wird, verwendet toString() "%H:%M:%S".
         /// @param fmt Format-String
         /// @return String-Repräsentation der Zeitdauer.
         std::string toString(const char* fmt = NULL) const;
