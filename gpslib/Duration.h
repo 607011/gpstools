@@ -7,22 +7,36 @@
 
 #include "Timestamp.h"
 
+#ifdef WIN32
+#include <Windows.h>
+#endif
+
 namespace GPS {
 
     class Timestamp;
 
+    /// Dauer einer Handlung.
+    /// Auflösung der Zeitmessung in Millisekunden.
     class Duration {
 
     private:
         /// Zeitstempel in Millisekunden
         timestamp_t ms;
 
+        /// Zeitstempel des Startzeitpunkts.
+#ifdef WIN32
+        LARGE_INTEGER t0;
+        LARGE_INTEGER freq;
+#else
+        Timestamp t0;
+#endif
+
     public:
         /// Konstruktor.
         Duration(void) : ms(0) { }
 
         /// Konstruktor.
-        /// @param ms Millisekunden
+        /// @param _MS Millisekunden
         Duration(timestamp_t _MS) : ms(_MS) { };
 
         /// Konstruktor.
@@ -46,6 +60,14 @@ namespace GPS {
 
         /// Konstruktor.
         Duration(int hours, int minutes, int seconds);
+
+        /// Starten der Zeitmessung.
+        /// @see stop
+        void start(void);
+
+        /// Stoppen der Zeitmessung.    
+        /// @see start
+        void stop(void);
 
         /// Zeitdauern addieren.
         /// @param ts Zeitstempel, der addiert werden soll.

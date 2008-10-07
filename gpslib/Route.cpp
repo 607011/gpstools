@@ -8,15 +8,11 @@
 
 namespace GPS {
 
-    Route::Route(void)
-    { /* ... */ }
-
-
-    Route::Route(const Route& o)
+    Route::Route(const Route& other)
     { 
-        _Name = o._Name;
+        copyMembers(other);
         // do a deeeeep copy of waypoints
-        for (WaypointList::const_iterator i = o.samples.begin(); i != o.samples.end(); ++i)
+        for (WaypointList::const_iterator i = other.samples.begin(); i != other.samples.end(); ++i)
             samples.push_back(new Waypoint(*(*i)));
     }
 

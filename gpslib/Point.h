@@ -47,18 +47,82 @@ namespace GPS {
         /// @return Vektor, der die Differenz zwischen den beiden Punkten repräsentiert.
         friend Vector operator-(const Point& p1, const Point& p2);
 
+        /// Einen Vektor von einem Punkt subtrahieren.
+        /// Das Ergebnis der Subtraktion ist ein Punkt.
+        /// @param p Punkt, von dem abgezogen werden soll.
+        /// @param v Vektor, der abgezogen werden soll
+        /// @return Punkt, der die Differenz repräsentiert.
         friend Point operator-(const Point& p, const Vector& v);
+
+        /// Einen Vektor auf einen Punkt addieren.
+        /// Das Ergebnis der Addition ist ein Punkt.
+        /// @param p zu addierender Punkt
+        /// @param v zu addierender Vektor
+        /// @return Punkt, der die Summe repräsentiert.
         friend Point operator+(const Point& p, const Vector& v);
-        friend Point operator*(const Point& p, double c);
-        friend Point operator*(double c, const Point& p);
-        friend Point operator/(const Point& p, double c);
+
+        /// Zwei Punkte addieren.
+        /// Das Ergebnis der Addition ist ein Punkt.
+        /// @param p1 zu addierender Punkt
+        /// @param p2 zu addierender Punkt
+        /// @return Punkt, der die Summe repräsentiert.
         friend Point operator+(const Point& p1, const Point& p2);
+
+        /// Einen Punkt mit einem Skalar multiplizieren.
+        /// Das Produkt ist ein Punkt.
+        /// @param p Punkt
+        /// @param c Skalar
+        /// @return Punkt, der die Summe repräsentiert.
+        friend Point operator*(const Point& p, double c);
+
+        /// Einen Punkt mit einem Skalar multiplizieren.
+        /// Das Produkt ist ein Punkt.
+        /// @param c Skalar
+        /// @param p Punkt
+        /// @return Punkt, der das Produkt repräsentiert.
+        friend Point operator*(double c, const Point& p);
+
+        /// Einen Punkt durch einen Skalar teilen.
+        /// Das Produkt ist ein Punkt.
+        /// @param p Punkt
+        /// @param c Skalar
+        /// @return Quotient aus Punkt und Skalar.
+        friend Point operator/(const Point& p, double c);
+
+        /// Zwei Punkte miteinander vergleichen.
+        /// @param p1 zu vergleichender Punkt
+        /// @param p2 zu vergleichender Punkt
+        /// @return true, wenn Punkte identisch sind, sonst false
         friend bool operator==(const Point& p1, const Point& p2);
+
+        /// Zwei Punkte miteinander vergleichen.
+        /// @param p1 zu vergleichender Punkt
+        /// @param p2 zu vergleichender Punkt
+        /// @return true, wenn Punkte sich unterscheiden, sonst false
         friend bool operator!=(const Point& p1, const Point& p2);
 
+        /// Einen Vektor von einem Punkt abziehen.
+        /// Das Ergebnis der Subtraktion ist ein Punkt.
+        /// @param v zu subtrahierender Vektor
+        /// @return Punkt, der die Differenz repräsentiert
         Point& operator-=(const Vector& v);
+
+        /// Einen Vektor auf einen Punkt addieren.
+        /// Das Ergebnis der Addition ist ein Punkt.
+        /// @param v zu addierender Vektor
+        /// @return Punkt, auf den die Spitze des Vektorpfeils zeigt.
         Point& operator+=(const Vector& v);
+
+        /// Einen Punkt mit einem Skalar multiplizieren.
+        /// Das Produkt ist ein Punkt.
+        /// @param c Skalar
+        /// @return Punkt, der die Summe repräsentiert.
         Point& operator*=(double c);
+
+        /// Einen Punkt durch einen Skalar teilen.
+        /// Das Produkt ist ein Punkt.
+        /// @param c Skalar
+        /// @return Quotient aus Punkt und Skalar.
         Point& operator/=(double c);
 
         /// Den senkrechten Abstand des Punktes zu der gedachten Geraden

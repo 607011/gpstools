@@ -21,12 +21,12 @@ using namespace std;
 using namespace GPS;
 
 enum _direction {
-    PLUS = +1,
-    MINUS = -1,
-    ABSOLUTE = 0
+    DIR_PLUS = +1,
+    DIR_MINUS = -1,
+    DIR_ABSOLUTE = 0
 };
 
-int direction = ABSOLUTE;
+int direction = DIR_ABSOLUTE;
 bool quiet = false;
 bool doDump = false;
 int verbose = 0;
@@ -107,15 +107,15 @@ int main(int argc, char* argv[])
             ++verbose;
             break;
         case SELECT_PLUS:
-            direction = PLUS;
+            direction = DIR_PLUS;
             amount = optarg;
             break;
         case SELECT_MINUS:
-            direction = MINUS;
+            direction = DIR_MINUS;
             amount = optarg;
             break;
         case SELECT_TO:
-            direction = ABSOLUTE;
+            direction = DIR_ABSOLUTE;
             amount = optarg;
             break;
         case SELECT_QUIET:
@@ -152,14 +152,14 @@ int main(int argc, char* argv[])
 
     switch (direction)
     {
-    case ABSOLUTE:
+    case DIR_ABSOLUTE:
         gpx.track()->shiftTimestamps(Timestamp(amount));
         break;
-    case MINUS:
+    case DIR_MINUS:
         amount = "-" + amount;
         gpx.track()->shiftTimestamps(amount);
         break;
-    case PLUS:
+    case DIR_PLUS:
         amount = "+" + amount;
         gpx.track()->shiftTimestamps(amount);
         break;

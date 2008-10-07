@@ -133,7 +133,7 @@ int main(int argc, char* argv[])
         Stochastics* sres = cmp.track()->compareTo(refTrack);
         double lengthDiff = cmp.track()->distance() - ref.track()->distance();
         cout << "  mittlerer Fehler    = " << noshowpoint << left << setprecision(8) << sres->average() << " m" << endl
-            << "  min./max. Fehler    = " << sres->min() << " / " << sres->max() << endl
+            << "  min./max. Fehler    = " << sres->minimum() << " / " << sres->maximum() << endl
             << "  Varianz             = " << sres->variance() << endl
             << "  Standardabweichung  = " << sres->standardDeviation() << endl
             << "  Streckendifferenz   = " << lengthDiff << " m" << endl

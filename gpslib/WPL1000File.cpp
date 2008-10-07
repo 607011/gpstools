@@ -11,7 +11,7 @@
 #ifdef _DEBUG
 #include <iostream>
 #include <iomanip>
-#endif // _DEBUG
+#endif
 
 
 using namespace std;
@@ -63,12 +63,12 @@ namespace GPS {
         Timestamp ts(_T.year(), _T.month(), _T.day(), _T.hours(), _T.mins(), _T.secs());
         switch (_Type)
         {
-        case WAYPOINT:
+        case WPL1000_WAYPOINT:
             setName(ts.toString());
             // fall-through
-        case TRACKPOINT:
+        case WPL1000_TRACKPOINT:
             // fall-through
-        case TRACK_START:
+        case WPL1000_TRACK_START:
             setLatitude(1e-7 * (double) _WPL1000lat);
             setLongitude(1e-7 * (double) _WPL1000lon);
             setElevation((double) _WPL1000ele);
@@ -97,7 +97,7 @@ namespace GPS {
         while (!nvpipe.eof())
         {
             int rc = point.readFrom(nvpipe);
-            if (rc == WPL1000Data::END_OF_LOG)
+            if (rc == WPL1000Data::WPL1000_END_OF_LOG)
             {
                 if (_Trk != NULL && _Trk->points().size() > 0)
                     addTrack(_Trk);
@@ -105,15 +105,15 @@ namespace GPS {
             }
             switch (rc)
             {
-            case WPL1000Data::TRACK_START:
+            case WPL1000Data::WPL1000_TRACK_START:
                 // fall-through
-            case WPL1000Data::TRACKPOINT:
+            case WPL1000Data::WPL1000_TRACKPOINT:
                 if (_Trk == NULL)
                     _Trk = new Track;
                 if (!point.isNull())
                 {
                     Trackpoint* trkpt = new Trackpoint(point);
-                    if ((point.type() == WPL1000Data::TRACK_START) && (_Trk->points().size() > 0))
+                    if ((point.type() == WPL1000Data::WPL1000_TRACK_START) && (_Trk->points().size() > 0))
                     {
                         addTrack(_Trk);
                         _Trk = NULL;
@@ -122,7 +122,7 @@ namespace GPS {
                         _Trk->append(trkpt);
                 }
                 break;
-            case WPL1000Data::WAYPOINT:
+            case WPL1000Data::WPL1000_WAYPOINT:
                 if (!point.isNull())
                 {
                     Waypoint* wpt = new Waypoint(point);

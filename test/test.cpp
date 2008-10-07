@@ -28,7 +28,7 @@ bool doWrite = true;
 
 void polygon_tests(void)
 {
-    Polygon p;
+    GPS::Polygon p;
     p << Point(1, 1) << Point(1, 3) << Point(5, 3);
     p.close();
     cout << "perimeter = " << p.perimeter() << endl
