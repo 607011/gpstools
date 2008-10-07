@@ -43,6 +43,29 @@ namespace GPS {
     }
 
 
+    void Duration::start(void)
+    {
+#ifdef WIN32
+        QueryPerformanceFrequency(&freq);
+        QueryPerformanceCounter(&t0);
+#else
+        t0 = Timestamp::current();
+#endif
+    }
+
+
+    void Duration::stop(void)
+    {
+#ifdef WIN32
+        LARGE_INTEGER t1;
+        QueryPerformanceCounter(&t1);
+        ms = 1000LL * (t1.QuadPart - t0.QuadPart) / freq.QuadPart;
+#else
+        ms = (Timestamp::current() - t0).milliseconds();
+#endif
+    }
+
+
     timestamp_t Duration::toMs(int days, int hours, int minutes, int seconds, int milliseconds)
     {
         timestamp_t ts = 1000ULL * ((timestamp_t) days * 86400ULL + (timestamp_t) hours * 3600ULL + (timestamp_t) minutes * 60ULL + (timestamp_t) seconds) + milliseconds;

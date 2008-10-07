@@ -19,10 +19,11 @@ namespace GPS {
 
     typedef std::vector<Waypoint*> WaypointList;
 
+    /// Eine Route, das heiﬂt eine gerichtete Wegpunktliste gem‰ﬂ http://www.topografix.com/GPX/1/1
     class Route : public AbstractWaypointList<Waypoint> {
     public:
         /// Konstruktor.
-        Route(void);
+        Route(void) { }
 
         /// Copy-Konstruktor.
         /// @param other Route, deren s‰mtliche Daten inklusive Kopien ihrer Wegpunkte in das

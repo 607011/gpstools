@@ -23,15 +23,30 @@ namespace GPS {
         std::string _Source;
         std::string _Link;
         std::string _Type;
-        IntValue _Number;
+
+        /// z.B. Nummer der Route
+        UnsignedIntValue _Number; 
 
         /// Chronologisch sortierte Liste der Trackpunkte.
         std::vector<PointType*> samples;
 
     public:
+        /// Konstruktor.
         AbstractWaypointList(void) { /* ... */ }
 
+        /// Destruktor.
         virtual ~AbstractWaypointList(void) { /* ... */ }
+
+        /// Kopieren der Membervariablen aus einem anderen AbstractWaypointList-Objekt
+        inline void copyMembers(const AbstractWaypointList& o)
+        {
+            _Name = o._Name;
+            _Comment = o._Comment;
+            _Description = o._Description;
+            _Source = o._Source;
+            _Link = o._Link;
+            _Type = o._Type;
+        }
 
         /// Entfernung zum Start in Metern zurückgeben.
         /// @return Entfernung in Metern

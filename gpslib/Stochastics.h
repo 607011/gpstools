@@ -53,10 +53,10 @@ namespace GPS {
         inline double median(void) const { return _Median; }
 
         /// Den Wert des kleinsten Messwerts zurückgeben.
-        inline double min(void) const { return _Min; }
+        inline double minimum(void) const { return _Min; }
 
         /// Den Wert des größten Messwerts zurückgeben.
-        inline double max(void) const { return _Max; }
+        inline double maximum(void) const { return _Max; }
 
         /// Die Anzahl der Messwerte zurückgeben.
         inline size_t N(void) const { return _Values.size(); }
