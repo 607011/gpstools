@@ -58,6 +58,8 @@ extern std::string authorName;
 extern std::string authorMail;
 extern std::string authorUrl;
 extern std::string encoding;
+extern std::string trackSelector;
+extern std::string trackSelectBy;
 extern TiXmlDocument config;
 extern time_t eleTimeOffset;
 extern time_t hrTimeOffset;

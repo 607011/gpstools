@@ -4,7 +4,6 @@
 
 #include "./globals.h"
 
-using namespace std;
 using namespace GPS;
 
 /// If range between start and finish exceeds 100 meters, assume
@@ -17,65 +16,67 @@ const std::string DEFAULT_CHARACTER_ENCODING = "UTF-8";
 bool quiet = false;
 int verbose = 0;
 bool metricSystem = true;
-string eleFile;
-string hrFile;
-string eleFileCmdline;
-string hrFileCmdline;
-string configFile;
-string title;
-string url;
-string authorName;
-string authorMail;
-string authorUrl;
-string encoding = DEFAULT_CHARACTER_ENCODING;
+std::string eleFile;
+std::string hrFile;
+std::string eleFileCmdline;
+std::string hrFileCmdline;
+std::string configFile;
+std::string title;
+std::string url;
+std::string authorName;
+std::string authorMail;
+std::string authorUrl;
+std::string encoding = DEFAULT_CHARACTER_ENCODING;
+std::string trackSelector;
+std::string trackSelectBy;
 TiXmlDocument config;
 time_t eleTimeOffset = 0;
 time_t hrTimeOffset = 0;
-vector<SmoothingOptions*> smoothings;
-const string MISSING = "?";
-const string gnuplotPltFile = "gnuplot.plt";
-string gnuplotDatFile;
-string gnuplotExe;
-string gnuplotExeCmdline;
-string gnuplotFormat = "png small size 640,480 enhanced interlace";
-string gnuplotSuffix = "png";
-string gnuplotXAxis = "distance";
+std::vector<SmoothingOptions*> smoothings;
+const std::string MISSING = "?";
+const std::string gnuplotPltFile = "gnuplot.plt";
+std::string gnuplotDatFile;
+std::string gnuplotExe;
+std::string gnuplotExeCmdline;
+std::string gnuplotFormat = "png small size 640,480 enhanced interlace";
+std::string gnuplotSuffix = "png";
+std::string gnuplotXAxis = "distance";
 time_t gnuplotSpeedIntervalSeconds = 0;
 double gnuplotSpeedIntervalMeters = 0;
 bool gnuplotLegend = true;
 bool gnuplotPadding = false;
 double gnuplotElevationPct = 0;
-IntValue gnuplotElevationLo;
-IntValue gnuplotElevationHi;
+GPS::IntValue gnuplotElevationLo;
+GPS::IntValue gnuplotElevationHi;
 double gnuplotSpeedPct = 0;
-IntValue gnuplotSpeedLo;
-IntValue gnuplotSpeedHi;
+GPS::IntValue gnuplotSpeedLo;
+GPS::IntValue gnuplotSpeedHi;
 bool gnuplotSpeedAverage = false;
-string gnuplotSpeedSource;
+std::string gnuplotSpeedSource;
 double gnuplotHeartratePct = 0;
-IntValue gnuplotHeartrateLo;
-IntValue gnuplotHeartrateHi;
+GPS::IntValue gnuplotHeartrateLo;
+GPS::IntValue gnuplotHeartrateHi;
 bool gnuplotHeartrateAverage = false;
 double gnuplotSlopePct = 0;
-IntValue gnuplotSlopeLo;
-IntValue gnuplotSlopeHi;
-string gnuplotSlopeSource;
-string dumpFile;
-string dumpFileCmdline;
-string kmlFile;
-string staticImagesUrl = "http://von-und-fuer-lau.de/images";
+GPS::IntValue gnuplotSlopeLo;
+GPS::IntValue gnuplotSlopeHi;
+std::string gnuplotSlopeSource;
+std::string dumpFile;
+std::string dumpFileCmdline;
+std::string kmlFile;
+std::string staticImagesUrl = "http://von-und-fuer-lau.de/images";
 bool kmlMarkStart = true;
 bool kmlMarkFinish = true;
 int kmlKmTicks = 5;
-string googleMapsFile;
+std::string googleMapsFile;
 smoothedTrack_t smoothedTrack;
 
-Track* trk = NULL;
+GPS::Track* trk = NULL;
 
 
 void errmsg(std::string str, int rc, bool _usage)
 {
-    std::cerr << endl << _("FEHLER") << " (" << ((rc != 0)? rc : errno) << "): " << str << endl;
+    std::cerr << std::endl << _("FEHLER") << " (" << ((rc != 0)? rc : errno) << "): " << str << std::endl;
     if (_usage)
         usage();
     exit(EXIT_FAILURE);
@@ -84,7 +85,7 @@ void errmsg(std::string str, int rc, bool _usage)
 
 void warnmsg(std::string str)
 {
-    std::cerr << endl << _("WARNUNG") << ": " << str << endl;
+    std::cerr << std::endl << _("WARNUNG") << ": " << str << std::endl;
 }
 
 
@@ -101,12 +102,17 @@ void loadConfiguration(void)
         if (cfgGeneral.FirstChild("title").Element()->GetText() != NULL)
             title = cfgGeneral.FirstChild("title").ToElement()->GetText();
     if (cfgGeneral.FirstChild("url").Element() != NULL)
-        if (cfgGeneral.FirstChild("url").Element()->GetText() != NULL)
+    {
+        if (cfgGeneral.FirstChild("url").Element()->GetText() != NULL) 
             url = cfgGeneral.FirstChild("url").Element()->GetText();
+    }
     if (cfgGeneral.FirstChild("encoding").Element() != NULL)
+    {
         if (cfgGeneral.FirstChild("encoding").Element()->GetText() != NULL)
             encoding = cfgGeneral.FirstChild("encoding").Element()->GetText();
-    if (cfgGeneral.FirstChild("author").FirstChild("name").Element() != NULL) {
+    }
+    if (cfgGeneral.FirstChild("author").FirstChild("name").Element() != NULL)
+    {
         if (cfgGeneral.FirstChild("author").FirstChild("name").Element()->GetText() != NULL)
             authorName =  cfgGeneral.FirstChild("author").FirstChild("name").Element()->GetText();
         if (cfgGeneral.FirstChild("author").FirstChild("email").Element()->GetText() != NULL)
@@ -122,6 +128,11 @@ void loadConfiguration(void)
         eleFile = cfgInputElevation.FirstChild("file").Element()->GetText();
     if (cfgInputElevation.FirstChild("offset").Element() != NULL && cfgInputElevation.FirstChild("offset").Element()->GetText() != NULL)
         eleTimeOffset = Timestamp::offsetToSeconds(cfgInputElevation.FirstChild("offset").Element()->GetText());
+    if (cfgInputElevation.FirstChild("select").Element() != NULL && cfgInputElevation.FirstChild("select").Element()->GetText() != NULL)
+    {
+        trackSelector = cfgInputElevation.FirstChild("select").Element()->GetText();
+        trackSelectBy = cfgInputElevation.FirstChild("select").Element()->Attribute("by");
+    }
     TiXmlHandle cfgInputHeartrate = cfgInput.FirstChild("heartrate");
     if (cfgInputHeartrate.FirstChild("file").Element() != NULL && cfgInputHeartrate.FirstChild("file").Element()->GetText() != NULL)
         hrFile = cfgInputHeartrate.FirstChild("file").Element()->GetText();
@@ -133,7 +144,8 @@ void loadConfiguration(void)
     while (calcSmoothing != NULL)
     {
         TiXmlElement* calcEle = calcSmoothing->ToElement();
-        if (calcEle != NULL) {
+        if (calcEle != NULL)
+        {
             SmoothingOptions* opt = new SmoothingOptions;
             opt->id = calcEle->Attribute("id");
             if (calcEle->FirstChildElement("algorithm") != NULL && calcEle->FirstChildElement("algorithm")->GetText() != NULL)
@@ -142,8 +154,9 @@ void loadConfiguration(void)
                 opt->gnuplotOption = calcEle->FirstChildElement("gnuplotOption")->GetText();
             if (calcEle->FirstChildElement("param") != NULL && calcEle->FirstChildElement("param")->GetText() != NULL)
                 opt->param = atof(calcEle->FirstChildElement("param")->GetText());
-            if (calcEle->FirstChildElement("draw") != NULL) {
-                string draw = (calcEle->FirstChildElement("draw")->GetText() != NULL)? calcEle->FirstChildElement("draw")->GetText() : "";
+            if (calcEle->FirstChildElement("draw") != NULL)
+            {
+                std::string draw = (calcEle->FirstChildElement("draw")->GetText() != NULL)? calcEle->FirstChildElement("draw")->GetText() : "";
                 opt->draw = (draw == "true");
             }
             smoothings.push_back(opt);
@@ -153,7 +166,8 @@ void loadConfiguration(void)
 
     // reading <gnuplot> configuration data
     TiXmlHandle cfgGnuplot = cfgRoot.FirstChild("gnuplot");
-    if (cfgGnuplot.Element() != NULL) {
+    if (cfgGnuplot.Element() != NULL)
+    {
         if (cfgGnuplot.FirstChild("executable").Element() != NULL && cfgGnuplot.FirstChild("executable").Element()->GetText() != NULL)
             gnuplotExe = cfgGnuplot.FirstChild("executable").Element()->GetText();
         if (cfgGnuplot.FirstChild("format").Element() != NULL && cfgGnuplot.FirstChild("format").Element()->GetText() != NULL)
@@ -163,26 +177,31 @@ void loadConfiguration(void)
         if (cfgGnuplot.FirstChild("xaxis").Element() != NULL && cfgGnuplot.FirstChild("xaxis").Element()->GetText() != NULL)
             gnuplotXAxis = cfgGnuplot.FirstChild("xaxis").Element()->GetText();
         if (cfgGnuplot.FirstChild("speedInterval").Element() != NULL && cfgGnuplot.FirstChild("speedInterval").Element()->GetText() != NULL) {
-            string str = cfgGnuplot.FirstChild("speedInterval").Element()->GetText();
+            std::string str = cfgGnuplot.FirstChild("speedInterval").Element()->GetText();
             if (cfgGnuplot.FirstChild("speedInterval").Element()->Attribute("unit") != NULL) { // deprecated
-                string unit = cfgGnuplot.FirstChild("speedInterval").Element()->Attribute("unit");
-                if (unit == "meters") {
+                warnmsg(_("Verwenden Sie <speed>/<interval> statt <speedInterval>"));
+                std::string unit = cfgGnuplot.FirstChild("speedInterval").Element()->Attribute("unit");
+                if (unit == "meters")
+                {
                     gnuplotSpeedIntervalMeters = atof(str.c_str());
                     gnuplotSpeedIntervalSeconds = 0;
                 }
-                else if (unit == "seconds") {
+                else if (unit == "seconds")
+                {
                     gnuplotSpeedIntervalSeconds = atoi(str.c_str());
                     gnuplotSpeedIntervalMeters = 0;
                 }
                 else errmsg(_("Unbekannte Einheit in <speedInterval unit=\")") + unit + "\"");
             }
         }
-        if (cfgGnuplot.FirstChild("padding").Element() != NULL && cfgGnuplot.FirstChild("padding").Element()->GetText() != NULL) {
-            string str = cfgGnuplot.FirstChild("padding").Element()->GetText();
+        if (cfgGnuplot.FirstChild("padding").Element() != NULL && cfgGnuplot.FirstChild("padding").Element()->GetText() != NULL)
+        {
+            std::string str = cfgGnuplot.FirstChild("padding").Element()->GetText();
             gnuplotPadding = (str == "true");
         }
-        if (cfgGnuplot.FirstChild("legend").Element() != NULL && cfgGnuplot.FirstChild("legend").Element()->GetText() != NULL) {
-            string str = cfgGnuplot.FirstChild("legend").Element()->GetText();
+        if (cfgGnuplot.FirstChild("legend").Element() != NULL && cfgGnuplot.FirstChild("legend").Element()->GetText() != NULL)
+        {
+            std::string str = cfgGnuplot.FirstChild("legend").Element()->GetText();
             gnuplotLegend = (str == "true");
         }
         if (cfgGnuplot.FirstChild("elevation").FirstChild("height").Element() != NULL && cfgGnuplot.FirstChild("elevation").FirstChild("height").Element()->GetText() != NULL)
@@ -198,21 +217,26 @@ void loadConfiguration(void)
             gnuplotSpeedLo = atoi(cfgGnuplot.FirstChild("speed").FirstChild("range").FirstChild("lo").Element()->GetText());
         if (cfgGnuplot.FirstChild("speed").FirstChild("range").FirstChild("hi").Element() != NULL && cfgGnuplot.FirstChild("speed").FirstChild("range").FirstChild("hi").Element()->GetText() != NULL)
             gnuplotSpeedHi = atoi(cfgGnuplot.FirstChild("speed").FirstChild("range").FirstChild("hi").Element()->GetText());
-        if (cfgGnuplot.FirstChild("speed").FirstChild("average").Element() != NULL && cfgGnuplot.FirstChild("speed").FirstChild("average").Element()->GetText() != NULL) {
-            string str = cfgGnuplot.FirstChild("speed").FirstChild("average").Element()->GetText();
+        if (cfgGnuplot.FirstChild("speed").FirstChild("average").Element() != NULL && cfgGnuplot.FirstChild("speed").FirstChild("average").Element()->GetText() != NULL)
+        {
+            std::string str = cfgGnuplot.FirstChild("speed").FirstChild("average").Element()->GetText();
             gnuplotSpeedAverage = (str == "true");
         }
         if (cfgGnuplot.FirstChild("speed").FirstChild("source").Element() != NULL && cfgGnuplot.FirstChild("speed").FirstChild("source").Element()->GetText() != NULL)
             gnuplotSpeedSource = cfgGnuplot.FirstChild("speed").FirstChild("source").Element()->GetText();
-        if (cfgGnuplot.FirstChild("speed").FirstChild("interval").Element() != NULL && cfgGnuplot.FirstChild("speed").FirstChild("interval").Element()->GetText() != NULL) {
-            string str = cfgGnuplot.FirstChild("speed").FirstChild("interval").Element()->GetText();
-            if (cfgGnuplot.FirstChild("speed").FirstChild("interval").Element()->Attribute("unit") != NULL) {
-                string unit = cfgGnuplot.FirstChild("speed").FirstChild("interval").Element()->Attribute("unit");
-                if (unit == "meters") {
+        if (cfgGnuplot.FirstChild("speed").FirstChild("interval").Element() != NULL && cfgGnuplot.FirstChild("speed").FirstChild("interval").Element()->GetText() != NULL)
+        {
+            std::string str = cfgGnuplot.FirstChild("speed").FirstChild("interval").Element()->GetText();
+            if (cfgGnuplot.FirstChild("speed").FirstChild("interval").Element()->Attribute("unit") != NULL)
+            {
+                std::string unit = cfgGnuplot.FirstChild("speed").FirstChild("interval").Element()->Attribute("unit");
+                if (unit == "meters")
+                {
                     gnuplotSpeedIntervalMeters = atof(str.c_str());
                     gnuplotSpeedIntervalSeconds = 0;
                 }
-                else if (unit == "seconds") {
+                else if (unit == "seconds")
+                {
                     gnuplotSpeedIntervalSeconds = atoi(str.c_str());
                     gnuplotSpeedIntervalMeters = 0;
                 }
@@ -227,7 +251,7 @@ void loadConfiguration(void)
         if (cfgGnuplot.FirstChild("hr").FirstChild("range").FirstChild("hi").Element() != NULL && cfgGnuplot.FirstChild("hr").FirstChild("range").FirstChild("hi").Element()->GetText() != NULL)
             gnuplotHeartrateHi = atoi(cfgGnuplot.FirstChild("hr").FirstChild("range").FirstChild("hi").Element()->GetText());
         if (cfgGnuplot.FirstChild("hr").FirstChild("average").Element() != NULL && cfgGnuplot.FirstChild("hr").FirstChild("average").Element()->GetText() != NULL) {
-            string str = cfgGnuplot.FirstChild("hr").FirstChild("average").Element()->GetText();
+            std::string str = cfgGnuplot.FirstChild("hr").FirstChild("average").Element()->GetText();
             gnuplotHeartrateAverage = (str == "true");
         }
 
@@ -256,15 +280,18 @@ void loadConfiguration(void)
     if (cfgKml.Element() != NULL) {
         if (cfgKml.FirstChild("file").Element() != NULL && cfgKml.FirstChild("file").Element()->GetText() != NULL)
             kmlFile = cfgKml.FirstChild("file").Element()->GetText();
-        if (cfgKml.FirstChild("start").Element() != NULL && cfgKml.FirstChild("start").Element()->GetText() != NULL) {
-            string str = cfgKml.FirstChild("start").Element()->GetText();
+        if (cfgKml.FirstChild("start").Element() != NULL && cfgKml.FirstChild("start").Element()->GetText() != NULL)
+        {
+            std::string str = cfgKml.FirstChild("start").Element()->GetText();
             kmlMarkStart = (str == "true");
         }
-        if (cfgKml.FirstChild("finish").Element() != NULL && cfgKml.FirstChild("finish").Element()->GetText() != NULL) {
-            string str = cfgKml.FirstChild("finish").Element()->GetText();
+        if (cfgKml.FirstChild("finish").Element() != NULL && cfgKml.FirstChild("finish").Element()->GetText() != NULL)
+        {
+            std::string str = cfgKml.FirstChild("finish").Element()->GetText();
             kmlMarkFinish = (str == "true");
         }
-        if (cfgKml.FirstChild("ticks").Element() != NULL && cfgKml.FirstChild("ticks").Element()->GetText() != NULL) {
+        if (cfgKml.FirstChild("ticks").Element() != NULL && cfgKml.FirstChild("ticks").Element()->GetText() != NULL)
+        {
             const char* str = cfgKml.FirstChild("ticks").Element()->GetText();
             kmlKmTicks = atoi(str);
         }
@@ -274,29 +301,29 @@ void loadConfiguration(void)
 
 void disclaimer(void)
 {
-    std::cout << "gpsplot " << VERSION << " - " << _("Höhenprofil-Plots aus GPX- oder SDF-Dateien erzeugen.") << endl
-        << "Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>" << endl
-        << _("Alle Rechte vorbehalten.") << endl << endl;
+    std::cout << "gpsplot " << VERSION << " - " << _("Höhenprofil-Plots aus GPX- oder SDF-Dateien erzeugen.") << std::endl
+        << "Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>" << std::endl
+        << _("Alle Rechte vorbehalten.") << std::endl << std::endl;
 }
 
 
 void usage(void)
 {
-    std::cout << _("Aufruf: gpsplot --config <Konfigurationsdatei> [Optionen]") << endl
-        << _("Optionen:") << endl
-        << "  " << _("--ele=GPX-Datei_mit_Höheninformationen") << endl
-        << "     " << _("Eintrag input/elevation/file aus Konfigurationsdatei überschreiben") << endl
-        << "  " << _("--hr=SDF-Datei_mit_HF-Informationen") << endl
-        << "     " << _("Eintrag input/hr/file aus Konfigurationsdatei überschreiben") << endl
-        << "  " << _("--gnuplot=Pfad_zu_Gnuplot-Binary") << endl
-        << "     " << _("Eintrag gnuplot/executable aus Konfigurationsdatei überschreiben") << endl
-        << "  " << _("--dump=Dump-Datei") << endl
-        << "     " << _("Eintrag dump/file aus Konfigurationsdatei überschreiben") << endl
-        << "  " << _("--quiet") << endl
-        << "     " << _("zur Laufzeit nichts in die Standardausgabe schreiben") << endl
-        << "  " << _("--verbose") << endl
-        << "     " << _("zusätzliche Infos zur Laufzeit ausgeben") << endl
-        << "  " << _("--help") << endl
-        << "     " << _("diese Hilfe ausgeben") << endl
-        << endl;
+    std::cout << _("Aufruf: gpsplot --config <Konfigurationsdatei> [Optionen]") << std::endl
+        << _("Optionen:") << std::endl
+        << "  " << _("--ele=GPX-Datei_mit_Höheninformationen") << std::endl
+        << "     " << _("Eintrag input/elevation/file aus Konfigurationsdatei überschreiben") << std::endl
+        << "  " << _("--hr=SDF-Datei_mit_HF-Informationen") << std::endl
+        << "     " << _("Eintrag input/hr/file aus Konfigurationsdatei überschreiben") << std::endl
+        << "  " << _("--gnuplot=Pfad_zu_Gnuplot-Binary") << std::endl
+        << "     " << _("Eintrag gnuplot/executable aus Konfigurationsdatei überschreiben") << std::endl
+        << "  " << _("--dump=Dump-Datei") << std::endl
+        << "     " << _("Eintrag dump/file aus Konfigurationsdatei überschreiben") << std::endl
+        << "  " << _("--quiet") << std::endl
+        << "     " << _("zur Laufzeit nichts in die Standardausgabe schreiben") << std::endl
+        << "  " << _("--verbose") << std::endl
+        << "     " << _("zusätzliche Infos zur Laufzeit ausgeben") << std::endl
+        << "  " << _("--help") << std::endl
+        << "     " << _("diese Hilfe ausgeben") << std::endl
+        << std::endl;
 }

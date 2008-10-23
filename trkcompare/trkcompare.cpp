@@ -16,7 +16,6 @@
 #include "gpslib/GPXFile.h"
 #include "gpslib/Stochastics.h"
 
-using namespace std;
 using namespace GPS;
 
 bool quiet = false;
@@ -44,22 +43,22 @@ static struct option long_options[] = {
 
 void disclaimer(void)
 {
-    cout << "trkcompare - Ermitteln, wie gut GPS-Tracks mit einer Referenz übereinstimmen." << endl
-        << "Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>" << endl
-        << "Alle Rechte vorbehalten." << endl
-        << endl;
+    std::cout << "trkcompare - Ermitteln, wie gut GPS-Tracks mit einer Referenz übereinstimmen." << std::endl
+        << "Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>" << std::endl
+        << "Alle Rechte vorbehalten." << std::endl
+        << std::endl;
 }
 
 
 void usage(void)
 {
-    cout << "Aufruf: " << endl
-        << "   trkcompare [Optionen] Referenztrack <Liste mit Vergleichstracks>" << endl
-        << endl
-        << "Optionen:" << endl
-        << "   --verbose | -v     " << endl
-        << "   --quiet | -q       nur Ergebnisse ausgeben" << endl
-        << "   --help | -? | -h   diese Hilfe ausgeben" << endl
+    std::cout << "Aufruf: " << std::endl
+        << "   trkcompare [Optionen] Referenztrack <Liste mit Vergleichstracks>" << std::endl
+        << std::endl
+        << "Optionen:" << std::endl
+        << "   --verbose | -v     " << std::endl
+        << "   --quiet | -q       nur Ergebnisse ausgeben" << std::endl
+        << "   --help | -? | -h   diese Hilfe ausgeben" << std::endl
         ;
 }
 
@@ -107,36 +106,36 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
-    string refFilename = argv[optind++];
+    std::string refFilename = argv[optind++];
     if (!quiet)
-        cout << "Lesen von " << refFilename << " .. " << endl;
+        std::cout << "Lesen von " << refFilename << " .. " << std::endl;
     GPXFile ref;
     errno_t rc = ref.load(refFilename);
     if (rc != 0) {
-        cerr << "fehlgeschlagen." << endl;
+        std::cerr << "fehlgeschlagen." << std::endl;
         exit(rc);
     }
-    Track* refTrack = ref.track();
+    Track* refTrack = ref.tracks().front();
     if (doDump)
-        refTrack->dump(cout, refFilename);    
+        refTrack->dump(std::cout, refFilename);    
 
     for (/* ... */; optind < argc; ++optind)
     {
-        string cmpFilename = argv[optind];
-        cout << "Lesen von " << cmpFilename << " .. " << endl;
+        std::string cmpFilename = argv[optind];
+        std::cout << "Lesen von " << cmpFilename << " .. " << std::endl;
         GPXFile cmp;
         rc = cmp.load(cmpFilename);
         if (rc != 0) {
-            cerr << "fehlgeschlagen." << endl;
+            std::cerr << "fehlgeschlagen." << std::endl;
             exit(rc);
         }
-        Stochastics* sres = cmp.track()->compareTo(refTrack);
-        double lengthDiff = cmp.track()->distance() - ref.track()->distance();
-        cout << "  mittlerer Fehler    = " << noshowpoint << left << setprecision(8) << sres->average() << " m" << endl
-            << "  min./max. Fehler    = " << sres->minimum() << " / " << sres->maximum() << endl
-            << "  Varianz             = " << sres->variance() << endl
-            << "  Standardabweichung  = " << sres->standardDeviation() << endl
-            << "  Streckendifferenz   = " << lengthDiff << " m" << endl
+        Stochastics* sres = cmp.tracks().front()->compareTo(refTrack);
+        double lengthDiff = cmp.tracks().front()->distance() - ref.tracks().front()->distance();
+        std::cout << "  mittlerer Fehler    = " << std::noshowpoint << std::left << std::setprecision(8) << sres->average() << " m" << std::endl
+            << "  min./max. Fehler    = " << sres->minimum() << " / " << sres->maximum() << std::endl
+            << "  Varianz             = " << sres->variance() << std::endl
+            << "  Standardabweichung  = " << sres->standardDeviation() << std::endl
+            << "  Streckendifferenz   = " << lengthDiff << " m" << std::endl
             ;
     }
     return EXIT_SUCCESS;

@@ -129,6 +129,9 @@ namespace GPS {
             TiXmlElement* nameElement = gpxTrk->FirstChildElement("name");
             if (nameElement != NULL && nameElement->GetText() != NULL)
                 _Trk->setName(nameElement->GetText());
+            TiXmlElement* numberElement = gpxTrk->FirstChildElement("number");
+            if (numberElement != NULL && numberElement->GetText() != NULL)
+                _Trk->setNumber((unsigned int) atoi(numberElement->GetText()));
             
             TiXmlNode* gpxTrkSeg = gpxTrk->FirstChild("trkseg");
             while (gpxTrkSeg != NULL) {
@@ -229,6 +232,8 @@ namespace GPS {
             os << "<trk>" << endl;
             if (!(*j)->name().empty())
                 os << " <name>" << (*j)->name() << "</name>" << endl;
+            if ((*j)->number().defined())
+                os << " <number>" << (*j)->number().value() << "</number>" << endl;
             os << " <trkseg>" << endl;
             const TrackpointList& points = (*j)->points();
             for (TrackpointList::const_iterator i = points.begin(); i != points.end(); ++i)
@@ -257,5 +262,22 @@ namespace GPS {
         return 0;
     }
 
+
+    Track* GPXFile::trackByName(const std::string& name)
+    {
+        for (TrackList::const_iterator i = _TrkList.begin(); i != _TrkList.end(); ++i)
+            if ((*i)->name() == name)
+                return (*i);
+        return NULL;
+    }
+
+
+    Track* GPXFile::trackByNumber(unsigned int number)
+    {
+        for (TrackList::const_iterator i = _TrkList.begin(); i != _TrkList.end(); ++i)
+            if ((*i)->number().defined() && (*i)->number().value() == number)
+                return (*i);
+        return NULL;
+    }
 
 };
