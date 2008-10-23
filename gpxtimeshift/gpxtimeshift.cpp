@@ -17,7 +17,6 @@
 #include "gpslib/GPXFile.h"
 #include "gpslib/Stochastics.h"
 
-using namespace std;
 using namespace GPS;
 
 enum _direction {
@@ -58,27 +57,27 @@ static struct option long_options[] = {
 
 void disclaimer(void)
 {
-    cout << "gpxtimeshift - Die Zeitstempel aller Trackpunkte in einer GPX-Datei um" << endl
-         << "               ein angegebenes Mass in die Zukunft oder die Vergangenheit" << endl
-         << "               verschieben." << endl
-         << "Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>" << endl
-         << "Alle Rechte vorbehalten." << endl
-         << endl;
+    std::cout << "gpxtimeshift - Die Zeitstempel der Trackpunkte aller Tracks in einer" << std::endl
+         << "               GPX-Datei um ein angegebenes Mass in die Zukunft oder" << std::endl
+         << "               die Vergangenheit verschieben." << std::endl
+         << "Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>" << std::endl
+         << "Alle Rechte vorbehalten." << std::endl
+         << std::endl;
 }
 
 
 void usage(void)
 {
-    cout << "Aufruf: " << endl
-         << "   gpxtimeshift eingabe.gpx ausgabe.gpx [ --plus | --minus | --to ] Datum/Zeit" << endl
-         << endl
-         << "Optionen:" << endl
-         << "   --plus hh:mm:ss            um hh:mms:ss in die Zukunft verschieben" << endl
-         << "   --minus hh:mm:ss           um hh:mms:ss in die Vergangenheit verschieben" << endl
-         << "   --to YYYY-MM-DDThh:mmZ     Zeitstempel an Datum ausrichten" << endl
-         << "   --verbose | -v" << endl
-         << "   --quiet   | -q             nur Ergebnisse ausgeben" << endl
-         << "   --help    | -? | -h        diese Hilfe ausgeben" << endl
+    std::cout << "Aufruf: " << std::endl
+         << "   gpxtimeshift eingabe.gpx ausgabe.gpx [ --plus | --minus | --to ] Datum/Zeit" << std::endl
+         << std::endl
+         << "Optionen:" << std::endl
+         << "   --plus hh:mm:ss            um hh:mms:ss in die Zukunft verschieben" << std::endl
+         << "   --minus hh:mm:ss           um hh:mms:ss in die Vergangenheit verschieben" << std::endl
+         << "   --to YYYY-MM-DDThh:mmZ     Zeitstempel an Datum ausrichten" << std::endl
+         << "   --verbose | -v" << std::endl
+         << "   --quiet   | -q             nur Ergebnisse ausgeben" << std::endl
+         << "   --help    | -? | -h        diese Hilfe ausgeben" << std::endl
         ;
 }
 
@@ -142,30 +141,34 @@ int main(int argc, char* argv[])
         disclaimer();
 
     if (!quiet)
-        cout << "Lesen von " << gpxInFile << " .. " << endl;
+        std::cout << "Lesen von " << gpxInFile << " .. " << std::endl;
     GPXFile gpx;
     errno_t rc = gpx.load(gpxInFile);
     if (rc != 0) {
-        cerr << "fehlgeschlagen." << endl;
+        std::cerr << "fehlgeschlagen." << std::endl;
         exit(rc);
     }
 
-    switch (direction)
+    GPS::TrackList& trkList = gpx.tracks();
+    for (GPS::TrackList::iterator i = trkList.begin(); i != trkList.end(); ++i)
     {
-    case DIR_ABSOLUTE:
-        gpx.track()->shiftTimestamps(Timestamp(amount));
-        break;
-    case DIR_MINUS:
-        amount = "-" + amount;
-        gpx.track()->shiftTimestamps(amount);
-        break;
-    case DIR_PLUS:
-        amount = "+" + amount;
-        gpx.track()->shiftTimestamps(amount);
-        break;
-    default:
-        cerr << "Oops!" << endl;
-        break;
+        switch (direction)
+        {
+        case DIR_ABSOLUTE:
+            (*i)->shiftTimestamps(Timestamp(amount));
+            break;
+        case DIR_MINUS:
+            amount = "-" + amount;
+            (*i)->shiftTimestamps(amount);
+            break;
+        case DIR_PLUS:
+            amount = "+" + amount;
+            (*i)->shiftTimestamps(amount);
+            break;
+        default:
+            std::cerr << "Oops!" << std::endl;
+            break;
+        }
     }
 
     gpx.write(gpxOutFile);

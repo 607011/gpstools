@@ -32,6 +32,12 @@ namespace GPS {
         _Ascent       = o._Ascent;
         _Descent      = o._Descent;
         _Name         = o._Name;
+        _Comment      = o._Comment;
+        _Description  = o._Description;
+        _Link         = o._Link;
+        _Number       = o._Number;
+        _Source       = o._Source;
+        _Type         = o._Type;
         // do a deeeeep copy of trackpoints
         for (TrackpointList::const_iterator i = o.samples.begin(); i != o.samples.end(); ++i)
             samples.push_back(new Trackpoint(*(*i)));
@@ -47,16 +53,19 @@ namespace GPS {
             Trackpoint* match = other->getMatchingTrackpoint((*i)->timestamp());
             if (match != NULL)
             {
-                if (what & HEARTRATE) {
+                if (what & HEARTRATE)
+                {
                     IntValue hr = match->heartrate();
                     if (hr.defined())
                         (*i)->setHeartrate(hr.value());
                 }
-                if (what & GEOCOORDS) {
+                if (what & GEOCOORDS)
+                {
                     (*i)->setLongitude(match->longitude());
                     (*i)->setLatitude(match->latitude());
                 }
-                if (what & ELEVATION) {
+                if (what & ELEVATION)
+                {
                     (*i)->setElevation(match->elevation());
                 }
             }
@@ -102,8 +111,10 @@ namespace GPS {
             return DoubleValue();
         double sum = 0.0;
         int n = 0;
-        for (TrackpointList::const_iterator i = samples.begin(); i != samples.end(); ++i) {
-                if ((*i)->heartrate().defined()) {
+        for (TrackpointList::const_iterator i = samples.begin(); i != samples.end(); ++i)
+        {
+                if ((*i)->heartrate().defined())
+                {
                     sum += (*i)->heartrate().value();
                     ++n;
                 }
@@ -120,7 +131,8 @@ namespace GPS {
             return DoubleValue();
         double sum = 0.0;
         int n = 0;
-        for (TrackpointList::const_iterator i = samples.begin(); i != samples.end(); ++i) {
+        for (TrackpointList::const_iterator i = samples.begin(); i != samples.end(); ++i)
+        {
                 if ((*i)->temperature().defined())
                 {
                     sum += (*i)->temperature().value();
@@ -203,7 +215,8 @@ namespace GPS {
         assert(lo < hi);
         double dMax = 0.0;
         size_t idx = 0;
-        for (size_t i = lo + 1; i < hi - 1; ++i) {
+        for (size_t i = lo + 1; i < hi - 1; ++i)
+        {
             double d = samples[i]->perpendicularDistanceElevation(samples.at(lo), samples.at(hi));
             if (d > dMax)
             {
@@ -262,7 +275,8 @@ namespace GPS {
         assert(lo < hi);
         double dMax = 0.0;
         size_t idx = 0;
-        for (size_t i = lo + 1; i < hi - 1; ++i) {
+        for (size_t i = lo + 1; i < hi - 1; ++i)
+        {
             double d = samples[i]->perpendicularDistance3D(samples.at(lo), samples.at(hi));
             if (d > dMax)
             {
@@ -341,7 +355,7 @@ namespace GPS {
         keepAll();
         for (TrackpointList::iterator i = t->points().begin(); i != t->points().end(); ++i)
         {
-            Trackpoint* curr = *i;
+            Trackpoint* curr = (*i);
             if (curr != NULL)
             {
                 if (fabs(curr->elevation().value() - prev->elevation().value()) < epsilon)
@@ -393,7 +407,7 @@ namespace GPS {
             // zwischen sämtlichen Punkten des Referenztracks suchen
             for (TrackpointList::const_iterator i = samples.begin()+1; i != samples.end(); ++i)
             {
-                Trackpoint* p2 = *i;
+                Trackpoint* p2 = (*i);
                 double dist = (*r)->perpendicularDistance2D(p1, p2);
                 if (dist < d_max)
                     d_max = dist;
@@ -409,6 +423,14 @@ namespace GPS {
     Track* Track::remaining(void)
     {
         Track* trk = new Track;
+        trk->setName(_Name);
+        trk->setComment(_Comment);
+        trk->setDescription(_Description);
+        trk->setLink(_Link);
+        if (_Number.defined())
+            trk->setNumber(_Number.value());
+        trk->setSource(_Source);
+        trk->setType(_Type);
         for (TrackpointList::iterator i = samples.begin(); i != samples.end(); ++i)
             if ((*i)->kept())
                 trk->append(*i);

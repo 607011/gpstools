@@ -92,20 +92,6 @@ namespace GPS {
             return _Filename;
         }
 
-        /// Track zurückgeben.
-        /// @return Track
-        inline Track* track(void)
-        {
-            return _Trk;
-        }
-
-        /// Track zurückgeben.
-        /// @return Track
-        inline const Track* track(void) const
-        {
-            return _Trk;
-        } 
-
         /// Track-Liste zurückgeben.
         /// @return Track-Liste
         inline TrackList& tracks(void)

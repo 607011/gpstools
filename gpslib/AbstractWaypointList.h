@@ -137,7 +137,7 @@ namespace GPS {
         inline const std::string& type(void) const { return _Type; }
 
         /// Nummer zurückgeben.
-        inline const IntValue& number(void) const { return _Number; }
+        inline const UnsignedIntValue& number(void) const { return _Number; }
 
         /// Namen setzen.
         inline void setName(std::string name) { _Name = name; }
@@ -158,7 +158,7 @@ namespace GPS {
         inline void setType(std::string type) { _Type = type; }
 
         /// Nummer setzen.
-        inline void setNumber(int number) { _Number = number; }
+        inline void setNumber(unsigned int number) { _Number = number; }
 
     };
 

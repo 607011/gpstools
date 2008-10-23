@@ -13,7 +13,6 @@
 
 #include "globals.h"
 
-using namespace std;
 using namespace GPS;
 
 enum _long_options {
@@ -105,7 +104,8 @@ int main(int argc, char* argv[])
     if (!quiet)
         disclaimer();
 
-    if (configFile == "") {
+    if (configFile == "")
+    {
         usage();
         exit(EXIT_FAILURE);
     }
@@ -132,21 +132,32 @@ int main(int argc, char* argv[])
     if (rc != 0)
         errmsg(_("Kann GPX-Datei nicht laden"), rc);
 
-    if (hrFile != "")
+    if (gpxFile.tracks().size() == 0)
+        errmsg(_("Die GPX-Datei enthält keine Tracks"));
+
+    GPS::TrackList trkList = gpxFile.tracks();
+
+    trk = gpxFile.tracks().front();
+    if (gpxFile.tracks().size() > 1)
     {
-        if (verbose > 0 && !quiet)
-            cout << _("Zusammenführen von ") << eleFile << " " << _("mit") << " " << hrFile << " .." << endl;
-        SuuntoDatafile suuntoFile;
-        if (suuntoFile.load(hrFile) == 0) {
-            suuntoFile.track()->shiftTimestamps(hrTimeOffset);
-            gpxFile.track()->merge(suuntoFile.track());
+        if (trackSelectBy == "name")
+        {
+            trk = gpxFile.trackByName(trackSelector);
+            if (trk == NULL)
+                errmsg(_("Track konnte unter dem angegebenen Namen nicht gefunden werden"));
+        }
+        else if (trackSelectBy == "number")
+        {
+            trk = gpxFile.trackByNumber(atoi(trackSelector.c_str()));
+            if (trk == NULL)
+                errmsg(_("Track konnte unter der angegebenen Nummer nicht gefunden werden"));
+        }
+        else
+        {
+            warnmsg(_("Die GPX-Datei enthält mehrere Tracks und die Konfigurationsdatei keinen Hinweis in <trk>/<select>, welcher verwendet werden soll. Es wird automatisch der erste ausgewählt."));
         }
     }
 
-    trk = gpxFile.track();
-
-    if (trk->isEmpty())
-        errmsg(_("Der Track enthält keine Trackpunkte"));
     if (!trk->hasTimestamps() && !trk->hasDistance())
         errmsg(_("Der Track enthält weder Zeitstempel noch Positionsangaben"));
     if (!trk->hasElevation())
@@ -156,41 +167,56 @@ int main(int argc, char* argv[])
     if (!trk->hasTimestamps())
         warnmsg(_("Der Track enthält keine Zeitstempel"));
 
+    trk->shiftTimestamps(eleTimeOffset);
+
+    if (hrFile != "")
+    {
+        if (verbose > 0 && !quiet)
+            std::cout << _("Zusammenführen von ") << eleFile << " " << _("mit") << " " << hrFile << " .." << std::endl;
+        SuuntoDatafile suuntoFile;
+        if (suuntoFile.load(hrFile) == 0) {
+            suuntoFile.track()->shiftTimestamps(hrTimeOffset);
+            trk->merge(suuntoFile.track());
+        }
+    }
+
     if (gnuplotSpeedIntervalSeconds > 0)
         trk->calculateSpeeds(gnuplotSpeedIntervalSeconds);
     else if (gnuplotSpeedIntervalMeters > 0)
         trk->calculateSpeeds(gnuplotSpeedIntervalMeters);
     else
-        errmsg("Ups!");
-
-    trk->shiftTimestamps(eleTimeOffset);
+        errmsg("Fehlermops!");
 
     if (!quiet)
-        trk->dump(cout, "Original");
+        trk->dump(std::cout, "Original");
     smoothedTrack["Original"] = trk;
 
-    for (vector<SmoothingOptions*>::const_iterator i = smoothings.begin(); i != smoothings.end(); ++i)
+    for (std::vector<SmoothingOptions*>::const_iterator i = smoothings.begin(); i != smoothings.end(); ++i)
     {
         assert((*i) != NULL);
         Track* smoothed = NULL;
-        const string& algorithm = (*i)->algorithm;
+        const std::string& algorithm = (*i)->algorithm;
         if (algorithm != "")
         {
-            const string& id = (*i)->id;
-            if (algorithm == "douglas_peucker") {
+            const std::string& id = (*i)->id;
+            if (algorithm == "douglas_peucker")
+            {
                 smoothed = trk->smoothDouglasPeucker((*i)->param, true);
             }
-            else if (algorithm == "threshold") {
+            else if (algorithm == "threshold")
+            {
                 smoothed = trk->smoothThreshold((*i)->param);
             }
-            else {
-                errmsg(string(_("Nicht unterstützter Glättungsalgorithmus:")) + " " + algorithm);
+            else
+            {
+                errmsg(std::string(_("Nicht unterstützter Glättungsalgorithmus:")) + " " + algorithm);
             }
-            if (smoothed != NULL) {
+            if (smoothed != NULL)
+            {
                 smoothed->keepAll();
                 smoothed->calculateAscentDescent();
                 if (!quiet)
-                    smoothed->dump(cout, id);
+                    smoothed->dump(std::cout, id);
                 smoothedTrack[id] = smoothed;
             }
         }
@@ -205,7 +231,7 @@ int main(int argc, char* argv[])
     executeGnuplot();
 
     if (verbose > 0 && !quiet)
-        cout << endl << _("Fertig.") << endl;
+        std::cout << std::endl << _("Fertig.") << std::endl;
 
     return EXIT_SUCCESS;
 }

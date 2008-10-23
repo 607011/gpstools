@@ -14,7 +14,7 @@
   <!-- Dieser Text wird oberhalb der erzeugten Grafik angezeigt und als
        Dateiname der erzeugten Grafik verwendet. Sonderzeichen werden im
        Dateinamen durch Unterstriche ersetzt, die Dateiendung wird
-       automatisch hinzugefüüügt.
+       automatisch hinzugefügt.
   -->
   <title>Grafik-Titel</title>
 
@@ -47,6 +47,13 @@
         muss man nichts ändern, weshalb die Zeitstempel im Beispiel
         unangetastet bleiben. -->
    <offset>+00:00:00</offset>
+   <!-- Eine GPX-Datei kann mehrere Tracks enthalten. Mit den folgenden
+        Parametern wählt man aus, welcher Track ausgewertet werden soll.
+   -->
+   <!-- Auswahl über den Namen im Tag trk/name -->
+   <select by="name">Harburger-Gipfel-Runde</select>
+   <!-- alternativ Auswahl über den Namen im Tag trk/number -->
+   <!-- <select by="number">1</select> -->
   </elevation>
 
   <!-- Angaben zur Datei, die die Herzfrequenzdaten enthält. Zurzeit werden
@@ -147,18 +154,6 @@
        (das Höhenprofil wird auf Datum und Uhrzeit abgetragen). -->
   <xaxis>distance</xaxis>
 
-  <!-- GPS-Positionen kranken an ihrer Ungenauigkeit, die im Bereich von
-       einigen (zehn) Metern liegt. Ermittelt man die Geschwindigkeit
-       zwischen zwei Trackpunkten durch Differenzierung der Strecke nach der
-       Zeit, erhält man unrealistisch starke Schwankungen. Mit Hilfe
-       dieses Parameters stellt man die Dauer oder die Strecke ein, über die
-       die Geschwindigkeit gemittelt wird, was zu geringeren Schwankungen und
-       damit typischerweise realistischeren Angaben führt.
-       Mögliche Werte für das Attribut unit sind: seconds (Mitteln über
-       die angegebene Anzahl Sekunden), meters (Mitteln über die angegebene
-       Strecke in Metern). -->
-  <speedInterval unit="seconds">120</speedInterval>
-
   <!-- Um die Abschnitt calculations deklarierten Kurven besser wiedererkennen
        zu können, kann man eine Legende in die Grafik einblenden.
        Die Beschriftungen der Kurven ergeben sich aus dem Wert des Attributs
@@ -213,7 +208,18 @@
         Abschitt mit der Kennung "Douglas-Peucker (5m)" hervorgegangenen
         Kurvendaten. -->
    <source>Douglas-Peucker (5m)</source>
-   <!-- <interval unit="meters">250</interval> -->
+
+   <!-- GPS-Positionen kranken an ihrer Ungenauigkeit, die im Bereich von
+        einigen (zehn) Metern liegt. Ermittelt man die Geschwindigkeit
+        zwischen zwei Trackpunkten durch Differenzierung der Strecke nach der
+        Zeit, erhält man unrealistisch starke Schwankungen. Mit Hilfe
+        dieses Parameters stellt man die Dauer oder die Strecke ein, über die
+        die Geschwindigkeit gemittelt wird, was zu geringeren Schwankungen und
+        damit typischerweise realistischeren Angaben führt.
+        Mögliche Werte für das Attribut unit sind: seconds (Mitteln über
+        die angegebene Anzahl Sekunden), meters (Mitteln über die angegebene
+        Strecke in Metern). -->
+   <interval unit="meters">250</interval>
   </speed>
 
   <!-- Liegen zum Track Herzfrequenzdaten vor, kann man auch diese als Kurve
