@@ -55,7 +55,7 @@ namespace GPS {
             {
                 if (what & HEARTRATE)
                 {
-                    IntValue hr = match->heartrate();
+                    UnsignedIntValue hr = match->heartrate();
                     if (hr.defined())
                         (*i)->setHeartrate(hr.value());
                 }
@@ -109,7 +109,7 @@ namespace GPS {
     {
         if (isEmpty())
             return DoubleValue();
-        double sum = 0.0;
+        double sum = 0;
         int n = 0;
         for (TrackpointList::const_iterator i = samples.begin(); i != samples.end(); ++i)
         {

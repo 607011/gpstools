@@ -65,6 +65,15 @@ namespace GPS {
         /// Höhe (in Metern) des Geoids (Normal Null) über dem WGS84-Ellipsoid (aus NMEA-GGA-Satz).
         DoubleValue _GeoidHeight;
 
+        /// Geschwindigkeit in km/h.
+        double _Speed;   
+
+        /// Geschwindigkeit in min/km.
+        double _Pace;
+
+        /// Kurs in °.
+        DoubleValue _Course;   
+
     public:
         /// Konstruktor.
         Waypoint(void);
@@ -167,6 +176,24 @@ namespace GPS {
         /// @return ID of DGPS station used in differential correction
         inline const IntValue& DGPSStationId(void) const { return _DGPSStationId; }
 
+        /// Geschwindigkeit in km/h zurückgeben.
+        /// @see _Speed
+        /// @return Geschwindigkeit (km/h)
+        inline double speed(void) const { return _Speed; }
+
+        /// Geschwindigkeit in min/km zurückgeben.
+        /// @see _Pace
+        inline double pace(void) const { return _Pace; }
+
+        /// Kurs (°) zurückgeben.
+        /// @see _Course
+        inline const DoubleValue& course(void) const { return _Course; }
+
+        /// Geschwindigkeit in min/km als String im Format mm:ss zurückgeben.
+        /// @see _Pace
+        /// @return Geschwindigkeit (min/km) im Format mm:ss
+        std::string paceString(void) const;
+
         /// Horizontal Dilusion of Precision setzen.
         /// @see _HDOP
         inline void setHDOP(double HDOP) { _HDOP = HDOP; }
@@ -229,6 +256,19 @@ namespace GPS {
         /// Zeitstempel setzen.
         /// @see _Timestamp
         inline void setTimestamp(const Timestamp& timestamp) { _Timestamp = timestamp; }
+
+        /// Setzen der Geschwindigkeit (km/h).
+        /// @see _Speed
+        inline void setSpeed(double speed) { _Speed = speed; }
+
+        /// Setzen der Geschwindigkeit (min/km).
+        /// @see _Pace
+        inline void setPace(double pace) { _Pace = pace; }
+
+        /// Setzen des Kurses (°).
+        /// @see _Course
+        inline void setCourse(double course) { _Course = course; }
+
     };
 
 };

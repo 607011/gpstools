@@ -7,9 +7,9 @@
 #include <fstream>
 #include <cstdlib>
 #include <limits>
-#include <getopt.h>
 #include <cassert>
 #include <errno.h>
+#include <getopt.h>
 
 #include "globals.h"
 
@@ -19,6 +19,7 @@ enum _long_options {
     SELECT_ELE,
     SELECT_HR,
     SELECT_HELP,
+    SELECT_NAME,
     SELECT_GNUPLOT,
     SELECT_XAXIS,
     SELECT_DEBUG,
@@ -33,6 +34,7 @@ static struct option long_options[] = {
     { "ele",       required_argument, 0, SELECT_ELE },
     { "hr",        required_argument, 0, SELECT_HR },
     { "help",      no_argument,       0, SELECT_HELP },
+    { "name",      required_argument, 0, SELECT_NAME },
     { "gnuplot",   required_argument, 0, SELECT_GNUPLOT },
     { "quiet",     no_argument,       0, SELECT_QUIET },
     { "debug",     no_argument,       0, SELECT_DEBUG },
@@ -69,6 +71,10 @@ int main(int argc, char* argv[])
         case SELECT_HR:
             if (optarg != NULL)
                 hrFileCmdline = optarg;
+            break;
+        case SELECT_NAME:
+            if (optarg != NULL)
+                trackSelectorCmdline = optarg;
             break;
         case SELECT_DUMP:
             if (optarg != NULL)
@@ -112,6 +118,10 @@ int main(int argc, char* argv[])
 
     loadConfiguration();
 
+    if (trackSelectorCmdline != "") {
+        trackSelector = trackSelectorCmdline;
+        trackSelectBy = TRACK_SELECT_BY_NAME;
+    }
     if (eleFileCmdline != "")
         eleFile = eleFileCmdline;
     if (hrFileCmdline != "")
@@ -140,13 +150,13 @@ int main(int argc, char* argv[])
     trk = gpxFile.tracks().front();
     if (gpxFile.tracks().size() > 1)
     {
-        if (trackSelectBy == "name")
+        if (trackSelectBy == TRACK_SELECT_BY_NAME)
         {
             trk = gpxFile.trackByName(trackSelector);
             if (trk == NULL)
                 errmsg(_("Track konnte unter dem angegebenen Namen nicht gefunden werden"));
         }
-        else if (trackSelectBy == "number")
+        else if (trackSelectBy == TRACK_SELECT_BY_NUMBER)
         {
             trk = gpxFile.trackByNumber(atoi(trackSelector.c_str()));
             if (trk == NULL)

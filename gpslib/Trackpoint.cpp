@@ -19,8 +19,6 @@ namespace GPS {
         : Waypoint(),
         _Distance(0.0),
         _Slope(0.0),
-        _Speed(0.0),
-        _Pace(0.0),
         _Heartrate(),
         _Temperature(),
         _Duration(0),
@@ -31,8 +29,6 @@ namespace GPS {
         : Waypoint(lon, lat, ele, timestamp),
         _Distance(0.0),
         _Slope(0.0),
-        _Speed(0.0),
-        _Pace(0.0),
         _Heartrate(),
         _Temperature(),
         _Duration(0),
@@ -44,8 +40,6 @@ namespace GPS {
         : Waypoint(p.longitude(), p.latitude(), p.elevation(), p.timestamp()),
         _Distance(p.distance()),
         _Slope(p.slope()),
-        _Speed(p.speed()),
-        _Pace(p.pace()),
         _Heartrate(p.heartrate()),
         _Temperature(p.temperature()),
         _Duration(p.duration()),
@@ -134,21 +128,5 @@ namespace GPS {
             os << "    temp.:    " << _Temperature << endl;
     }
 
-
-    std::string Trackpoint::paceString(void) const
-    {
-        double p = _Pace;
-        unsigned int min = (unsigned int) (_Pace);
-        if (min >= 100) { min = 99; p = 99; }
-        unsigned int sec = (unsigned int) (60 * (p - (double) min));
-#if defined(_WIN32) && (_MSC_VER >= 1400)
-        char buf[17];
-        sprintf_s(buf, 16, "%2u:%02u", min, sec);
-#else
-        char buf[256];
-        sprintf(buf, "%2u:%02u", min, sec);
-#endif
-        return buf;
-    }
 
 };
