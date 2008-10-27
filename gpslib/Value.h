@@ -30,10 +30,8 @@ namespace GPS {
         { /* ... */ }
 
         /// Konstruktor.
-        inline Value<T>(T value) : _Defined(true)
-        {
-            _Value = value;
-        }
+        inline Value<T>(T value) : _Defined(true), _Value(value)
+        { /* ... */ }
 
         /// Gibt true zurück, wenn der skalare Wert in der Membervariablen
         /// _Value gültig ist.

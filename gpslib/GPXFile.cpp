@@ -48,6 +48,14 @@ namespace GPS {
         if (eleElement != NULL && eleElement->GetText() != NULL)
             wpt->setElevation(atof(eleElement->GetText()));
 
+        TiXmlElement* spdElement = element->FirstChildElement("speed");
+        if (spdElement != NULL && spdElement->GetText() != NULL)
+            wpt->setSpeed(atof(spdElement->GetText()));
+
+        TiXmlElement* crsElement = element->FirstChildElement("course");
+        if (crsElement != NULL && crsElement->GetText() != NULL)
+            wpt->setCourse(atof(crsElement->GetText()));
+
         TiXmlElement* nameElement = element->FirstChildElement("name");
         if (nameElement != NULL && nameElement->GetText() != NULL)
             wpt->setName(nameElement->GetText());

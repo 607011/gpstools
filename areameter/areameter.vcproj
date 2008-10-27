@@ -22,6 +22,7 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -64,7 +65,10 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
+				LinkTimeCodeGeneration="0"
 				TargetMachine="1"
+				CLRImageType="0"
+				ErrorReporting="0"
 			/>
 			<Tool
 				Name="VCALinkTool"

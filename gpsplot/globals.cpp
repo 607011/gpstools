@@ -28,6 +28,7 @@ std::string authorMail;
 std::string authorUrl;
 std::string encoding = DEFAULT_CHARACTER_ENCODING;
 std::string trackSelector;
+std::string trackSelectorCmdline;
 std::string trackSelectBy;
 TiXmlDocument config;
 time_t eleTimeOffset = 0;

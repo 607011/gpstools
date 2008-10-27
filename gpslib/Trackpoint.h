@@ -23,14 +23,8 @@ namespace GPS {
         /// Anstieg zum nächsten Trackpunkt in Prozent.
         double _Slope;
 
-        /// Geschwindigkeit in km/h.
-        double _Speed;   
-
-        /// Geschwindigkeit in min/km.
-        double _Pace;
-
         /// Herzfrequenz in Schlägen pro Minute.
-        IntValue _Heartrate;
+        UnsignedIntValue _Heartrate;
 
         /// Temperatur in °C.
         DoubleValue _Temperature;
@@ -113,24 +107,10 @@ namespace GPS {
         /// @see _Slope
         inline double slope(void) const { return _Slope; }
 
-        /// Geschwindigkeit in km/h zurückgeben.
-        /// @see _Speed
-        /// @return Geschwindigkeit (km/h)
-        inline double speed(void) const { return _Speed; }
-
-        /// Geschwindigkeit in min/km zurückgeben.
-        /// @see _Pace
-        inline double pace(void) const { return _Pace; }
-
-        /// Geschwindigkeit in min/km als String im Format mm:ss zurückgeben.
-        /// @see _Pace
-        /// @return Geschwindigkeit (min/km) im Format mm:ss
-        std::string paceString(void) const;
-
         /// Herzfrequenz in Schlägen pro Minute zurückgeben.
         /// @see _Heartrate
         /// @return HF (1/min)
-        inline const IntValue& heartrate(void) const { return _Heartrate; }
+        inline const UnsignedIntValue& heartrate(void) const { return _Heartrate; }
 
         /// Temperatur in °C zurückgeben.
         /// @see _Temperature
@@ -152,7 +132,7 @@ namespace GPS {
 
         /// Setzen der Hearzfrequenz (Schläge pro Minute).
         /// @see _Heartrate
-        inline void setHeartrate(IntValue heartrate) { _Heartrate = heartrate; }
+        inline void setHeartrate(UnsignedIntValue heartrate) { _Heartrate = heartrate; }
         
         /// Setzen der Temperatur (° Celsius).
         /// @see _Temperature
@@ -165,14 +145,6 @@ namespace GPS {
         /// Setzen des Anstiegs (Prozent)
         /// @see _Slope
         inline void setSlope(double slope) { _Slope = slope; }
-
-        /// Setzen der Geschwindigkeit (km/h).
-        /// @see _Speed
-        inline void setSpeed(double speed) { _Speed = speed; }
-
-        /// Setzen der Geschwindigkeit (min/km).
-        /// @see _Pace
-        inline void setPace(double pace) { _Pace = pace; }
 
         /// Setzen der Dauer seit Start (Sekunden)
         /// @see _Duration

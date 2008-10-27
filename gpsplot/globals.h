@@ -10,6 +10,9 @@
 // gettext-Dummy
 #define _(x) x
 
+#define TRACK_SELECT_BY_NAME        "name"
+#define TRACK_SELECT_BY_NUMBER      "number"
+
 #include <string>
 #include <vector>
 #include <ctime>
@@ -59,6 +62,7 @@ extern std::string authorMail;
 extern std::string authorUrl;
 extern std::string encoding;
 extern std::string trackSelector;
+extern std::string trackSelectorCmdline;
 extern std::string trackSelectBy;
 extern TiXmlDocument config;
 extern time_t eleTimeOffset;
