@@ -16,10 +16,10 @@ const std::string DEFAULT_CHARACTER_ENCODING = "UTF-8";
 bool quiet = false;
 int verbose = 0;
 bool metricSystem = true;
-std::string eleFile;
-std::string hrFile;
-std::string eleFileCmdline;
-std::string hrFileCmdline;
+std::string defaultFile;
+std::string mergeFile;
+std::string defaultFileCmdline;
+std::string mergeFileCmdline;
 std::string configFile;
 std::string title;
 std::string url;
@@ -30,6 +30,7 @@ std::string encoding = DEFAULT_CHARACTER_ENCODING;
 std::string trackSelector;
 std::string trackSelectorCmdline;
 std::string trackSelectBy;
+int mergeWhat = 0;
 TiXmlDocument config;
 time_t eleTimeOffset = 0;
 time_t hrTimeOffset = 0;
@@ -124,9 +125,9 @@ void loadConfiguration(void)
 
     // reading <input> configuration data
     TiXmlHandle cfgInput = cfgRoot.FirstChild("input");
-    TiXmlHandle cfgInputElevation = cfgInput.FirstChild("elevation");
+    TiXmlHandle cfgInputElevation = cfgInput.FirstChild("default");
     if (cfgInputElevation.FirstChild("file").Element() != NULL && cfgInputElevation.FirstChild("file").Element()->GetText() != NULL)
-        eleFile = cfgInputElevation.FirstChild("file").Element()->GetText();
+        defaultFile = cfgInputElevation.FirstChild("file").Element()->GetText();
     if (cfgInputElevation.FirstChild("offset").Element() != NULL && cfgInputElevation.FirstChild("offset").Element()->GetText() != NULL)
         eleTimeOffset = Timestamp::offsetToSeconds(cfgInputElevation.FirstChild("offset").Element()->GetText());
     if (cfgInputElevation.FirstChild("select").Element() != NULL && cfgInputElevation.FirstChild("select").Element()->GetText() != NULL)
@@ -134,11 +135,25 @@ void loadConfiguration(void)
         trackSelector = cfgInputElevation.FirstChild("select").Element()->GetText();
         trackSelectBy = cfgInputElevation.FirstChild("select").Element()->Attribute("by");
     }
-    TiXmlHandle cfgInputHeartrate = cfgInput.FirstChild("heartrate");
+    TiXmlHandle cfgInputHeartrate = cfgInput.FirstChild("merge");
     if (cfgInputHeartrate.FirstChild("file").Element() != NULL && cfgInputHeartrate.FirstChild("file").Element()->GetText() != NULL)
-        hrFile = cfgInputHeartrate.FirstChild("file").Element()->GetText();
+        mergeFile = cfgInputHeartrate.FirstChild("file").Element()->GetText();
     if (cfgInputHeartrate.FirstChild("offset").Element() != NULL && cfgInputHeartrate.FirstChild("offset").Element()->GetText() != NULL)
         hrTimeOffset = Timestamp::offsetToSeconds(cfgInputHeartrate.FirstChild("offset").Element()->GetText());
+
+	for (TiXmlElement* cfgInputHeartrateUseEle = cfgInputHeartrate.FirstChild("use").ToElement();
+        cfgInputHeartrateUseEle != NULL;
+        cfgInputHeartrateUseEle = cfgInputHeartrateUseEle->NextSiblingElement())
+	{
+        if (cfgInputHeartrateUseEle->GetText() != NULL)
+        {
+            std::string useStr = cfgInputHeartrateUseEle->GetText();
+            if (useStr == "heartrate")      { mergeWhat |= Track::HEARTRATE; }
+            else if (useStr == "elevation") { mergeWhat |= Track::ELEVATION; }
+            else if (useStr == "geocoords") { mergeWhat |= Track::GEOCOORDS; }
+            else errmsg(_("Unbekannte Merge-Option in <merge><use>") + useStr + "</use></merge>");
+        }
+	}
 
     // reading <calculations> configuration data
     TiXmlNode* calcSmoothing = cfgRoot.FirstChild("calculations").FirstChild("smoothing").Node();
@@ -225,6 +240,7 @@ void loadConfiguration(void)
         }
         if (cfgGnuplot.FirstChild("speed").FirstChild("source").Element() != NULL && cfgGnuplot.FirstChild("speed").FirstChild("source").Element()->GetText() != NULL)
             gnuplotSpeedSource = cfgGnuplot.FirstChild("speed").FirstChild("source").Element()->GetText();
+
         if (cfgGnuplot.FirstChild("speed").FirstChild("interval").Element() != NULL && cfgGnuplot.FirstChild("speed").FirstChild("interval").Element()->GetText() != NULL)
         {
             std::string str = cfgGnuplot.FirstChild("speed").FirstChild("interval").Element()->GetText();

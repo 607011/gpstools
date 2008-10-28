@@ -23,9 +23,9 @@ void writeGnuplotData(void)
     double gnuplotSlopeOrigin     = 0.0;
     if (gnuplotPadding)
     {
-        gnuplotHeartratePct /= 1.16;
-        gnuplotSpeedPct     /= 1.16;
-        gnuplotSlopePct     /= 1.16;
+        gnuplotHeartratePct /= 1.1;
+        gnuplotSpeedPct     /= 1.1;
+        gnuplotSlopePct     /= 1.1;
     }
     string outputFile(title);
     outputFile += "." + gnuplotSuffix;
@@ -141,6 +141,7 @@ void writeGnuplotData(void)
 
     if (trk->hasSpeed() && gnuplotSpeedPct > 0)
     {
+        string speedSourceFile = string((gnuplotSpeedSource == "")? "Original" : gnuplotSpeedSource) + ".dat";
         if (trk->hasElevation() && gnuplotSlopePct > 0)
         {
             gnuplotStream << "set format x \"\"" << endl
@@ -165,7 +166,7 @@ void writeGnuplotData(void)
             << "plot ";
         if (gnuplotSpeedAverage && trk->avgSpeed().defined())
             gnuplotStream << trk->avgSpeed().value() << " notitle lt 5 linecolor rgb \"#AACDA2\", ";
-        gnuplotStream << "\"" << gnuplotDatFile << "\" using " << xcolumn << ":5 notitle with steps lc rgb \"#ff4433\"" << endl;
+        gnuplotStream << "\"" << speedSourceFile << "\" using " << xcolumn << ":5 notitle with steps lc rgb \"#ff4433\"" << endl;
     }
 
     if (trk->hasElevation() && trk->hasDistance() && gnuplotSlopePct > 0)
