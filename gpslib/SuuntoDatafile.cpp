@@ -113,15 +113,18 @@ namespace GPS {
                 timestamp = Timestamp::toMs(year, month, day, hours, minutes, seconds);
             double lat = 0.0;
             double lon = 0.0;
-            DoubleValue ele;
-            // TODO: extract lat, lon, ele
+            DoubleValue ele = atof(fields.at(3).c_str());
+            // TODO: extract lat, lon
             Trackpoint* trkpt = new Trackpoint(lon, lat, ele, timestamp);
             const char* distance = fields.at(15).c_str();
             if (distance != NULL)
                 trkpt->setDistance(atof(distance));
-            const char* hr = fields.at(6).c_str();
-            if (hr != NULL)
-                trkpt->setHeartrate(atoi(hr));
+            const char* hrStr = fields.at(6).c_str();
+            if (hrStr != NULL) {
+                unsigned int hr = atoi(hrStr);
+                if (hr > 0)
+                    trkpt->setHeartrate(hr);
+            }
             _Trk->append(trkpt);
         }
         sdf.close();

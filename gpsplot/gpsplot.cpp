@@ -186,7 +186,7 @@ int main(int argc, char* argv[])
         SuuntoDatafile suuntoFile;
         if (suuntoFile.load(hrFile) == 0) {
             suuntoFile.track()->shiftTimestamps(hrTimeOffset);
-            trk->merge(suuntoFile.track());
+            trk->merge(suuntoFile.track(), Track::HEARTRATE | Track::ELEVATION);
         }
     }
 
