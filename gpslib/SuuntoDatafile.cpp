@@ -111,14 +111,19 @@ namespace GPS {
 #endif
             if ((rc_date == 3) && (rc_time == 3))
                 timestamp = Timestamp::toMs(year, month, day, hours, minutes, seconds);
+            // TODO: extract latitude and longitude
             double lat = 0.0;
             double lon = 0.0;
-            DoubleValue ele = atof(fields.at(3).c_str());
-            // TODO: extract lat, lon
+            DoubleValue ele;
+            const char* eleStr = fields.at(3).c_str();
+            if (eleStr != NULL)
+                ele = atof(eleStr);
             Trackpoint* trkpt = new Trackpoint(lon, lat, ele, timestamp);
-            const char* distance = fields.at(15).c_str();
-            if (distance != NULL)
-                trkpt->setDistance(atof(distance));
+            const char* distanceStr = fields.at(15).c_str();
+            if (distanceStr != NULL) {
+                double distance = atof(distanceStr);
+                trkpt->setDistance(distance);
+            }
             const char* hrStr = fields.at(6).c_str();
             if (hrStr != NULL) {
                 unsigned int hr = atoi(hrStr);
