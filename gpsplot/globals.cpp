@@ -4,8 +4,6 @@
 
 #include "./globals.h"
 
-using namespace GPS;
-
 /// If range between start and finish exceeds 100 meters, assume
 /// that track is not a circular course but goes from A to B.
 const double MAX_RANGE_BETWEEN_START_AND_FINISH = 100.0;
@@ -129,7 +127,7 @@ void loadConfiguration(void)
     if (cfgInputElevation.FirstChild("file").Element() != NULL && cfgInputElevation.FirstChild("file").Element()->GetText() != NULL)
         defaultFile = cfgInputElevation.FirstChild("file").Element()->GetText();
     if (cfgInputElevation.FirstChild("offset").Element() != NULL && cfgInputElevation.FirstChild("offset").Element()->GetText() != NULL)
-        eleTimeOffset = Timestamp::offsetToSeconds(cfgInputElevation.FirstChild("offset").Element()->GetText());
+        eleTimeOffset = GPS::Timestamp::offsetToSeconds(cfgInputElevation.FirstChild("offset").Element()->GetText());
     if (cfgInputElevation.FirstChild("select").Element() != NULL && cfgInputElevation.FirstChild("select").Element()->GetText() != NULL)
     {
         trackSelector = cfgInputElevation.FirstChild("select").Element()->GetText();
@@ -139,7 +137,7 @@ void loadConfiguration(void)
     if (cfgInputHeartrate.FirstChild("file").Element() != NULL && cfgInputHeartrate.FirstChild("file").Element()->GetText() != NULL)
         mergeFile = cfgInputHeartrate.FirstChild("file").Element()->GetText();
     if (cfgInputHeartrate.FirstChild("offset").Element() != NULL && cfgInputHeartrate.FirstChild("offset").Element()->GetText() != NULL)
-        hrTimeOffset = Timestamp::offsetToSeconds(cfgInputHeartrate.FirstChild("offset").Element()->GetText());
+        hrTimeOffset = GPS::Timestamp::offsetToSeconds(cfgInputHeartrate.FirstChild("offset").Element()->GetText());
 
 	for (TiXmlElement* cfgInputHeartrateUseEle = cfgInputHeartrate.FirstChild("use").ToElement();
         cfgInputHeartrateUseEle != NULL;
@@ -148,9 +146,9 @@ void loadConfiguration(void)
         if (cfgInputHeartrateUseEle->GetText() != NULL)
         {
             std::string useStr = cfgInputHeartrateUseEle->GetText();
-            if (useStr == "heartrate")      { mergeWhat |= Track::HEARTRATE; }
-            else if (useStr == "elevation") { mergeWhat |= Track::ELEVATION; }
-            else if (useStr == "geocoords") { mergeWhat |= Track::GEOCOORDS; }
+            if (useStr == "heartrate")      { mergeWhat |= GPS::Track::HEARTRATE; }
+            else if (useStr == "elevation") { mergeWhat |= GPS::Track::ELEVATION; }
+            else if (useStr == "geocoords") { mergeWhat |= GPS::Track::GEOCOORDS; }
             else errmsg(_("Unbekannte Merge-Option in <merge><use>") + useStr + "</use></merge>");
         }
 	}
