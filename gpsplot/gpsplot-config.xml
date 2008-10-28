@@ -49,7 +49,7 @@
    <offset>+00:00:00</offset>
    <!-- Eine GPX-Datei kann mehrere Tracks enthalten. Mit den folgenden
         Parametern wählt man aus, welcher Track ausgewertet werden soll.
-   -->
+        Lässt man den Parameter weg, wählt gpsplot den letzten Track. -->
    <!-- Auswahl über den Namen im Tag trk/name -->
    <select by="name">Harburger-Gipfel-Runde</select>
    <!-- alternativ Auswahl über den Namen im Tag trk/number -->
