@@ -98,7 +98,7 @@ namespace GPS {
 
         /// Höhe in Metern setzen
         /// @param ele Höhe in Metern
-        inline void setElevation(double ele) { _Elevation = ele; }
+        inline void setElevation(DoubleValue ele) { _Elevation = ele; }
 
         /// Geografische Koordinaten in UTM-Koordinaten wandeln.
         /// @return UTM-Koordinaten

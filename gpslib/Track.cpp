@@ -48,25 +48,36 @@ namespace GPS {
     {
         if (what == 0)
             return;
-        for (TrackpointList::iterator i = samples.begin(); i != samples.end(); ++i)
+        if (what & ELEVATION)
+        {   // clear elevation data
+            for (size_t i = 0; i < samples.size(); ++i)
+                samples[i]->setElevation(DoubleValue());
+        }
+        if (what & HEARTRATE)
+        {   // clear heartrate data
+            for (size_t i = 0; i < samples.size(); ++i)
+                samples[i]->setHeartrate(UnsignedIntValue());
+        }
+        for (size_t i = 0; i < samples.size(); ++i)
         {
-            Trackpoint* match = other->getMatchingTrackpoint((*i)->timestamp());
+            Trackpoint* trkpt = samples[i];
+            Trackpoint* match = other->getMatchingTrackpoint(trkpt->timestamp());
             if (match != NULL)
             {
                 if (what & HEARTRATE)
                 {
                     UnsignedIntValue hr = match->heartrate();
                     if (hr.defined())
-                        (*i)->setHeartrate(hr.value());
+                        trkpt->setHeartrate(hr.value());
                 }
                 if (what & GEOCOORDS)
                 {
-                    (*i)->setLongitude(match->longitude());
-                    (*i)->setLatitude(match->latitude());
+                    trkpt->setLongitude(match->longitude());
+                    trkpt->setLatitude(match->latitude());
                 }
                 if (what & ELEVATION)
                 {
-                    (*i)->setElevation(match->elevation());
+                    trkpt->setElevation(match->elevation());
                 }
             }
         }

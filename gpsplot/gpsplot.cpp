@@ -66,11 +66,11 @@ int main(int argc, char* argv[])
             break;
         case SELECT_ELE:
             if (optarg != NULL)
-                eleFileCmdline = optarg;
+                defaultFileCmdline = optarg;
             break;
         case SELECT_HR:
             if (optarg != NULL)
-                hrFileCmdline = optarg;
+                mergeFileCmdline = optarg;
             break;
         case SELECT_NAME:
             if (optarg != NULL)
@@ -122,10 +122,10 @@ int main(int argc, char* argv[])
         trackSelector = trackSelectorCmdline;
         trackSelectBy = TRACK_SELECT_BY_NAME;
     }
-    if (eleFileCmdline != "")
-        eleFile = eleFileCmdline;
-    if (hrFileCmdline != "")
-        hrFile = hrFileCmdline;
+    if (defaultFileCmdline != "")
+        defaultFile = defaultFileCmdline;
+    if (mergeFileCmdline != "")
+        mergeFile = mergeFileCmdline;
     if (gnuplotExeCmdline != "")
         gnuplotExe = gnuplotExeCmdline;
     if (dumpFileCmdline != "")
@@ -134,11 +134,11 @@ int main(int argc, char* argv[])
     if (smoothings.size() == 0)
         errmsg(_("In der Konfigurationsdatei fehlt der Abschnitt calculations/smoothing"));
 
-    if (eleFile == "")
+    if (defaultFile == "")
         errmsg(_("Angabe der Datei mit den Höheninformationen fehlt"));
 
     GPXFile gpxFile;
-    int rc = gpxFile.load(eleFile);
+    int rc = gpxFile.load(defaultFile);
     if (rc != 0)
         errmsg(_("Kann GPX-Datei nicht laden"), rc);
 
@@ -179,23 +179,23 @@ int main(int argc, char* argv[])
 
     trk->shiftTimestamps(eleTimeOffset);
 
-    if (hrFile != "")
+    if (mergeFile != "")
     {
         if (verbose > 0 && !quiet)
-            std::cout << _("Zusammenführen von ") << eleFile << " " << _("mit") << " " << hrFile << " .." << std::endl;
+            std::cout << _("Zusammenführen von ") << defaultFile << " " << _("mit") << " " << mergeFile << " .." << std::endl;
         SuuntoDatafile suuntoFile;
-        if (suuntoFile.load(hrFile) == 0) {
+        if (suuntoFile.load(mergeFile) == 0) {
             suuntoFile.track()->shiftTimestamps(hrTimeOffset);
-            trk->merge(suuntoFile.track(), Track::HEARTRATE | Track::ELEVATION);
+            trk->merge(suuntoFile.track(), mergeWhat);
         }
     }
 
-    if (gnuplotSpeedIntervalSeconds > 0)
+    if (gnuplotSpeedIntervalSeconds > 0) {
         trk->calculateSpeeds(gnuplotSpeedIntervalSeconds);
-    else if (gnuplotSpeedIntervalMeters > 0)
+    }
+    else if (gnuplotSpeedIntervalMeters > 0) {
         trk->calculateSpeeds(gnuplotSpeedIntervalMeters);
-    else
-        errmsg("Fehlermops!");
+    }
 
     if (!quiet)
         trk->dump(std::cout, "Original");
