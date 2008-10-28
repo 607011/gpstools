@@ -24,9 +24,9 @@ namespace GPS {
 
     Waypoint::Waypoint(double lon, double lat, DoubleValue ele, Timestamp timestamp)
         : GeoCoord(lon, lat, ele),
-        _Speed(0.0),
-        _Pace(0.0),
-        _Timestamp(timestamp)
+          _Timestamp(timestamp),
+          _Speed(0.0),
+          _Pace(0.0)
     { /* ... */ }
 
     std::string Waypoint::paceString(void) const
