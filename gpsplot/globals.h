@@ -36,6 +36,7 @@ extern void disclaimer(void);
 extern void usage(void);
 extern void errmsg(std::string str, int rc = 0, bool _usage = false);
 extern void warnmsg(std::string str);
+extern void initDefaultConfiguration(void);
 extern void loadConfiguration(void);
 
 extern void dumpData(void);

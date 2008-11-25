@@ -21,8 +21,7 @@ namespace GPS {
     const time_t Track::DEFAULT_SECONDS_INTERVAL = 60;
 
 
-    Track::Track(void) : _MinElevation(), _MaxElevation(), _Ascent(), _Descent()
-    { /* ... */ }
+    Track::Track(void) { /* ... */ }
 
 
     Track::Track(const Track& o)

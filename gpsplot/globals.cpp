@@ -19,7 +19,7 @@ std::string mergeFile;
 std::string defaultFileCmdline;
 std::string mergeFileCmdline;
 std::string configFile;
-std::string title;
+std::string title = "Grafik-Titel";
 std::string url;
 std::string authorName;
 std::string authorMail;
@@ -36,7 +36,11 @@ std::vector<SmoothingOptions*> smoothings;
 const std::string MISSING = "?";
 const std::string gnuplotPltFile = "gnuplot.plt";
 std::string gnuplotDatFile;
-std::string gnuplotExe;
+#ifdef _DEBUG
+std::string gnuplotExe = "I:\\Programme\\gnuplot\\bin\\wgnuplot.exe";
+#else
+std::string gnuplotExe = "C:\\Programme\\gnuplot\\bin\\wgnuplot.exe";
+#endif
 std::string gnuplotExeCmdline;
 std::string gnuplotFormat = "png small size 640,480 enhanced interlace";
 std::string gnuplotSuffix = "png";
@@ -45,21 +49,21 @@ time_t gnuplotSpeedIntervalSeconds = 0;
 double gnuplotSpeedIntervalMeters = 0;
 bool gnuplotLegend = true;
 bool gnuplotPadding = false;
-double gnuplotElevationPct = 0;
+double gnuplotElevationPct = 60;
 GPS::IntValue gnuplotElevationLo;
 GPS::IntValue gnuplotElevationHi;
-double gnuplotSpeedPct = 0;
+double gnuplotSpeedPct = 20;
 GPS::IntValue gnuplotSpeedLo;
 GPS::IntValue gnuplotSpeedHi;
-bool gnuplotSpeedAverage = false;
+bool gnuplotSpeedAverage = true;
 std::string gnuplotSpeedSource;
 double gnuplotHeartratePct = 0;
 GPS::IntValue gnuplotHeartrateLo;
 GPS::IntValue gnuplotHeartrateHi;
 bool gnuplotHeartrateAverage = false;
-double gnuplotSlopePct = 0;
-GPS::IntValue gnuplotSlopeLo;
-GPS::IntValue gnuplotSlopeHi;
+double gnuplotSlopePct = 20;
+GPS::IntValue gnuplotSlopeLo = -25;
+GPS::IntValue gnuplotSlopeHi = +25;
 std::string gnuplotSlopeSource;
 std::string dumpFile;
 std::string dumpFileCmdline;
@@ -86,6 +90,37 @@ void errmsg(std::string str, int rc, bool _usage)
 void warnmsg(std::string str)
 {
     std::cerr << std::endl << _("WARNUNG") << ": " << str << std::endl;
+}
+
+
+
+void initDefaultConfiguration(void)
+{
+    SmoothingOptions* opt;
+    opt = new SmoothingOptions;
+    opt->id = "Original";
+    opt->draw = true;
+    opt->gnuplotOption = "with lines lw 2 lc rgb \"#E77171\"";
+    smoothings.push_back(opt);
+    opt = new SmoothingOptions;
+    opt->id = "Threshold (3m)";
+    opt->algorithm = "threshold";
+    opt->draw = false;
+    opt->param = 3.0;
+    smoothings.push_back(opt);
+    opt = new SmoothingOptions;
+    opt->id = "Douglas-Peucker (3m)";
+    opt->algorithm = "douglas_peucker";
+    opt->draw = false;
+    opt->param = 3.0;
+    smoothings.push_back(opt);
+    opt = new SmoothingOptions;
+    opt->id = "Douglas-Peucker (5m)";
+    opt->algorithm = "douglas_peucker";
+    opt->draw = true;
+    opt->gnuplotOption = "with points pt 5 ps 0.3";
+    opt->param = 5.0;
+    smoothings.push_back(opt);
 }
 
 
@@ -155,6 +190,8 @@ void loadConfiguration(void)
 
     // reading <calculations> configuration data
     TiXmlNode* calcSmoothing = cfgRoot.FirstChild("calculations").FirstChild("smoothing").Node();
+    if (calcSmoothing != NULL)
+        smoothings.clear();
     while (calcSmoothing != NULL)
     {
         TiXmlElement* calcEle = calcSmoothing->ToElement();

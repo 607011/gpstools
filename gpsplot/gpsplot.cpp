@@ -49,6 +49,8 @@ static struct option long_options[] = {
 
 int main(int argc, char* argv[])
 {
+    initDefaultConfiguration();
+
     for (;;) {
         int option_index = 0;
         int c = getopt_long(argc, argv, "h?vqc:", long_options, &option_index);
@@ -110,13 +112,8 @@ int main(int argc, char* argv[])
     if (!quiet)
         disclaimer();
 
-    if (configFile == "")
-    {
-        usage();
-        exit(EXIT_FAILURE);
-    }
-
-    loadConfiguration();
+    if (configFile != "")
+        loadConfiguration();
 
     if (trackSelectorCmdline != "") {
         trackSelector = trackSelectorCmdline;
