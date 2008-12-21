@@ -42,7 +42,7 @@ std::string gnuplotExe = "I:\\Programme\\gnuplot\\bin\\wgnuplot.exe";
 std::string gnuplotExe = "C:\\Programme\\gnuplot\\bin\\wgnuplot.exe";
 #endif
 std::string gnuplotExeCmdline;
-std::string gnuplotFormat = "png small size 640,480 enhanced interlace";
+std::string gnuplotFormat = "png small size 1024,768 enhanced interlace";
 std::string gnuplotSuffix = "png";
 std::string gnuplotXAxis = "distance";
 time_t gnuplotSpeedIntervalSeconds = 0;
@@ -117,9 +117,16 @@ void initDefaultConfiguration(void)
     opt = new SmoothingOptions;
     opt->id = "Douglas-Peucker (5m)";
     opt->algorithm = "douglas_peucker";
-    opt->draw = true;
+    opt->draw = false;
     opt->gnuplotOption = "with points pt 5 ps 0.3";
     opt->param = 5.0;
+    smoothings.push_back(opt);
+    opt = new SmoothingOptions;
+    opt->id = "Douglas-Peucker (8m)";
+    opt->algorithm = "douglas_peucker";
+    opt->draw = true;
+    opt->gnuplotOption = "with points pt 5 ps 0.3";
+    opt->param = 8.0;
     smoothings.push_back(opt);
 }
 
