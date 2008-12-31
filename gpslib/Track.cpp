@@ -165,7 +165,7 @@ namespace GPS {
     {
         return isEmpty()
             ? DoubleValue()
-            : 2 * 1e2 * _Ascent / distance();
+            : 1e2 * _Ascent / distance();
     }
 
 
@@ -173,7 +173,7 @@ namespace GPS {
     {
         return isEmpty()
             ? DoubleValue()
-            : 2 * 1e2 * _Descent / distance();
+            : 1e2 * _Descent / distance();
     }
 
 
@@ -818,7 +818,7 @@ namespace GPS {
             os << std::setprecision(3)
                 << "  mittl. Geschw. = " << avgSpeed() << " km/h" << std::endl;
             if (circular)
-                os << "  mittl. Anstieg = " << (avgUphillSlope() + avgDownhillSlope()).value() * 2 << "%" << std::endl;
+                os << "  mittl. Anstieg = " << (avgUphillSlope() + avgDownhillSlope()).value() << "%" << std::endl;
             else
                 os << "  mittl. An-/Abstieg = " << avgUphillSlope() << "% / " << avgDownhillSlope() << "%" << std::endl;
             if (avgHeartrate().defined())
