@@ -20,7 +20,7 @@ std::string mergeFile;
 std::string defaultFileCmdline;
 std::string mergeFileCmdline;
 std::string configFile;
-std::string title = "Grafik-Titel";
+std::string title;
 std::string url;
 std::string authorName;
 std::string authorMail;
@@ -64,8 +64,8 @@ GPS::IntValue gnuplotHeartrateLo;
 GPS::IntValue gnuplotHeartrateHi;
 bool gnuplotHeartrateAverage = false;
 double gnuplotSlopePct = 20;
-GPS::IntValue gnuplotSlopeLo = -25;
-GPS::IntValue gnuplotSlopeHi = +25;
+GPS::IntValue gnuplotSlopeLo;
+GPS::IntValue gnuplotSlopeHi;
 std::string gnuplotSlopeSource;
 std::string dumpFile;
 std::string dumpFileCmdline;
@@ -95,40 +95,19 @@ void warnmsg(std::string str)
 }
 
 
-
 void initDefaultConfiguration(void)
 {
     SmoothingOptions* opt;
-    opt = new SmoothingOptions;
-    opt->id = "Original";
-    opt->draw = true;
-    opt->gnuplotOption = "with lines lw 2 lc rgb \"#E77171\"";
+    opt = new SmoothingOptions("Original", true, std::string(), 0.0, "with lines lw 2 lc rgb \"#E77171\"");
     smoothings.push_back(opt);
-    opt = new SmoothingOptions;
-    opt->id = "Threshold (3m)";
-    opt->algorithm = "threshold";
-    opt->draw = false;
-    opt->param = 3.0;
+    opt = new SmoothingOptions("Threshold (3m)", false, "threshold", 3.0);
     smoothings.push_back(opt);
-    opt = new SmoothingOptions;
-    opt->id = "Douglas-Peucker (3m)";
-    opt->algorithm = "douglas_peucker";
-    opt->draw = false;
-    opt->param = 3.0;
+    opt = new SmoothingOptions("Douglas-Peucker (3m)", false, "douglas_peucker", 3.0);
     smoothings.push_back(opt);
-    opt = new SmoothingOptions;
-    opt->id = "Douglas-Peucker (5m)";
-    opt->algorithm = "douglas_peucker";
-    opt->draw = true;
-    opt->gnuplotOption = "with points pt 5 ps 0.3";
-    opt->param = 5.0;
+    opt = new SmoothingOptions("Douglas-Peucker (5m)", true, "douglas_peucker", 5.0, "with points pt 5 ps 0.3");
+    gnuplotSlopeSource = opt->id;
     smoothings.push_back(opt);
-    opt = new SmoothingOptions;
-    opt->id = "Douglas-Peucker (8m)";
-    opt->algorithm = "douglas_peucker";
-    opt->draw = false;
-    opt->gnuplotOption = "with points pt 5 ps 0.3";
-    opt->param = 8.0;
+    opt = new SmoothingOptions("Douglas-Peucker (8m)", false, "douglas_peucker", 8.0);
     smoothings.push_back(opt);
 }
 

@@ -14,7 +14,10 @@ typedef std::map<std::string, GPS::Track*> smoothedTrack_t;
 
 struct SmoothingOptions
 {
-    SmoothingOptions(void) : param(0.0), draw(false)
+    SmoothingOptions(void) 
+    { /* ... */ }
+    SmoothingOptions(std::string _Id, bool _Draw, std::string _Algorithm = std::string(), double _Param = 0.0, std::string _GnuplotOption = std::string())
+        : id(_Id), algorithm(_Algorithm), gnuplotOption(_GnuplotOption), param(_Param), draw(_Draw)
     { /* ... */ }
     std::string id;
     std::string algorithm;

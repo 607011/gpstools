@@ -47,7 +47,7 @@ void dumpData(void)
                  << std::setprecision(3)
                  << std::setw(4) << std::right;
             if (circular)
-                dump << (t->avgUphillSlope() + t->avgDownhillSlope()).value() * 2;
+                dump << (t->avgUphillSlope() + t->avgDownhillSlope()).value();
             else
                 dump << t->avgUphillSlope() << "% / " << t->avgDownhillSlope();
             dump << "%)" << std::endl;
