@@ -5,7 +5,7 @@
 #ifndef __GLOBALS_H_
 #define __GLOBALS_H_
 
-#define VERSION "1.0.3"
+#define VERSION "1.0.4"
 
 // gettext-Dummy
 #define _(x) x

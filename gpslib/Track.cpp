@@ -818,9 +818,9 @@ namespace GPS {
             os << std::setprecision(3)
                 << "  mittl. Geschw. = " << avgSpeed() << " km/h" << std::endl;
             if (circular)
-                os << "  mittl. Anstieg = " << (avgUphillSlope() + avgDownhillSlope()).value() / 2 << "%" << std::endl;
+                os << "  mittl. Anstieg = " << (avgUphillSlope() + avgDownhillSlope()).value() * 2 << "%" << std::endl;
             else
-                os << "  mittl. An-/Abstieg = " << avgUphillSlope() << "% / " << avgDownhillSlope() << std::endl;
+                os << "  mittl. An-/Abstieg = " << avgUphillSlope() << "% / " << avgDownhillSlope() << "%" << std::endl;
             if (avgHeartrate().defined())
                 os << "  mittl. HF = " << (int) avgHeartrate().value() << " bpm" << std::endl;
             if (avgTemperature().defined())
