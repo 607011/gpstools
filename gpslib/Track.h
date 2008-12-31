@@ -293,6 +293,12 @@ namespace GPS {
         /// @return Geglätteter Track
         Track* smoothThreshold(double epsilon);
 
+        /// Die Höheninformationen aller Trackpunkte um die angegebenen
+        /// Anzahl Meter verschieben.
+        /// @param m Meter, um die die Höheninformationen aller Trackpunkte
+        /// verschoben werden sollen.
+        void shiftElevation(double m);
+
         /// Die Zeitstempel aller Trackpunkte um die angegebenen
         /// Anzahl Sekunden verschieben.
         /// @param seconds Anzahl der Sekunden, um die die

@@ -13,8 +13,6 @@
 #include "Timestamp.h"
 #include "Duration.h"
 
-using namespace std;
-
 namespace GPS {
 
     const double Track::DEFAULT_METERS_INTERVAL = 200;
@@ -748,6 +746,13 @@ namespace GPS {
     }
 
 
+    void Track::shiftElevation(double m)
+    {
+        for (TrackpointList::iterator i = samples.begin(); i != samples.end(); ++i)
+            (*i)->setElevation((*i)->elevation() + m);
+    }
+
+
     void Track::shiftTimestamps(timestamp_t milliseconds)
     {
         for (TrackpointList::iterator i = samples.begin(); i != samples.end(); ++i)
@@ -793,29 +798,33 @@ namespace GPS {
     }
 
 
-    void Track::dump(ostream& os, string msg, bool dumpTrackpoints)
+    void Track::dump(std::ostream& os, std::string msg, bool dumpTrackpoints)
     {
         if (os.good()) 
         {
-            os << endl 
-                << "Track: " << name() << endl 
-                << "  >>" << msg << "<<" << endl
-                << "  Anzahl Punkte: " << samples.size() << endl
-                << "  Startzeit: " << startTimestamp().toString() << endl
-                << "  Zielzeit: " << finishTimestamp().toString() << endl
-                << setprecision(5) << noshowpoint
-                << "  Entfernung: " << 1e-3*distance() << " km" << endl
-                << setprecision(4) << showpoint
-                << "  An-/Abstiege = " << ascent() << " m / " << descent() << " m" << endl
-                << "  Höhe min/max = " << minElevation() << " m / " << maxElevation() << " m" << endl
-                << setprecision(3)
-                << "  mittl. Geschw. = " << avgSpeed() << " km/h" << endl
-                << "  mittl. Anstieg = " << avgUphillSlope() << " %" << endl
-                << "  mittl. Abstieg = " << avgDownhillSlope() << " %" << endl;
+            bool circular = samples.front()->rangeTo(samples.back()) < 100.0;
+            os << std::endl 
+                << "Track: " << name() << std::endl 
+                << "  >>" << msg << "<<" << std::endl
+                << "  Anzahl Punkte: " << samples.size() << std::endl
+                << "  Startzeit: " << startTimestamp().toString() << std::endl
+                << "  Zielzeit: " << finishTimestamp().toString() << std::endl
+                << "  Dauer: " << (finishTimestamp() - startTimestamp()).toString() << std::endl
+                << std::setprecision(5) << std::noshowpoint
+                << "  Entfernung: " << 1e-3*distance() << " km" << std::endl
+                << std::setprecision(4) << std::showpoint
+                << "  An-/Abstiege = " << ascent() << " m / " << descent() << " m" << std::endl
+                << "  Höhe min/max = " << minElevation() << " m / " << maxElevation() << " m" << std::endl;
+            os << std::setprecision(3)
+                << "  mittl. Geschw. = " << avgSpeed() << " km/h" << std::endl;
+            if (circular)
+                os << "  mittl. Anstieg = " << (avgUphillSlope() + avgDownhillSlope()).value() / 2 << "%" << std::endl;
+            else
+                os << "  mittl. An-/Abstieg = " << avgUphillSlope() << "% / " << avgDownhillSlope() << std::endl;
             if (avgHeartrate().defined())
-                os << "  mittl. HF = " << (int) avgHeartrate().value() << " bpm" << endl;
+                os << "  mittl. HF = " << (int) avgHeartrate().value() << " bpm" << std::endl;
             if (avgTemperature().defined())
-                os << "  mittl. Temp. = " << avgTemperature() << " °C" << endl;
+                os << "  mittl. Temp. = " << avgTemperature() << "° C" << std::endl;
             if (dumpTrackpoints)
             {
                 for (TrackpointList::const_iterator i = samples.begin(); i != samples.end(); ++i)

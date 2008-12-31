@@ -21,6 +21,8 @@ enum _long_options {
     SELECT_HELP,
     SELECT_NAME,
     SELECT_GNUPLOT,
+    SELECT_LIST,
+    SELECT_ELESHIFT,
     SELECT_XAXIS,
     SELECT_DEBUG,
     SELECT_QUIET,
@@ -36,6 +38,8 @@ static struct option long_options[] = {
     { "help",      no_argument,       0, SELECT_HELP },
     { "name",      required_argument, 0, SELECT_NAME },
     { "gnuplot",   required_argument, 0, SELECT_GNUPLOT },
+    { "eleshift",  required_argument, 0, SELECT_ELESHIFT },
+    { "list",      no_argument,       0, SELECT_LIST },
     { "quiet",     no_argument,       0, SELECT_QUIET },
     { "debug",     no_argument,       0, SELECT_DEBUG },
     { "dump",      required_argument, 0, SELECT_DUMP },
@@ -53,15 +57,15 @@ int main(int argc, char* argv[])
 
     for (;;) {
         int option_index = 0;
-        int c = getopt_long(argc, argv, "h?vqc:", long_options, &option_index);
+        int c = getopt_long(argc, argv, "h?vqc:l", long_options, &option_index);
         if (c == -1)
             break;
         switch (c)
         {
         case 'h':
-            /* fall-through */
+            // fall-through
         case '?':
-            /* fall-through */
+            // fall-through
         case SELECT_HELP:
             usage();
             return 0;
@@ -70,9 +74,18 @@ int main(int argc, char* argv[])
             if (optarg != NULL)
                 defaultFileCmdline = optarg;
             break;
+        case SELECT_ELESHIFT:
+            if (optarg != NULL)
+                eleOffset = atof(optarg);
+            break;
         case SELECT_HR:
             if (optarg != NULL)
                 mergeFileCmdline = optarg;
+            break;
+        case SELECT_LIST:
+            // fall-through
+        case 'l':
+            doList = true;
             break;
         case SELECT_NAME:
             if (optarg != NULL)
@@ -87,18 +100,18 @@ int main(int argc, char* argv[])
                 gnuplotExeCmdline = optarg;
             break;
         case SELECT_CONFIG:
-            /* fall-through */
+            // fall-through
         case 'c':
             if (optarg != NULL)
                 configFile = optarg;
             break;
         case SELECT_VERBOSE:
-            /* fall-through */
+            // fall-through
         case 'v':
             ++verbose;
             break;
         case SELECT_QUIET:
-            /* fall-through */
+            // fall-through
         case 'q':
             quiet = true;
             break;
@@ -144,6 +157,15 @@ int main(int argc, char* argv[])
 
     GPS::TrackList trkList = gpxFile.tracks();
 
+    if (doList)
+    {
+        for (GPS::TrackList::const_iterator i = trkList.begin(); i != trkList.end(); ++i)
+        {
+            std::cout << " - ``" << (*i)->name() << "''" << std::endl;
+        }
+        return EXIT_SUCCESS;
+    }
+
     trk = gpxFile.tracks().front();
     if (gpxFile.tracks().size() > 1)
     {
@@ -174,7 +196,11 @@ int main(int argc, char* argv[])
     if (!trk->hasTimestamps())
         warnmsg(_("Der Track enthält keine Zeitstempel"));
 
-    trk->shiftTimestamps(eleTimeOffset);
+
+    if (eleTimeOffset != 0)
+        trk->shiftTimestamps(eleTimeOffset);
+    if (eleOffset != 0)
+        trk->shiftElevation(eleOffset);
 
     if (mergeFile != "")
     {
