@@ -159,6 +159,7 @@ int main(int argc, char* argv[])
 
     if (doList)
     {
+        std::cout << "Die Datei enthält " << trkList.size() << " Track" << ((trkList.size() != 1)? "s" : "") << ":" << std::endl;
         for (GPS::TrackList::const_iterator i = trkList.begin(); i != trkList.end(); ++i)
         {
             std::cout << " - ``" << (*i)->name() << "''" << std::endl;
