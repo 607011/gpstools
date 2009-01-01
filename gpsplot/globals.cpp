@@ -44,7 +44,7 @@ std::string gnuplotExe = "I:\\Programme\\gnuplot\\bin\\wgnuplot.exe";
 std::string gnuplotExe = "C:\\Programme\\gnuplot\\bin\\wgnuplot.exe";
 #endif
 std::string gnuplotExeCmdline;
-std::string gnuplotFormat = "png small size 1024,768 enhanced interlace";
+std::string gnuplotFormat = "png small size 800,600 enhanced interlace";
 std::string gnuplotSuffix = "png";
 std::string gnuplotXAxis = "distance";
 time_t gnuplotSpeedIntervalSeconds = 0;
@@ -97,18 +97,12 @@ void warnmsg(std::string str)
 
 void initDefaultConfiguration(void)
 {
-    SmoothingOptions* opt;
-    opt = new SmoothingOptions("Original", true, std::string(), 0.0, "with lines lw 2 lc rgb \"#E77171\"");
-    smoothings.push_back(opt);
-    opt = new SmoothingOptions("Threshold (3m)", false, "threshold", 3.0);
-    smoothings.push_back(opt);
-    opt = new SmoothingOptions("Douglas-Peucker (3m)", false, "douglas_peucker", 3.0);
-    smoothings.push_back(opt);
-    opt = new SmoothingOptions("Douglas-Peucker (5m)", true, "douglas_peucker", 5.0, "with points pt 5 ps 0.3");
-    gnuplotSlopeSource = opt->id;
-    smoothings.push_back(opt);
-    opt = new SmoothingOptions("Douglas-Peucker (8m)", false, "douglas_peucker", 8.0);
-    smoothings.push_back(opt);
+    smoothings.push_back(new SmoothingOptions("Original", true, std::string(), 0.0, "with lines lw 2 lc rgb \"#E77171\""));
+    smoothings.push_back(new SmoothingOptions("Threshold (3m)", false, "threshold", 3.0));
+    smoothings.push_back(new SmoothingOptions("Douglas-Peucker (3m)", false, "douglas_peucker", 3.0));
+    gnuplotSlopeSource = smoothings.back()->id;
+    smoothings.push_back(new SmoothingOptions("Douglas-Peucker (5m)", true, "douglas_peucker", 5.0, "with points pt 5 ps 0.3"));
+    smoothings.push_back(new SmoothingOptions("Douglas-Peucker (8m)", false, "douglas_peucker", 8.0));
 }
 
 
