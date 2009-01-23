@@ -147,7 +147,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     HDC hdc;
     HWND hStatus = NULL;
     HWND hEdit = NULL;
-    int PartSize[2];
 
     switch (message)
     {
@@ -189,25 +188,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             hStatus = GetDlgItem(hWnd, IDC_MAIN_STATUS);
             int nWidth = LOWORD(lParam); 
             int nHeight = HIWORD(lParam);
-            PartSize[0] = nWidth/2;
-            PartSize[1] = -1;
+            int PartSize[2] = { nWidth/2, -1 };
             SendMessage(hStatus, SB_SETPARTS, sizeof(PartSize)/sizeof(int), (LPARAM)PartSize);
-            SetWindowPos(hStatus, 0, 0, 0, LOWORD(lParam), 20, SWP_NOMOVE); 
-            // SendMessage(hStatus, SB_SETTEXT, 0, (LPARAM)"blah");
+            SetWindowPos(hStatus, 0, 0, 0, nWidth, 20, SWP_NOMOVE); 
             hEdit = GetDlgItem(hWnd, IDC_EDIT);
-            MoveWindow(hEdit, 
-                0, 0,                  // starting x- and y-coordinates 
-                LOWORD(lParam),        // width of client area 
-                HIWORD(lParam)-20,        // height of client area 
-                TRUE);                 // repaint window 
+            MoveWindow(hEdit, 0, 0, nWidth, nHeight-20, TRUE);
         }
         break;
     case WM_CREATE:
         {
             RECT clientRect;
             GetClientRect(hWnd, &clientRect);
-            PartSize[0] = clientRect.right/2;
-            PartSize[1] = clientRect.right;
+            int PartSize[2] = { clientRect.right/2, -1 };
             hStatus = CreateWindowEx(0, STATUSCLASSNAME, NULL,
                 WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP, 0, 0, 0, 0,
                 hWnd, (HMENU)IDC_MAIN_STATUS, hInst, NULL);
@@ -215,7 +207,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             RECT statusBarRect;
             GetClientRect(hStatus, &statusBarRect);
             hEdit = CreateWindowEx(NULL, "Edit", NULL,
-                ES_READONLY | ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL |WS_CHILD | WS_VISIBLE,
+                ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL |WS_CHILD | WS_VISIBLE,
                 0, 0,
                 statusBarRect.right, clientRect.bottom - (statusBarRect.bottom - statusBarRect.top),
                 hWnd, (HMENU)IDC_EDIT, hInst, NULL);
