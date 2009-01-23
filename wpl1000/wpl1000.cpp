@@ -197,6 +197,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_CREATE:
         {
+            InitCommonControls();
             RECT clientRect;
             GetClientRect(hWnd, &clientRect);
             int PartSize[2] = { clientRect.right/2, -1 };
