@@ -33,16 +33,19 @@ namespace GPS {
     /// @param a erste Zahl
     /// @param b zweite Zahl
     /// @return kleineren der beiden Werte a und b
+#ifndef min
     template <typename T>
     inline const T &min(const T &a, const T &b) { if (a < b) return a; return b; }
-
+#endif
 
     /// Größeren Wert zweier Zahlen ermitteln.
     /// @param a erste Zahl
     /// @param b zweite Zahl
     /// @return Größeren der beiden Werte a und b
+#ifndef max
     template <typename T>
     inline const T &max(const T &a, const T &b) { if (a > b) return a; return b; }
+#endif
 
 
     /// Eine Ganzzahl in einen String wandeln.

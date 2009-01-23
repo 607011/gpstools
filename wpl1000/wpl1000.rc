@@ -45,6 +45,8 @@ IDC_WPL1000 MENU
 BEGIN
     POPUP "&File"
     BEGIN
+        MENUITEM "&Open ...",                   IDM_FILEOPEN
+        MENUITEM "&Save as ...",                IDM_FILESAVE
         MENUITEM "E&xit",                       IDM_EXIT
     END
     POPUP "&Help"
@@ -71,29 +73,17 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
+IDD_ABOUTBOX DIALOGEX 0, 0, 170, 80
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About wpl1000"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            128,IDC_STATIC,14,14,21,20
-    LTEXT           "wpl1000, Version 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "wpl1000 0.9",IDC_STATIC,42,14,114,8,SS_NOPREFIX
     LTEXT           "Copyright (C) 2009",IDC_STATIC,42,26,114,8
-    DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
+    LTEXT           "Oliver Lau, oliver@ersatzworld.net",IDC_STATIC,42,38,114,8
+    DEFPUSHBUTTON   "OK",IDOK,113,53,50,14,WS_GROUP
 END
-
-IDD_FORMVIEW DIALOGEX 0, 0, 209, 107
-STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
-FONT 8, "MS Shell Dlg", 400, 0, 0x0
-BEGIN
-    PUSHBUTTON      "Button1",IDC_BUTTON1,135,23,50,14
-    EDITTEXT        IDC_EDIT1,15,23,112,14,ES_AUTOHSCROLL
-    PUSHBUTTON      "Button2",IDC_BUTTON2,135,65,50,14
-    EDITTEXT        IDC_EDIT2,17,64,112,14,ES_AUTOHSCROLL
-    GROUPBOX        "NVPIPE.DAT",IDC_STATIC,7,7,195,40
-    GROUPBOX        "GPX-Datei",IDC_STATIC,7,49,195,40
-END
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -160,7 +150,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_APP_TITLE           "wpl1000"
+    IDS_APP_TITLE           "WPL1000"
     IDC_WPL1000             "WPL1000"
 END
 
