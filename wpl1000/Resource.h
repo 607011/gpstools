@@ -9,14 +9,14 @@
 #define IDD_ABOUTBOX                    103
 #define IDM_ABOUT                       104
 #define IDM_EXIT                        105
+#define IDM_FILEOPEN                    106
 #define IDI_WPL1000                     107
 #define IDI_SMALL                       108
 #define IDC_WPL1000                     109
+#define IDM_FILESAVE                    110
 #define IDR_MAINFRAME                   128
-#define IDC_BUTTON1                     1000
-#define IDC_EDIT1                       1001
-#define IDC_BUTTON2                     1002
-#define IDC_EDIT2                       1003
+#define IDC_MAIN_STATUS                 1000
+#define IDC_EDIT                        1001
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
