@@ -18,23 +18,13 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// German (Neutral) resources
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
 #ifdef _WIN32
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 #pragma code_page(1252)
 #endif //_WIN32
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDI_WPL1000             ICON                    "wpl1000.ico"
-IDI_SMALL               ICON                    "small.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -43,28 +33,16 @@ IDI_SMALL               ICON                    "small.ico"
 
 IDC_WPL1000 MENU 
 BEGIN
-    POPUP "&File"
+    POPUP "&Datei"
     BEGIN
-        MENUITEM "&Open ...",                   IDM_FILEOPEN
-        MENUITEM "&Save as ...",                IDM_FILESAVE
-        MENUITEM "E&xit",                       IDM_EXIT
+        MENUITEM "&Öffnen",                     IDM_FILEOPEN
+        MENUITEM "&Speichern unter ...",        IDM_FILESAVE
+        MENUITEM "B&eenden",                    IDM_EXIT
     END
-    POPUP "&Help"
+    POPUP "&Hilfe"
     BEGIN
-        MENUITEM "&About ...",                  IDM_ABOUT
+        MENUITEM "Ü&ber ...",                   IDM_ABOUT
     END
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Accelerator
-//
-
-IDC_WPL1000 ACCELERATORS 
-BEGIN
-    "?",            IDM_ABOUT,              ASCII,  ALT
-    "/",            IDM_ABOUT,              ASCII,  ALT
 END
 
 
@@ -80,10 +58,26 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            128,IDC_STATIC,14,14,21,20
     LTEXT           "wpl1000 0.9",IDC_STATIC,42,14,114,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2009",IDC_STATIC,42,26,114,8
+    LTEXT           "Copyright (c) 2009",IDC_STATIC,42,26,114,8
     LTEXT           "Oliver Lau, oliver@ersatzworld.net",IDC_STATIC,42,38,114,8
     DEFPUSHBUTTON   "OK",IDOK,113,53,50,14,WS_GROUP
 END
+
+IDD_MAINFORM DIALOGEX 0, 0, 286, 243
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    EDITTEXT        IDC_EDITLOAD,12,18,200,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Laden",IDC_BUTTONLOAD,215,17,47,15
+    EDITTEXT        IDC_EDITSAVE,11,54,200,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Speichern",IDC_BUTTONSAVE,214,54,48,15
+    CONTROL         "eine GPX-Datei pro Track speichern (multi)",IDC_CHECKMULTI,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,72,155,10
+    GROUPBOX        "GPX-Datei",IDC_STATIC,6,42,272,48
+    GROUPBOX        "NVPIPE.DAT",IDC_STATIC,7,7,272,33
+    EDITTEXT        IDC_EDIT1,6,96,276,144,ES_AUTOHSCROLL
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -101,16 +95,50 @@ BEGIN
         BOTTOMMARGIN, 55
     END
 
-    IDD_FORMVIEW, DIALOG
+    IDD_MAINFORM, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 202
+        RIGHTMARGIN, 279
         TOPMARGIN, 7
-        BOTTOMMARGIN, 100
+        BOTTOMMARGIN, 236
     END
 END
 #endif    // APSTUDIO_INVOKED
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_APP_TITLE           "WPL1000"
+    IDC_WPL1000             "WPL1000"
+END
+
+#endif    // German (Neutral) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_WPL1000             ICON                    "wpl1000.ico"
+IDI_SMALL               ICON                    "small.ico"
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -141,18 +169,6 @@ BEGIN
 END
 
 #endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// String Table
-//
-
-STRINGTABLE 
-BEGIN
-    IDS_APP_TITLE           "WPL1000"
-    IDC_WPL1000             "WPL1000"
-END
 
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
