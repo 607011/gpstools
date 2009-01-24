@@ -17,14 +17,15 @@ std::string wpl1000Filename;
 std::string gpxFilename;
 BOOL multi = FALSE;
 
-// Forward declarations of functions included in this code module:
-ATOM				MyRegisterClass(HINSTANCE hInstance);
+
+ATOM				MyRegisterClass(HINSTANCE);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
 BOOL                OpenNVPIPE(HWND);
 BOOL                SaveGPX(HWND);
+
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                        HINSTANCE hPrevInstance,
@@ -34,24 +35,14 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    // TODO: Place code here.
     MSG msg;
     HACCEL hAccelTable;
-
-    // Initialize global strings
     LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadString(hInstance, IDC_WPL1000, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
-
-    // Perform application initialization:
-    if (!InitInstance (hInstance, nCmdShow))
-    {
+    if (!InitInstance(hInstance, nCmdShow))
         return FALSE;
-    }
-
     hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WPL1000));
-
-    // Main message loop:
     while (GetMessage(&msg, NULL, 0, 0))
     {
         if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
@@ -60,25 +51,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
             DispatchMessage(&msg);
         }
     }
-
     return (int) msg.wParam;
 }
 
 
-
-//
-//  FUNCTION: MyRegisterClass()
-//
-//  PURPOSE: Registers the window class.
-//
-//  COMMENTS:
-//
-//    This function and its usage are only necessary if you want this code
-//    to be compatible with Win32 systems prior to the 'RegisterClassEx'
-//    function that was added to Windows 95. It is important to call this function
-//    so that the application will get 'well formed' small icons associated
-//    with it.
-//
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
     WNDCLASSEX wcex;
@@ -100,46 +76,32 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     return RegisterClassEx(&wcex);
 }
 
-//
-//   FUNCTION: InitInstance(HINSTANCE, int)
-//
-//   PURPOSE: Saves instance handle and creates main window
-//
-//   COMMENTS:
-//
-//        In this function, we save the instance handle in a global variable and
-//        create and display the main program window.
-//
+
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     HWND hWnd;
-
-    hInst = hInstance; // Store instance handle in our global variable
-
-    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, 0, 300, 200, NULL, NULL, hInstance, NULL);
-
+    hInst = hInstance;
+    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+        CW_USEDEFAULT, 0, 600, 600, HWND_DESKTOP, NULL, hInstance, NULL);
     if (!hWnd)
-    {
         return FALSE;
-    }
-
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
-
     return TRUE;
 }
 
-//
-//  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
-//
-//  PURPOSE:  Processes messages for the main window.
-//
-//  WM_COMMAND	- process the application menu
-//  WM_PAINT	- Paint the main window
-//  WM_DESTROY	- post a quit message and return
-//
-//
+
+LRESULT CALLBACK MainFormProc(HWND hWndDlg, UINT Msg, WPARAM wParam, LPARAM lParam)
+{
+    switch(Msg)
+    {
+    case WM_INITDIALOG:
+        return TRUE;
+    }
+    return FALSE;
+}
+
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     int wmId, wmEvent;
@@ -147,13 +109,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     HDC hdc;
     HWND hStatus = NULL;
     HWND hEdit = NULL;
+    HWND hMainForm = NULL;
 
     switch (message)
     {
     case WM_COMMAND:
         wmId    = LOWORD(wParam);
         wmEvent = HIWORD(wParam);
-        // Parse the menu selections:
         switch (wmId)
         {
         case IDM_FILEOPEN:
@@ -191,8 +153,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             int PartSize[2] = { nWidth/2, -1 };
             SendMessage(hStatus, SB_SETPARTS, sizeof(PartSize)/sizeof(int), (LPARAM)PartSize);
             SetWindowPos(hStatus, 0, 0, 0, nWidth, 20, SWP_NOMOVE); 
-            hEdit = GetDlgItem(hWnd, IDC_EDIT);
-            MoveWindow(hEdit, 0, 0, nWidth, nHeight-20, TRUE);
+            //hEdit = GetDlgItem(hWnd, IDC_EDIT);
+            //MoveWindow(hEdit, 0, 0, nWidth, nHeight-20, TRUE);
+            hMainForm = GetDlgItem(hWnd, IDD_MAINFORM);
+            MoveWindow(hMainForm, 0, 0, nWidth, nHeight-20, TRUE);
         }
         break;
     case WM_CREATE:
@@ -207,11 +171,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             SendMessage(hStatus, SB_SETPARTS, sizeof(PartSize)/sizeof(int), (LPARAM)PartSize);
             RECT statusBarRect;
             GetClientRect(hStatus, &statusBarRect);
-            hEdit = CreateWindowEx(NULL, "Edit", NULL,
-                ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL |WS_CHILD | WS_VISIBLE,
-                0, 0,
-                statusBarRect.right, clientRect.bottom - (statusBarRect.bottom - statusBarRect.top),
-                hWnd, (HMENU)IDC_EDIT, hInst, NULL);
+            //hEdit = CreateWindowEx(NULL, "Edit", NULL,
+            //    ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL | WS_CHILD | WS_VISIBLE,
+            //    0, 0,
+            //    statusBarRect.right, clientRect.bottom - (statusBarRect.bottom - statusBarRect.top),
+            //    hWnd, (HMENU)IDC_EDIT, hInst, NULL);
+            hMainForm = CreateDialog(hInst, MAKEINTRESOURCE(IDD_MAINFORM), hWnd, (DLGPROC)MainFormProc);
+            ShowWindow(hMainForm, SW_SHOW);
         }
         break;
     default:
@@ -220,7 +186,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-// Message handler for about box.
+
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     UNREFERENCED_PARAMETER(lParam);
@@ -247,7 +213,7 @@ BOOL OpenNVPIPE(HWND hWnd)
     OPENFILENAME ofn;
     TCHAR szFileName[MAX_PATH] = "";
     ZeroMemory(&ofn, sizeof(ofn));
-    ofn.lStructSize = sizeof(ofn); // SEE NOTE BELOW
+    ofn.lStructSize = sizeof(ofn);
     ofn.hwndOwner = hWnd;
     ofn.lpstrFilter = "DAT files (*.dat)\0*.dat\0All Files (*.*)\0*.*\0";
     ofn.lpstrFile = szFileName;
@@ -257,12 +223,11 @@ BOOL OpenNVPIPE(HWND hWnd)
     if(GetOpenFileName(&ofn))
     {
         wpl1000Filename = ofn.lpstrFile;
+        HWND hStatus = GetDlgItem(hWnd, IDC_MAIN_STATUS);
         errno_t rc = wpl1000File.load(wpl1000Filename);
+        SendMessage(hStatus, SB_SETTEXT, 0, (LPARAM)((rc != 0)? "Laden fehlgeschlagen." : "Laden OK."));
         if (wpl1000File.tracks().size() == 0)
-        {
-            HWND hStatus = GetDlgItem(hWnd, IDC_MAIN_STATUS);
             SendMessage(hStatus, SB_SETTEXT, 0, (LPARAM)"Die Datei enthält keine Tracks!");
-        }
         bSuccess = (rc != 0);
     }
     return bSuccess;
@@ -280,7 +245,7 @@ BOOL SaveGPX(HWND hWnd)
     ofn.lpstrFilter = "GPX files (*.gpx)\0*.gpx\0All Files (*.*)\0*.*\0";
     ofn.lpstrFile = szFileName;
     ofn.nMaxFile = MAX_PATH;
-    ofn.Flags = OFN_EXPLORER | OFN_HIDEREADONLY;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_EXPLORER | OFN_HIDEREADONLY;
     ofn.lpstrDefExt = "gpx";
     if(GetSaveFileName(&ofn))
     {
@@ -295,10 +260,8 @@ BOOL SaveGPX(HWND hWnd)
                 std::basic_string<char>::size_type spos = gpxFilename.find_last_of(PathDelimiter);
                 std::string trkFilename = gpxFilename;
                 trkFilename.insert(spos+1, (*i)->startTimestamp().toString("%Y%m%d-%H%M") + "-");
-                SendMessage(hStatus, SB_SETTEXT, 0, (LPARAM)"Gespeichert");
                 errno_t rc = trkFile.write(trkFilename);
-                if (rc != 0)
-                    SendMessage(hStatus, SB_SETTEXT, 0, (LPARAM)"Speichern fehlgeschlagen!");
+                SendMessage(hStatus, SB_SETTEXT, 0, (LPARAM)((rc != 0)? "Speichern fehlgeschlagen!" : "Speichern OK."));
                 bSuccess = (rc == 0);
             }
             GPS::GPXFile wptFile;
@@ -317,13 +280,9 @@ BOOL SaveGPX(HWND hWnd)
             gpxFile.setWaypoints(wpl1000File.waypoints());
             HWND hEdit = GetDlgItem(hWnd, IDC_EDIT);
             for (GPS::TrackList::const_iterator i = gpxFile.tracks().begin(); i != gpxFile.tracks().end(); ++i)
-            {
                 SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM) (*i)->name().c_str()); 
-            }
             errno_t rc = gpxFile.write(gpxFilename);
-            if (rc != 0) {
-                SendMessage(hStatus, SB_SETTEXT, 0, (LPARAM)"FEHLER: Speichern fehlgeschlagen.");
-            }
+            SendMessage(hStatus, SB_SETTEXT, 0, (LPARAM)((rc != 0)? "FEHLER: Speichern fehlgeschlagen." : "Speichern OK."));
             bSuccess = (rc == 0);
         }
     }
