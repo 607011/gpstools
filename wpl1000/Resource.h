@@ -9,22 +9,21 @@
 #define IDD_ABOUTBOX                    103
 #define IDM_ABOUT                       104
 #define IDM_EXIT                        105
-#define IDM_FILEOPEN                    106
 #define IDI_WPL1000                     107
 #define IDI_SMALL                       108
 #define IDC_WPL1000                     109
-#define IDM_FILESAVE                    110
 #define IDR_MAINFRAME                   128
 #define IDC_MAIN_STATUS                 1000
 #define IDC_EDIT                        1001
-#define IDC_CHECKMULTI                  1004
-#define IDC_RICHEDITLOG                 1005
-#define IDC_BUTTONLOAD                  1006
-#define IDC_BUTTONSAVE                  1007
-#define IDC_EDITLOAD                    1008
-#define IDC_EDITSAVE                    1009
-#define IDC_EDIT1                       1011
+#define IDC_CHECK_MULTI                 1004
+#define IDC_BUTTON_OPEN                 1006
+#define IDC_BUTTON_SAVE                 1007
+#define IDC_EDIT_LOG                    1011
+#define IDC_COMBO_OPEN                  1015
+#define IDC_COMBO_SAVE                  1016
 #define IDC_STATIC                      -1
+
+#define IDT_STATUSBAR                   2001
 
 // Next default values for new objects
 // 
@@ -33,7 +32,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        131
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1012
+#define _APS_NEXT_CONTROL_VALUE         1016
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif
