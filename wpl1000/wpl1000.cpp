@@ -345,6 +345,7 @@ BOOL OpenNVPIPE(VOID)
 
 BOOL SaveGPX(VOID)
 {
+    const DWORD BUFSIZE = 2048;
     BOOL bSuccess = FALSE;
     if (multi)
     {
@@ -372,8 +373,12 @@ BOOL SaveGPX(VOID)
         GPS::GPXFile gpxFile;
         gpxFile.setTracks(wpl1000File.tracks());
         gpxFile.setWaypoints(wpl1000File.waypoints());
-        for (GPS::TrackList::const_iterator i = gpxFile.tracks().begin(); i != gpxFile.tracks().end(); ++i)
-            AppendToLog((LPSTR)(*i)->name().c_str()); 
+        char* buf = (char*)VirtualAlloc(NULL, BUFSIZE, MEM_COMMIT, PAGE_READWRITE);
+        if (buf == NULL)
+            return FALSE;
+        sprintf_s(buf, BUFSIZE, "Schreiben von %s ...", gpxFilename.c_str());
+        AppendToLog(buf);
+        VirtualFree(buf, 0, MEM_RELEASE);
         errno_t rc = gpxFile.write(gpxFilename);
         bSuccess = (rc == 0);
     }
