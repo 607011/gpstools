@@ -37,7 +37,11 @@ namespace GPS {
 
         /// Konstruktor.
         /// @param _MS Millisekunden
-        Duration(timestamp_t _MS) : ms(_MS) { };
+        Duration(timestamp_t _MS) : ms(_MS) { }
+
+        /// Konstruktor.
+        /// @param _S Sekunden
+        Duration(time_t _S) : ms(_S * 1000) { }
 
         /// Konstruktor.
         /// @param str Dauer als String. 

@@ -6,23 +6,18 @@
 #define IDD_MAINFORM                    101
 #define IDD_WPL1000_DIALOG              102
 #define IDS_APP_TITLE                   103
-#define IDD_ABOUTBOX                    103
-#define IDM_ABOUT                       104
-#define IDM_EXIT                        105
-#define IDI_WPL1000                     107
-#define IDI_SMALL                       108
-#define IDC_WPL1000                     109
+#define IDD_ABOUTBOX                    104
+#define IDM_ABOUT                       105
+#define IDM_EXIT                        106
+#define IDM_FILE_OPEN                   107
+#define IDM_FILE_SAVE                   108
+#define IDI_WPL1000                     109
+#define IDI_SMALL                       110
+#define IDC_WPL1000                     111
 #define IDR_MAINFRAME                   128
 #define IDC_MAIN_STATUS                 1000
-#define IDC_EDIT                        1001
-#define IDC_CHECK_MULTI                 1004
-#define IDC_BUTTON_OPEN                 1006
-#define IDC_BUTTON_SAVE                 1007
-#define IDC_EDIT_LOG                    1011
-#define IDC_COMBO_OPEN                  1015
-#define IDC_COMBO_SAVE                  1016
-#define IDC_LIST1                       1017
-#define IDC_PROGRESS1                   1019
+#define IDC_CHECK_MULTI                 1001
+#define IDC_LISTVIEW                    1002
 #define IDT_STATUSBAR                   2001
 #define IDC_STATIC                      -1
 
@@ -34,6 +29,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        131
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1020
-#define _APS_NEXT_SYMED_VALUE           110
+#define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

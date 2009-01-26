@@ -187,7 +187,6 @@ namespace GPS {
                 _Route->append(wpt);
                 gpxRtept = gpxRtept->NextSibling();
             }
-            _Trk->postProcess();
             addTrack(_Trk);
             gpxRte = gpxRte->NextSibling();
         }
