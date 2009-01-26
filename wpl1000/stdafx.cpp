@@ -1,8 +1,4 @@
-// stdafx.cpp : source file that includes just the standard includes
-// wpl1000.pch will be the pre-compiled header
-// stdafx.obj will contain the pre-compiled type information
+// $Id$
+// Copyright (c) 2009 Oliver Lau <oliver@ersatzworld.net>
 
 #include "stdafx.h"
-
-// TODO: reference any additional headers you need in STDAFX.H
-// and not in this file
