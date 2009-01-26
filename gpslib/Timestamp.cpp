@@ -13,9 +13,6 @@
 #include "Duration.h"
 
 
-using namespace std;
-
-
 #ifdef _MSC_VER
     static inline time_t timegm(struct tm* tm)
     {
@@ -116,7 +113,7 @@ namespace GPS {
     }
 
 
-    string Timestamp::toString(const char* fmt) const
+    std::string Timestamp::toString(const char* fmt) const
     {
         if (fmt == NULL)
             fmt = "%Y-%m-%dT%H:%M:%SZ";
@@ -126,12 +123,12 @@ namespace GPS {
 #if defined(_WIN32) && (_MSC_VER >= 1400)
         errno_t rc = gmtime_s(&t, &secs);
         if (rc != 0)
-            return string();
+            return std::string();
 #else
         gmtime_r(&secs, &t);
 #endif
         strftime(buf, sizeof(buf), fmt, &t);
-        return string(buf);
+        return std::string(buf);
     }
 
 

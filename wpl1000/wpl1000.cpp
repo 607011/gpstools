@@ -4,7 +4,41 @@
 #include "stdafx.h"
 #include "wpl1000.h"
 
-#define MAX_LOADSTRING 100
+
+#define MAX_LOADSTRING      100
+
+typedef struct TrackListColumnType {
+    LPSTR pszText;
+    int cx;
+    int fmt;
+} TRACKLISTCOLUMNTYPE;
+
+struct TrackListInfoType
+{
+    TrackListInfoType(void)
+        : pszStart(NULL), pszFinish(NULL), pszPointCount(NULL), pszDistance(NULL), pszDuration(NULL) { }
+    ~TrackListInfoType()
+    {
+        if (pszStart != NULL)
+            delete [] pszStart;
+        if (pszFinish != NULL)
+            delete [] pszFinish;
+        if (pszPointCount != NULL)
+            delete [] pszPointCount;
+        if (pszDistance != NULL)
+            delete [] pszDistance;
+        if (pszDuration != NULL)
+            delete [] pszDuration;
+    }
+    LPSTR pszStart;
+    LPSTR pszFinish;
+    LPSTR pszPointCount;
+    LPSTR pszDistance;
+    LPSTR pszDuration;
+};
+
+typedef struct TrackListInfoType TRACKLISTINFOTYPE;
+
 
 HINSTANCE hInst;
 HWND ghWnd;
@@ -17,6 +51,7 @@ GPS::GPXFile gpxFile;
 std::string wpl1000Filename;
 std::string gpxFilename;
 BOOL multi = FALSE;
+TRACKLISTINFOTYPE* trk = NULL;
 
 
 ATOM				MyRegisterClass(HINSTANCE);
@@ -26,7 +61,6 @@ LRESULT CALLBACK	MainFormProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
 VOID                SetStatusBar(LPSTR, UINT Milli = 3000);
-VOID                AppendToLog(LPSTR);
 
 BOOL                OpenNVPIPE(VOID);
 BOOL                OpenGPX(VOID);
@@ -94,13 +128,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 }
 
 
-VOID AppendToLog(LPSTR Msg)
-{
-    SendDlgItemMessage(ghMainForm, IDC_EDIT_LOG, EM_REPLACESEL, 0, (LPARAM)Msg);
-    SendDlgItemMessage(ghMainForm, IDC_EDIT_LOG, EM_REPLACESEL, 0, (LPARAM)"\r\n");
-}
-
-
 VOID SetStatusBar(LPSTR Msg, UINT Milli)
 {
     HWND hStatus = GetDlgItem(ghWnd, IDC_MAIN_STATUS);
@@ -120,7 +147,7 @@ LRESULT CALLBACK MainFormProc(HWND hWndDlg, UINT Msg, WPARAM wParam, LPARAM lPar
 {
     int wmId, wmEvent;
     int nWidth, nHeight;
-    HWND hComboOpen, hComboSave, hEdit;
+    HWND hList;
 
     switch(Msg)
     {
@@ -129,58 +156,6 @@ LRESULT CALLBACK MainFormProc(HWND hWndDlg, UINT Msg, WPARAM wParam, LPARAM lPar
         wmEvent = HIWORD(wParam);
         switch (wmId)
         {
-        case IDC_COMBO_OPEN:
-            switch (wmEvent)
-            {
-            case CBN_SETFOCUS:
-                hEdit = GetDlgItem(hWndDlg, IDC_EDIT_LOG);
-                SendMessage(hEdit, WM_SETTEXT, NULL, (LPARAM)"");
-                if (OpenNVPIPE())
-                {
-                    hComboOpen = GetDlgItem(hWndDlg, IDC_COMBO_OPEN);
-                    SetWindowText(hComboOpen, (LPCSTR)wpl1000Filename.c_str());
-                    LoadNVPIPE();
-                }
-                break;
-            case CBN_KILLFOCUS:
-                {
-                    TCHAR buf[MAX_PATH];
-                    hComboOpen = GetDlgItem(hWndDlg, IDC_COMBO_OPEN);
-                    GetWindowText(hComboOpen, buf, MAX_PATH);
-                }
-                break;
-            case CBN_DROPDOWN: 
-                break;
-            default:
-                break;
-            }
-            break;
-        case IDC_COMBO_SAVE:
-            switch (wmEvent)
-            {
-            case CBN_SETFOCUS:
-                if (OpenGPX()) 
-                {
-                    hComboSave = GetDlgItem(hWndDlg, IDC_COMBO_SAVE);
-                    SetWindowText(hComboSave, (LPCSTR)gpxFilename.c_str());
-                    SaveGPX();
-                }
-                break;
-            case CBN_KILLFOCUS:
-                break;
-            }
-            break;
-        case IDC_BUTTON_OPEN:
-            if (OpenNVPIPE())
-            {
-                hComboOpen = GetDlgItem(hWndDlg, IDC_COMBO_OPEN);
-                SetWindowText(hComboOpen, (LPCSTR)wpl1000Filename.c_str());
-                LoadNVPIPE();
-            }
-            break;
-        case IDC_BUTTON_SAVE:
-            SaveGPX();
-            break;
         case IDC_CHECK_MULTI:
             if (wmEvent == BN_CLICKED) 
                 multi ^= TRUE;
@@ -192,7 +167,58 @@ LRESULT CALLBACK MainFormProc(HWND hWndDlg, UINT Msg, WPARAM wParam, LPARAM lPar
         nHeight = HIWORD(lParam);
         break;
     case WM_INITDIALOG:
+        {
+            TRACKLISTCOLUMNTYPE cols[] = {
+                { TEXT("Start"), 120, LVCFMT_LEFT },
+                { TEXT("Ende"), 120, LVCFMT_LEFT },
+                { TEXT("Punkte"), 48, LVCFMT_RIGHT },
+                { TEXT("km"), 48, LVCFMT_RIGHT },
+                { TEXT("Dauer"), 72, LVCFMT_LEFT },
+                { NULL, 0, 0 }
+            };
+            hList = GetDlgItem(hWndDlg, IDC_LISTVIEW);
+            LVCOLUMN lvc; 
+            lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
+            int iCol = 0;
+            while (cols[iCol].pszText != NULL)
+            {
+                lvc.iSubItem = iCol;
+                lvc.pszText = cols[iCol].pszText;
+                lvc.cx = cols[iCol].cx;
+                lvc.fmt = cols[iCol].fmt;
+                if (ListView_InsertColumn(hList, iCol, &lvc) == -1)
+                    return FALSE;
+                ++iCol;
+            } 
+        }
         return TRUE;
+    case WM_NOTIFY:
+        switch (((LPNMHDR) lParam)->code)
+        {
+        case LVN_GETDISPINFO:
+            NMLVDISPINFO* plvdi = (NMLVDISPINFO*)lParam;
+            switch (plvdi->item.iSubItem)
+            {
+            case 0:
+                plvdi->item.pszText = trk[plvdi->item.iItem].pszStart;
+                break;
+            case 1:
+                plvdi->item.pszText = trk[plvdi->item.iItem].pszFinish;
+                break;
+            case 2:
+                plvdi->item.pszText = trk[plvdi->item.iItem].pszPointCount;
+                break;
+            case 3:
+                plvdi->item.pszText = trk[plvdi->item.iItem].pszDistance;
+                break;
+            case 4:
+                plvdi->item.pszText = trk[plvdi->item.iItem].pszDuration;
+                break;
+            default:
+                break;
+            }
+            return 0;
+        }
     default:
         break;
     }
@@ -220,6 +246,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         case IDM_EXIT:
             DestroyWindow(hWnd);
+            break;
+        case IDM_FILE_OPEN:
+            if (OpenNVPIPE())
+            {
+                if (LoadNVPIPE())
+                {
+                    TCHAR szTitleCopy[MAX_LOADSTRING];
+                    LoadString(hInst, IDS_APP_TITLE, szTitleCopy, MAX_LOADSTRING);
+                    StringCchCopy(szTitle, MAX_LOADSTRING, wpl1000Filename.c_str());
+                    StringCchCat(szTitle, MAX_LOADSTRING, " - ");
+                    StringCchCat(szTitle, MAX_LOADSTRING, szTitleCopy);
+                    SendMessage(ghWnd, WM_SETTEXT, NULL, (LPARAM)szTitle);
+                }
+            }
+            break;
+        case IDM_FILE_SAVE:
+            if (OpenGPX())
+            {
+                SaveGPX();
+            }
             break;
         default:
             return DefWindowProc(hWnd, message, wParam, lParam);
@@ -299,28 +345,6 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 
-BOOL LoadNVPIPE(VOID)
-{
-    BOOL bSuccess = FALSE;
-    errno_t rc = wpl1000File.load(wpl1000Filename);
-    SetStatusBar((rc != 0)? _T("Laden fehlgeschlagen.") : _T("Laden OK."));
-    if (wpl1000File.tracks().size() == 0)
-        SetStatusBar(_T("Die Datei enthält keine Tracks!"));
-    char* buf = (char*)VirtualAlloc(NULL, MAX_PATH+2, MEM_COMMIT, PAGE_READWRITE);
-    if (buf == NULL)
-        return FALSE;
-    AppendToLog("Die Datei enthält folgende Tracks:");
-    for (GPS::TrackList::const_iterator i = wpl1000File.tracks().begin(); i != wpl1000File.tracks().end(); ++i)
-    {
-        sprintf_s(buf, MAX_PATH+2, "- %s",  (*i)->name().c_str());
-        AppendToLog(buf);
-    }
-    bSuccess = (rc != 0);
-    VirtualFree(buf, 0, MEM_RELEASE);
-    return bSuccess;
-}
-
-
 BOOL OpenNVPIPE(VOID)
 {
     BOOL bSuccess = FALSE;
@@ -329,16 +353,85 @@ BOOL OpenNVPIPE(VOID)
     ZeroMemory(&ofn, sizeof(ofn));
     ofn.lStructSize = sizeof(ofn);
     ofn.hwndOwner = ghWnd;
-    ofn.lpstrFilter = _T("DAT files (*.dat)\0*.dat\0All Files (*.*)\0*.*\0");
+    ofn.lpstrFilter = TEXT("DAT files (*.dat)\0*.dat\0All Files (*.*)\0*.*\0");
     ofn.lpstrFile = szFileName;
     ofn.nMaxFile = MAX_PATH;
     ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-    ofn.lpstrDefExt = _T("dat");
+    ofn.lpstrDefExt = TEXT("dat");
     if (GetOpenFileName(&ofn))
     {
         wpl1000Filename = ofn.lpstrFile;
-        bSuccess = TRUE;
+        bSuccess = (wpl1000Filename != "");
     }
+    return bSuccess;
+}
+
+
+BOOL LoadNVPIPE(VOID)
+{
+    BOOL bSuccess = FALSE;
+    errno_t rc = wpl1000File.load(wpl1000Filename);
+    SetStatusBar((rc != 0)? TEXT("Laden fehlgeschlagen.") : TEXT("Laden OK."));
+    if (wpl1000File.tracks().size() == 0) 
+    {
+        SetStatusBar(TEXT("FEHLER: Die Datei enthält keine Tracks!"));
+        return FALSE;
+    }
+
+    char* buf = (char*)VirtualAlloc(NULL, MAX_PATH+2, MEM_COMMIT, PAGE_READWRITE);
+    if (buf == NULL)
+    {
+        SetStatusBar(TEXT("FEHLER: Kein Speicher mehr frei!"));
+        return FALSE;
+    }
+
+    HWND hList = GetDlgItem(ghMainForm, IDC_LISTVIEW);
+    ListView_DeleteAllItems(hList);
+
+    if (trk != NULL)
+        delete [] trk;
+
+    LVITEM lvI;
+    lvI.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM | LVIF_STATE; 
+    lvI.state = 0; 
+    lvI.stateMask = 0;
+    int index = 0;
+    trk = new TRACKLISTINFOTYPE[wpl1000File.tracks().size()];
+    const int BUFSIZE = 200;
+    CHAR pszBuf[BUFSIZE];
+    for (GPS::TrackList::const_iterator i = wpl1000File.tracks().begin(); i != wpl1000File.tracks().end(); ++i)
+    {
+        const std::string& t0 = (*i)->startTimestamp().toString();
+        trk[index].pszStart = new CHAR[t0.size()+1];
+        StringCchCopy(trk[index].pszStart, t0.size(), t0.c_str());
+
+        const std::string& t1 = (*i)->finishTimestamp().toString();
+        trk[index].pszFinish = new CHAR[t1.size()+1];
+        StringCchCopy(trk[index].pszFinish, t1.size(), t1.c_str());
+
+        sprintf_s(pszBuf, BUFSIZE, "%.1lf", 1e-3 * (*i)->distance());
+        trk[index].pszDistance = new CHAR[strlen(pszBuf)+1];
+        StringCchCopy(trk[index].pszDistance, strlen(pszBuf)+1, pszBuf);
+
+        sprintf_s(pszBuf, BUFSIZE, "%u", (*i)->points().size());
+        trk[index].pszPointCount = new CHAR[strlen(pszBuf)+1];
+        StringCchCopy(trk[index].pszPointCount, strlen(pszBuf)+1, pszBuf);
+
+        GPS::Duration d((*i)->duration());
+        const std::string dstr = d.toString();
+        trk[index].pszDuration = new CHAR[dstr.size()+1];
+        StringCchCopy(trk[index].pszDuration, dstr.size()+1, dstr.c_str());
+
+        lvI.iItem = index;
+        lvI.iImage = index;
+        lvI.iSubItem = 0;
+        lvI.lParam = (LPARAM)&trk[index];
+        lvI.pszText = LPSTR_TEXTCALLBACK;
+        ListView_InsertItem(hList, &lvI);
+        ++index;
+    }
+    bSuccess = (rc == 0);
+    VirtualFree(buf, 0, MEM_RELEASE);
     return bSuccess;
 }
 
@@ -376,13 +469,11 @@ BOOL SaveGPX(VOID)
         char* buf = (char*)VirtualAlloc(NULL, BUFSIZE, MEM_COMMIT, PAGE_READWRITE);
         if (buf == NULL)
             return FALSE;
-        sprintf_s(buf, BUFSIZE, "Schreiben von %s ...", gpxFilename.c_str());
-        AppendToLog(buf);
         VirtualFree(buf, 0, MEM_RELEASE);
         errno_t rc = gpxFile.write(gpxFilename);
         bSuccess = (rc == 0);
     }
-    SetStatusBar((bSuccess)? _T("Speichern OK.") : _T("FEHLER: Speichern fehlgeschlagen."));
+    SetStatusBar((bSuccess)? TEXT("Speichern OK.") : TEXT("FEHLER: Speichern fehlgeschlagen."));
     return bSuccess;
 }
 
@@ -395,15 +486,15 @@ BOOL OpenGPX(VOID)
     ZeroMemory(&ofn, sizeof(ofn));
     ofn.lStructSize = sizeof(ofn);
     ofn.hwndOwner = ghWnd;
-    ofn.lpstrFilter = _T("GPX files (*.gpx)\0*.gpx\0All Files (*.*)\0*.*\0");
+    ofn.lpstrFilter = TEXT("GPX files (*.gpx)\0*.gpx\0All Files (*.*)\0*.*\0");
     ofn.lpstrFile = szFileName;
     ofn.nMaxFile = MAX_PATH;
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_EXPLORER | OFN_HIDEREADONLY;
-    ofn.lpstrDefExt = _T("gpx");
+    ofn.lpstrDefExt = TEXT("gpx");
     if(GetSaveFileName(&ofn))
     {
         gpxFilename = ofn.lpstrFile;
-        bSuccess = TRUE;
+        bSuccess = (gpxFilename != "");
     }
     return bSuccess;
 }

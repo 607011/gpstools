@@ -15,6 +15,7 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
+#include <strsafe.h>
 #include <commctrl.h> 
 
 // C++ RunTime Header Files
