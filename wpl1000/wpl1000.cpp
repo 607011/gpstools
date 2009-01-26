@@ -5,6 +5,15 @@
 #include "wpl1000.h"
 
 
+// TODO: Fenstergröße merken
+
+// TODO: die 5 fünf zuletzt geladenen Dateien ans "Datei"-Menü anhängen
+
+// TODO: nicht ungefragt Dateien überschreiben
+
+// TODO: nur ausgewählte Tracks sichern
+
+
 #define MAX_LOADSTRING      100
 
 typedef struct TrackListColumnType {
@@ -118,10 +127,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     HWND hWnd;
     hInst = hInstance;
-    hWnd = CreateWindow(szWindowClass, szTitle, WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE,
-        CW_USEDEFAULT, 0, 423, 468, HWND_DESKTOP, NULL, hInstance, NULL);
+    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+        CW_USEDEFAULT, 0, 468, 468, HWND_DESKTOP, NULL, hInstance, NULL);
     ghWnd = hWnd;
-    SetStatusBar(_T("Bereit."));
+    SetStatusBar(TEXT("Bereit."));
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
     return TRUE;
@@ -165,6 +174,8 @@ LRESULT CALLBACK MainFormProc(HWND hWndDlg, UINT Msg, WPARAM wParam, LPARAM lPar
     case WM_SIZE:
         nWidth = LOWORD(lParam); 
         nHeight = HIWORD(lParam);
+        hList = GetDlgItem(hWndDlg, IDC_LISTVIEW);
+        SetWindowPos(hList, 0, 6, 36, nWidth-18, nHeight-36-20, SWP_NOMOVE); 
         break;
     case WM_INITDIALOG:
         {
@@ -273,7 +284,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_PAINT:
         hdc = BeginPaint(hWnd, &ps);
-        // TODO: Add any drawing code here...
+        // ...
         EndPaint(hWnd, &ps);
         break;
     case WM_CLOSE:
@@ -300,6 +311,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             int PartSize[2] = { nWidth, -1 };
             SendMessage(hStatus, SB_SETPARTS, sizeof(PartSize)/sizeof(int), (LPARAM)PartSize);
             SetWindowPos(hStatus, 0, 0, 0, nWidth, 20, SWP_NOMOVE); 
+            SetWindowPos(ghMainForm, 0, 0, 0, nWidth, nHeight-20, SWP_NOMOVE); 
         }
         break;
     case WM_CREATE:
