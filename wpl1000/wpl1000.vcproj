@@ -203,6 +203,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\utility.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\wpl1000.cpp"
 				>
 			</File>

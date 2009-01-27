@@ -17,12 +17,15 @@
 #define IDI_WPL1000                     109
 #define IDI_SMALL                       110
 #define IDC_WPL1000                     111
+#define IDM_FILE_RECENT                 112
 #define IDR_MAINFRAME                   128
 #define IDC_MAIN_STATUS                 1000
 #define IDC_CHECK_MULTI                 1001
 #define IDC_LISTVIEW                    1002
 #define IDT_STATUSBAR                   2001
 #define IDC_STATIC                      -1
+
+#define ID_RECENT_FILE_LIST             9001
 
 // Next default values for new objects
 // 

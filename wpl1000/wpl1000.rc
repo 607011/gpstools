@@ -35,8 +35,14 @@ IDC_WPL1000 MENU
 BEGIN
     POPUP "&Datei"
     BEGIN
-        MENUITEM "&Öffnen",                     IDM_FILE_OPEN
-        MENUITEM "&Speichern unter ...",        IDM_FILE_SAVE
+        MENUITEM "&Öffnen...",                  IDM_FILE_OPEN
+        MENUITEM "&Speichern unter...",         IDM_FILE_SAVE
+        MENUITEM SEPARATOR
+        POPUP "&Letzte Dateien"
+        BEGIN
+            MENUITEM "",0
+        END
+        MENUITEM SEPARATOR
         MENUITEM "B&eenden",                    IDM_EXIT
     END
     POPUP "&Hilfe"

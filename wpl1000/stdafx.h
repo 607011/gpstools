@@ -18,6 +18,7 @@
 
 // C++ RunTime Header Files
 #include <string>
+#include <deque>
 
 // Other Header Files
 #include "gpslib/portable.h"
