@@ -107,6 +107,9 @@ END
 STRINGTABLE 
 BEGIN
     IDS_APP_TITLE           "WPL1000"
+    IDS_VENDORNAME          "von-und-fuer-lau.de"
+    IDS_AUTHORNAME          "Oliver Lau"
+    IDS_AUTHOREMAIL         "oliver@von-und-fuer-lau.de"
     IDC_WPL1000             "WPL1000"
 END
 
@@ -177,3 +180,4 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
+

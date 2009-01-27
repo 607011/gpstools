@@ -7,8 +7,11 @@
 #define IDD_WPL1000_DIALOG              102
 #define IDS_APP_TITLE                   103
 #define IDD_ABOUTBOX                    104
+#define IDS_VENDORNAME                  104
 #define IDM_ABOUT                       105
+#define IDS_AUTHORNAME                  105
 #define IDM_EXIT                        106
+#define IDS_AUTHOREMAIL                 106
 #define IDM_FILE_OPEN                   107
 #define IDM_FILE_SAVE                   108
 #define IDI_WPL1000                     109
