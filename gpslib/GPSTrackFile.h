@@ -169,6 +169,14 @@ namespace GPS {
         /// Route zur Routenliste hinzufügen
         /// @param rte Route; wenn rte = NULL, dann wird _Route hinzugefügt.
         void addRoute(Route* rte = NULL);
+
+
+        inline void clearAll(void)
+        {
+            _TrkList.clear();
+            _Waypoints.clear();
+            _Routes.clear();
+        }
     };
 
 };

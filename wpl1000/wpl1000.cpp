@@ -7,8 +7,6 @@
 
 // TODO: Fenstergröße merken
 
-// TODO: die 5 fünf zuletzt geladenen Dateien ans "Datei"-Menü anhängen
-
 // TODO: nicht ungefragt Dateien überschreiben
 
 // TODO: nur ausgewählte Tracks sichern
@@ -48,15 +46,27 @@ struct TrackListInfoType
 
 typedef struct TrackListInfoType TRACKLISTINFOTYPE;
 
+class RecentFileList : public std::deque<std::string>
+{
+public:
+    bool contains(const std::string& _Val) const 
+    {
+        bool found = false;
+        for (std::deque<std::string>::const_iterator i = begin(); !found && i != end(); ++i)
+            found = ((*i) == _Val);
+        return found;
+    }
+};
+
 
 HINSTANCE hInst;
 HWND ghWnd;
 HWND ghMainForm;
 TCHAR szTitle[MAX_LOADSTRING];
 TCHAR szWindowClass[MAX_LOADSTRING];
-TCHAR* szKeyRecentFiles = TEXT("SOFTWARE\\Lau\\WPL1000\\Recent File List");
-TCHAR* szKeySettings    = TEXT("SOFTWARE\\Lau\\WPL1000\\Settings");
-TCHAR* szKeyWorkspace   = TEXT("SOFTWARE\\Lau\\WPL1000\\Workspace");
+const TCHAR* szKeyRecentFiles = TEXT("SOFTWARE\\Lau\\WPL1000\\Recent File List");
+const TCHAR* szKeySettings    = TEXT("SOFTWARE\\Lau\\WPL1000\\Settings");
+const TCHAR* szKeyWorkspace   = TEXT("SOFTWARE\\Lau\\WPL1000\\Workspace");
 
 GPS::WPL1000File wpl1000File;
 GPS::GPXFile gpxFile;
@@ -65,6 +75,11 @@ std::string gpxFilename;
 BOOL multi = FALSE;
 TRACKLISTINFOTYPE* trk = NULL;
 
+#define MAX_RECENT_FILES (10)
+RecentFileList RecentFiles;
+
+VOID                Warn(LPTSTR, DWORD dw = 0);
+VOID                ErrorExit(LPTSTR, DWORD dw = 0);
 
 ATOM				MyRegisterClass(HINSTANCE);
 BOOL				InitInstance(HINSTANCE, int);
@@ -126,6 +141,102 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 }
 
 
+BOOL SaveRecentFileList(VOID)
+{
+    BOOL bSuccess = FALSE;
+    const int MAX_KEY_LENGTH = 255;
+    const int MAX_VALUE_NAME = 16383;
+    HKEY hKey;
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeyRecentFiles, 0, KEY_READ, &hKey) != ERROR_SUCCESS)
+        if (RegCreateKeyEx(HKEY_CURRENT_USER, szKeyRecentFiles, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_READ, NULL, &hKey, NULL) != ERROR_SUCCESS)
+            ErrorExit("RegCreateKeyEx()");
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeyRecentFiles, 0, KEY_SET_VALUE, &hKey) == ERROR_SUCCESS)
+    {
+        int iIndex = 0;
+        TCHAR szValue[MAX_PATH];
+        for (RecentFileList::const_iterator i = RecentFiles.begin(); i != RecentFiles.end(); ++i)
+        {
+            LPCSTR d = (*i).c_str();
+            sprintf_s(szValue, MAX_PATH, "%d", iIndex);
+            LONG retCode = RegSetValueEx(hKey, szValue, 0, REG_SZ, (const BYTE*)d, (*i).size());
+            if (retCode != ERROR_SUCCESS)
+                ErrorExit("RegSetValueEx()", retCode);
+            ++iIndex;
+        }
+    }
+    return bSuccess;
+}
+
+
+BOOL PopulateRecentFileList(VOID)
+{
+    BOOL bSuccess = FALSE;
+    const int MAX_KEY_LENGTH = 255;
+    const int MAX_VALUE_NAME = 16383;
+    HKEY hKey;
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeyRecentFiles, 0, KEY_READ, &hKey) == ERROR_SUCCESS)
+    {
+        TCHAR* achValue = (TCHAR*)LocalAlloc(LMEM_FIXED, MAX_VALUE_NAME);
+        if (achValue == NULL)
+            ErrorExit("LocalAlloc()");
+        DWORD cchValue = MAX_VALUE_NAME; 
+        TCHAR achClass[MAX_PATH] = TEXT("");  // buffer for class name 
+        DWORD cchClassName = MAX_PATH;  // size of class string 
+        DWORD cSubKeys=0;               // number of subkeys 
+        DWORD cbMaxSubKey;              // longest subkey size 
+        DWORD cchMaxClass;              // longest class string 
+        DWORD cValues;              // number of values for key 
+        DWORD cchMaxValue;          // longest value name 
+        DWORD cbMaxValueData;       // longest value data 
+        DWORD cbSecurityDescriptor; // size of security descriptor 
+        FILETIME ftLastWriteTime;      // last write time 
+        DWORD retCode = RegQueryInfoKey(
+            hKey,                    // key handle 
+            achClass,                // buffer for class name 
+            &cchClassName,           // size of class string 
+            NULL,                    // reserved 
+            &cSubKeys,               // number of subkeys 
+            &cbMaxSubKey,            // longest subkey size 
+            &cchMaxClass,            // longest class string 
+            &cValues,                // number of values for this key 
+            &cchMaxValue,            // longest value name 
+            &cbMaxValueData,         // longest value data 
+            &cbSecurityDescriptor,   // security descriptor 
+            &ftLastWriteTime);       // last write time 
+        if (cValues > 0) 
+        {
+            TCHAR* szValue = (TCHAR*)LocalAlloc(LMEM_FIXED, MAX_VALUE_NAME);
+            if (szValue == NULL)
+                ErrorExit("LocalAlloc()");
+            retCode = ERROR_SUCCESS;
+            HMENU hMainMenu = GetMenu(ghWnd);
+            HMENU hFileMenu = GetSubMenu(hMainMenu, 0);
+            HMENU hRecentMenu = GetSubMenu(hFileMenu, 3);
+            RecentFiles.clear();
+            for (DWORD i = 0; i < cValues; ++i) 
+            { 
+                cchValue = MAX_VALUE_NAME; 
+                achValue[0] = '\0'; 
+                DWORD dwType;
+                DWORD dwSize;
+                retCode = RegEnumValue(hKey, i, achValue, &cchValue, NULL, &dwType, (LPBYTE)szValue, &dwSize);
+                if (retCode == ERROR_SUCCESS)
+                {
+                    AppendMenu(hRecentMenu, MF_STRING, ID_RECENT_FILE_LIST+i, szValue);
+                    if (RecentFiles.size() >= MAX_RECENT_FILES)
+                        RecentFiles.pop_back();
+                    RecentFiles.push_front(szValue);
+                }
+            }
+            LocalFree(szValue);
+        }
+        LocalFree(achValue);
+        bSuccess = TRUE;
+    }
+    return bSuccess;
+}
+
+
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     HWND hWnd;
@@ -133,10 +244,34 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE,
         CW_USEDEFAULT, 0, 468, 468, HWND_DESKTOP, NULL, hInstance, NULL);
     ghWnd = hWnd;
+
+    HKEY hKey;
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeyRecentFiles, 0, KEY_READ, &hKey) != ERROR_SUCCESS)
+        if (RegCreateKeyEx(HKEY_CURRENT_USER, szKeyRecentFiles, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL) != ERROR_SUCCESS)
+            return FALSE;
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeySettings, 0, KEY_READ, &hKey) != ERROR_SUCCESS)
+        if (RegCreateKeyEx(HKEY_CURRENT_USER, szKeySettings, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL) != ERROR_SUCCESS)
+            return FALSE;
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeyWorkspace, 0, KEY_READ, &hKey) != ERROR_SUCCESS)
+        if (RegCreateKeyEx(HKEY_CURRENT_USER, szKeyWorkspace, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL) != ERROR_SUCCESS)
+            return FALSE;
+
+    PopulateRecentFileList();
     SetStatusBar(TEXT("Bereit."));
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
     return TRUE;
+}
+
+
+VOID UpdateTitle(VOID)
+{
+    TCHAR szTitleCopy[MAX_LOADSTRING];
+    LoadString(hInst, IDS_APP_TITLE, szTitleCopy, MAX_LOADSTRING);
+    StringCchCopy(szTitle, MAX_LOADSTRING, wpl1000Filename.c_str());
+    StringCchCat(szTitle, MAX_LOADSTRING, " - ");
+    StringCchCat(szTitle, MAX_LOADSTRING, szTitleCopy);
+    SendMessage(ghWnd, WM_SETTEXT, NULL, (LPARAM)szTitle);
 }
 
 
@@ -152,97 +287,6 @@ VOID ClearStatus(VOID)
 {
     HWND hStatus = GetDlgItem(ghWnd, IDC_MAIN_STATUS);
     SendMessage(hStatus, SB_SETTEXT, 0, (LPARAM)"");
-}
-
-
-VOID PopulateMostRecent(VOID)
-{
-    const int MAX_KEY_LENGTH = 255;
-    const int MAX_VALUE_NAME = 16383;
-    HKEY hKey;
-    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeyRecentFiles, 0, KEY_READ, &hKey) == ERROR_SUCCESS)
-    {
-        TCHAR    achKey[MAX_KEY_LENGTH];   // buffer for subkey name
-        DWORD    cbName;                   // size of name string 
-        TCHAR    achClass[MAX_PATH] = TEXT("");  // buffer for class name 
-        DWORD    cchClassName = MAX_PATH;  // size of class string 
-        DWORD    cSubKeys=0;               // number of subkeys 
-        DWORD    cbMaxSubKey;              // longest subkey size 
-        DWORD    cchMaxClass;              // longest class string 
-        DWORD    cValues;              // number of values for key 
-        DWORD    cchMaxValue;          // longest value name 
-        DWORD    cbMaxValueData;       // longest value data 
-        DWORD    cbSecurityDescriptor; // size of security descriptor 
-        FILETIME ftLastWriteTime;      // last write time 
-
-        DWORD i, retCode; 
-
-        TCHAR  achValue[MAX_VALUE_NAME]; 
-        DWORD cchValue = MAX_VALUE_NAME; 
-
-        // Get the class name and the value count. 
-        retCode = RegQueryInfoKey(
-            hKey,                    // key handle 
-            achClass,                // buffer for class name 
-            &cchClassName,           // size of class string 
-            NULL,                    // reserved 
-            &cSubKeys,               // number of subkeys 
-            &cbMaxSubKey,            // longest subkey size 
-            &cchMaxClass,            // longest class string 
-            &cValues,                // number of values for this key 
-            &cchMaxValue,            // longest value name 
-            &cbMaxValueData,         // longest value data 
-            &cbSecurityDescriptor,   // security descriptor 
-            &ftLastWriteTime);       // last write time 
-
-        // Enumerate the subkeys, until RegEnumKeyEx fails.
-
-        if (cSubKeys)
-        {
-            printf( "\nNumber of subkeys: %d\n", cSubKeys);
-
-            for (i=0; i<cSubKeys; i++) 
-            { 
-                cbName = MAX_KEY_LENGTH;
-                retCode = RegEnumKeyEx(hKey, i,
-                    achKey, 
-                    &cbName, 
-                    NULL, 
-                    NULL, 
-                    NULL, 
-                    &ftLastWriteTime); 
-                if (retCode == ERROR_SUCCESS) 
-                {
-                    _tprintf(TEXT("(%d) %s\n"), i+1, achKey);
-                }
-            }
-        } 
-
-        // Enumerate the key values. 
-
-        if (cValues) 
-        {
-            printf( "\nNumber of values: %d\n", cValues);
-
-            for (i=0, retCode=ERROR_SUCCESS; i<cValues; i++) 
-            { 
-                cchValue = MAX_VALUE_NAME; 
-                achValue[0] = '\0'; 
-                retCode = RegEnumValue(hKey, i, 
-                    achValue, 
-                    &cchValue, 
-                    NULL, 
-                    NULL,
-                    NULL,
-                    NULL);
-
-                if (retCode == ERROR_SUCCESS ) 
-                { 
-                    _tprintf(TEXT("(%d) %s\n"), i+1, achValue); 
-                } 
-            }
-        }
-    }
 }
 
 
@@ -357,12 +401,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
                 if (LoadNVPIPE())
                 {
-                    TCHAR szTitleCopy[MAX_LOADSTRING];
-                    LoadString(hInst, IDS_APP_TITLE, szTitleCopy, MAX_LOADSTRING);
-                    StringCchCopy(szTitle, MAX_LOADSTRING, wpl1000Filename.c_str());
-                    StringCchCat(szTitle, MAX_LOADSTRING, " - ");
-                    StringCchCat(szTitle, MAX_LOADSTRING, szTitleCopy);
-                    SendMessage(ghWnd, WM_SETTEXT, NULL, (LPARAM)szTitle);
+                    UpdateTitle();
+                    if (!RecentFiles.contains(wpl1000Filename))
+                    {
+                        RecentFiles.push_front(wpl1000Filename);
+                        SaveRecentFileList();
+                        PopulateRecentFileList();
+                    }
                 }
             }
             break;
@@ -373,7 +418,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
             break;
         default:
-            return DefWindowProc(hWnd, message, wParam, lParam);
+            if (ID_RECENT_FILE_LIST <= wmId && wmId <= ID_RECENT_FILE_LIST+9)
+            {
+                wpl1000Filename = RecentFiles.at(wmId - ID_RECENT_FILE_LIST);
+                if (LoadNVPIPE())
+                {
+                    UpdateTitle();
+                }
+            }
+            else
+                return DefWindowProc(hWnd, message, wParam, lParam);
+            break;
         }
         break;
     case WM_PAINT:
@@ -423,7 +478,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             hMainForm = CreateDialog(hInst, MAKEINTRESOURCE(IDD_MAINFORM), hWnd, (DLGPROC)MainFormProc);
             ghMainForm = hMainForm;
             ShowWindow(hMainForm, SW_SHOW);
-            PopulateMostRecent();
         }
         break;
     default:
@@ -477,20 +531,22 @@ BOOL OpenNVPIPE(VOID)
 BOOL LoadNVPIPE(VOID)
 {
     BOOL bSuccess = FALSE;
+    wpl1000File.clearAll();
     errno_t rc = wpl1000File.load(wpl1000Filename);
-    SetStatusBar((rc != 0)? TEXT("Laden fehlgeschlagen.") : TEXT("Laden OK."));
+    if (rc != 0)
+        Warn(TEXT("Laden fehlgeschlagen."));
+    
     if (wpl1000File.tracks().size() == 0) 
     {
-        SetStatusBar(TEXT("FEHLER: Die Datei enthält keine Tracks!"));
+        Warn(TEXT("Die Datei enthält keine Tracks!"));
         return FALSE;
     }
 
-    char* buf = (char*)VirtualAlloc(NULL, MAX_PATH+2, MEM_COMMIT, PAGE_READWRITE);
+    SetStatusBar(TEXT("Laden OK."));
+
+    char* buf = (char*)LocalAlloc(LMEM_ZEROINIT, MAX_PATH+2);
     if (buf == NULL)
-    {
-        SetStatusBar(TEXT("FEHLER: Kein Speicher mehr frei!"));
-        return FALSE;
-    }
+        ErrorExit("LocalAlloc()", GetLastError());
 
     HWND hList = GetDlgItem(ghMainForm, IDC_LISTVIEW);
     ListView_DeleteAllItems(hList);
@@ -573,10 +629,10 @@ BOOL SaveGPX(VOID)
         GPS::GPXFile gpxFile;
         gpxFile.setTracks(wpl1000File.tracks());
         gpxFile.setWaypoints(wpl1000File.waypoints());
-        char* buf = (char*)VirtualAlloc(NULL, BUFSIZE, MEM_COMMIT, PAGE_READWRITE);
+        char* buf = (char*)LocalAlloc(LMEM_ZEROINIT, BUFSIZE);
         if (buf == NULL)
-            return FALSE;
-        VirtualFree(buf, 0, MEM_RELEASE);
+            ErrorExit(TEXT("LocalAlloc()"), GetLastError());
+        LocalFree(buf);
         errno_t rc = gpxFile.write(gpxFilename);
         bSuccess = (rc == 0);
     }
