@@ -73,6 +73,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				EmbedManifest="false"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -138,6 +139,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="comctl32.lib strsafe.lib"
 				LinkIncremental="1"
+				UACUIAccess="true"
 				IgnoreDefaultLibraryNames="LIBCMT.lib "
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -150,6 +152,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				EmbedManifest="false"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"

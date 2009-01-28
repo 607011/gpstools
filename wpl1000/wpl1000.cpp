@@ -78,7 +78,8 @@ TRACKLISTINFOTYPE* trk = NULL;
 #define MAX_RECENT_FILES (10)
 RecentFileList RecentFiles;
 
-VOID                Warn(LPTSTR, DWORD dw = 0);
+VOID                Warn(LPTSTR);
+VOID                Error(LPTSTR, DWORD dw = 0);
 VOID                ErrorExit(LPTSTR, DWORD dw = 0);
 
 ATOM				MyRegisterClass(HINSTANCE);
@@ -533,9 +534,11 @@ BOOL LoadNVPIPE(VOID)
     BOOL bSuccess = FALSE;
     wpl1000File.clearAll();
     errno_t rc = wpl1000File.load(wpl1000Filename);
-    if (rc != 0)
-        Warn(TEXT("Laden fehlgeschlagen."));
-    
+    if (rc != 0) 
+    {
+        Error(TEXT("wpl1000File.load()"));
+        return FALSE;
+    }
     if (wpl1000File.tracks().size() == 0) 
     {
         Warn(TEXT("Die Datei enthält keine Tracks!"));
@@ -613,6 +616,8 @@ BOOL SaveGPX(VOID)
             std::string trkFilename = gpxFilename;
             trkFilename.insert(spos+1, (*i)->startTimestamp().toString("%Y%m%d-%H%M") + "-");
             errno_t rc = trkFile.write(trkFilename);
+            if (rc != 0)
+                Error(TEXT("trkFile.write()"));
             bSuccess = (rc == 0);
         }
         GPS::GPXFile wptFile;
@@ -622,7 +627,10 @@ BOOL SaveGPX(VOID)
         if (ppos == std::basic_string<char>::npos)
             ppos = gpxFilename.size();
         wptFilename.insert(ppos, "-waypoints");
-        wptFile.write(wptFilename);
+        errno_t rc = wptFile.write(wptFilename);
+        if (rc != 0)
+            Error(TEXT("wptFile.write()"));
+        bSuccess |= (rc == 0);
     }
     else // ! multi
     {   
@@ -631,12 +639,15 @@ BOOL SaveGPX(VOID)
         gpxFile.setWaypoints(wpl1000File.waypoints());
         char* buf = (char*)LocalAlloc(LMEM_ZEROINIT, BUFSIZE);
         if (buf == NULL)
-            ErrorExit(TEXT("LocalAlloc()"), GetLastError());
+            ErrorExit(TEXT("LocalAlloc()"));
         LocalFree(buf);
         errno_t rc = gpxFile.write(gpxFilename);
+        if (rc != 0)
+            Error(TEXT("gpxFile.write()"));
         bSuccess = (rc == 0);
     }
-    SetStatusBar((bSuccess)? TEXT("Speichern OK.") : TEXT("FEHLER: Speichern fehlgeschlagen."));
+    if (bSuccess)
+        SetStatusBar(TEXT("Speichern OK."));
     return bSuccess;
 }
 
