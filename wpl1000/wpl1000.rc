@@ -42,6 +42,7 @@ BEGIN
         BEGIN
             MENUITEM "",0
         END
+        MENUITEM "&Löschen",                    IDM_DELETE_RECENT
         MENUITEM SEPARATOR
         MENUITEM "B&eenden",                    IDM_EXIT
     END
