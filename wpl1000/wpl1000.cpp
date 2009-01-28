@@ -5,8 +5,6 @@
 #include "wpl1000.h"
 
 
-// TODO: Fenstergröße merken
-
 // TODO: nicht ungefragt Dateien überschreiben
 
 // TODO: nur ausgewählte Tracks sichern
@@ -55,6 +53,10 @@ TCHAR szWindowClass[MAX_LOADSTRING];
 const TCHAR* szKeyRecentFiles = TEXT("SOFTWARE\\Lau\\WPL1000\\Recent File List");
 const TCHAR* szKeySettings    = TEXT("SOFTWARE\\Lau\\WPL1000\\Settings");
 const TCHAR* szKeyWorkspace   = TEXT("SOFTWARE\\Lau\\WPL1000\\Workspace");
+int nWidth;
+int nHeight;
+int nTop;
+int nLeft;
 
 
 GPS::WPL1000File wpl1000File;
@@ -158,9 +160,42 @@ BOOL SaveRecentFilesToReg(VOID)
 }
 
 
+VOID LoadState(VOID)
+{
+    const int MAX_VALUE_NAME = 16383;
+    DWORD dwType;
+    DWORD dwSize;
+
+    HKEY hKeyWorkspace;
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeyWorkspace, 0, KEY_READ, &hKeyWorkspace) != ERROR_SUCCESS)
+        Error(TEXT("RegOpenKeyEx()"));
+
+    TCHAR* achValue = (TCHAR*)LocalAlloc(LMEM_FIXED, MAX_VALUE_NAME);
+    if (achValue == NULL)
+        ErrorExit("LocalAlloc()");
+
+    dwSize = MAX_VALUE_NAME;
+    if (RegQueryValueEx(hKeyWorkspace, "top", 0, &dwType, (LPBYTE) achValue, &dwSize) == ERROR_SUCCESS)
+        nTop = atoi(achValue);
+    dwSize = MAX_VALUE_NAME;
+    if (RegQueryValueEx(hKeyWorkspace, "left", 0, &dwType, (LPBYTE) achValue, &dwSize) == ERROR_SUCCESS)
+        nLeft = atoi(achValue);
+    dwSize = MAX_VALUE_NAME;
+    if (RegQueryValueEx(hKeyWorkspace, "width", 0, &dwType, (LPBYTE) achValue, &dwSize) == ERROR_SUCCESS)
+        nWidth = atoi(achValue);
+    dwSize = MAX_VALUE_NAME;
+    if (RegQueryValueEx(hKeyWorkspace, "height", 0, &dwType, (LPBYTE) achValue, &dwSize) == ERROR_SUCCESS)
+        nHeight = atoi(achValue);
+
+    LocalFree(achValue);
+    RegCloseKey(hKeyWorkspace);
+}
+
+
 BOOL SaveState(VOID)
 {
     BOOL bSuccess = FALSE;
+    const int MAX_VALUE_NAME = 16383;
 
     SaveRecentFilesToReg();
 
@@ -168,7 +203,7 @@ BOOL SaveState(VOID)
     if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeySettings, 0, KEY_READ, &hKeySettings) != ERROR_SUCCESS)
         if (RegCreateKeyEx(HKEY_CURRENT_USER, szKeySettings, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKeySettings, NULL) != ERROR_SUCCESS)
             Error(TEXT("RegCreateKeyEx()"));
-    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeySettings, 0, KEY_READ, &hKeySettings) != ERROR_SUCCESS)
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeySettings, 0, KEY_SET_VALUE, &hKeySettings) != ERROR_SUCCESS)
         Error(TEXT("RegOpenKeyEx()"));
     RegCloseKey(hKeySettings);
 
@@ -176,9 +211,27 @@ BOOL SaveState(VOID)
     if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeyWorkspace, 0, KEY_READ, &hKeyWorkspace) != ERROR_SUCCESS)
         if (RegCreateKeyEx(HKEY_CURRENT_USER, szKeyWorkspace, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKeyWorkspace, NULL) != ERROR_SUCCESS)
             Error(TEXT("RegCreateKeyEx()"));
-    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeyWorkspace, 0, KEY_READ, &hKeyWorkspace) != ERROR_SUCCESS)
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeyWorkspace, 0, KEY_SET_VALUE, &hKeyWorkspace) != ERROR_SUCCESS)
         Error(TEXT("RegOpenKeyEx()"));
+
+    TCHAR* achValue = (TCHAR*)LocalAlloc(LMEM_FIXED, MAX_VALUE_NAME);
+    if (achValue == NULL)
+        ErrorExit("LocalAlloc()");
+
+    WINDOWINFO pwi;
+    pwi.cbSize = sizeof(WINDOWINFO);
+    GetWindowInfo(ghWnd, &pwi);
+    sprintf_s(achValue, MAX_VALUE_NAME, "%d", pwi.rcWindow.top);
+    RegSetValueEx(hKeyWorkspace, TEXT("top"), 0, REG_SZ, (const BYTE*)achValue, strlen(achValue));
+    sprintf_s(achValue, MAX_VALUE_NAME, "%d", pwi.rcWindow.left);
+    RegSetValueEx(hKeyWorkspace, TEXT("left"), 0, REG_SZ, (const BYTE*)achValue, strlen(achValue));
+    sprintf_s(achValue, MAX_VALUE_NAME, "%d", pwi.rcWindow.right - pwi.rcWindow.left);
+    RegSetValueEx(hKeyWorkspace, TEXT("width"), 0, REG_SZ, (const BYTE*)achValue, strlen(achValue));
+    sprintf_s(achValue, MAX_VALUE_NAME, "%d", pwi.rcWindow.bottom - pwi.rcWindow.top);
+    RegSetValueEx(hKeyWorkspace, TEXT("height"), 0, REG_SZ, (const BYTE*)achValue, strlen(achValue));
     RegCloseKey(hKeyWorkspace);
+
+    LocalFree(achValue);
     return bSuccess;
 }
 
@@ -272,15 +325,13 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     HWND hWnd;
     hInst = hInstance;
+
+    LoadState();
+
     hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-        CW_USEDEFAULT, 0, 468, 468, HWND_DESKTOP, NULL, hInstance, NULL);
+        nLeft, nTop, nWidth, nHeight, HWND_DESKTOP, NULL, hInstance, NULL);
     ghWnd = hWnd;
 
-    HKEY hKey;
-    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeyRecentFiles, 0, KEY_READ, &hKey) != ERROR_SUCCESS)
-        if (RegCreateKeyEx(HKEY_CURRENT_USER, szKeyRecentFiles, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL) != ERROR_SUCCESS)
-            return FALSE;
-    RegCloseKey(hKey);
     ClearRecentFilesMenu();
     LoadRecentFilesFromReg();
     PopulateRecentFilesMenu();
