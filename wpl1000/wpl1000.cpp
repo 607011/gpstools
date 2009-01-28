@@ -176,16 +176,20 @@ VOID LoadState(VOID)
 
     dwSize = MAX_VALUE_NAME;
     if (RegQueryValueEx(hKeyWorkspace, "top", 0, &dwType, (LPBYTE) achValue, &dwSize) == ERROR_SUCCESS)
-        nTop = atoi(achValue);
+        if (dwType == REG_DWORD)
+            nTop = *((int*)achValue);
     dwSize = MAX_VALUE_NAME;
     if (RegQueryValueEx(hKeyWorkspace, "left", 0, &dwType, (LPBYTE) achValue, &dwSize) == ERROR_SUCCESS)
-        nLeft = atoi(achValue);
+        if (dwType == REG_DWORD)
+            nLeft = *((int*)achValue);
     dwSize = MAX_VALUE_NAME;
     if (RegQueryValueEx(hKeyWorkspace, "width", 0, &dwType, (LPBYTE) achValue, &dwSize) == ERROR_SUCCESS)
-        nWidth = atoi(achValue);
+        if (dwType == REG_DWORD)
+            nWidth = *((int*)achValue);
     dwSize = MAX_VALUE_NAME;
     if (RegQueryValueEx(hKeyWorkspace, "height", 0, &dwType, (LPBYTE) achValue, &dwSize) == ERROR_SUCCESS)
-        nHeight = atoi(achValue);
+        if (dwType == REG_DWORD)
+            nHeight = *((int*)achValue);
 
     LocalFree(achValue);
     RegCloseKey(hKeyWorkspace);
@@ -221,14 +225,14 @@ BOOL SaveState(VOID)
     WINDOWINFO pwi;
     pwi.cbSize = sizeof(WINDOWINFO);
     GetWindowInfo(ghWnd, &pwi);
-    sprintf_s(achValue, MAX_VALUE_NAME, "%d", pwi.rcWindow.top);
-    RegSetValueEx(hKeyWorkspace, TEXT("top"), 0, REG_SZ, (const BYTE*)achValue, strlen(achValue));
-    sprintf_s(achValue, MAX_VALUE_NAME, "%d", pwi.rcWindow.left);
-    RegSetValueEx(hKeyWorkspace, TEXT("left"), 0, REG_SZ, (const BYTE*)achValue, strlen(achValue));
-    sprintf_s(achValue, MAX_VALUE_NAME, "%d", pwi.rcWindow.right - pwi.rcWindow.left);
-    RegSetValueEx(hKeyWorkspace, TEXT("width"), 0, REG_SZ, (const BYTE*)achValue, strlen(achValue));
-    sprintf_s(achValue, MAX_VALUE_NAME, "%d", pwi.rcWindow.bottom - pwi.rcWindow.top);
-    RegSetValueEx(hKeyWorkspace, TEXT("height"), 0, REG_SZ, (const BYTE*)achValue, strlen(achValue));
+    nTop = pwi.rcWindow.top;
+    RegSetValueEx(hKeyWorkspace, TEXT("top"), 0, REG_DWORD, (const BYTE*)&nTop, sizeof(nTop));
+    nLeft = pwi.rcWindow.left;
+    RegSetValueEx(hKeyWorkspace, TEXT("left"), 0, REG_DWORD, (const BYTE*)&nLeft, sizeof(nLeft));
+    nWidth = pwi.rcWindow.right - pwi.rcWindow.left;
+    RegSetValueEx(hKeyWorkspace, TEXT("width"), 0, REG_DWORD, (const BYTE*)&nWidth, sizeof(nHeight));
+    nHeight = pwi.rcWindow.bottom - pwi.rcWindow.top;
+    RegSetValueEx(hKeyWorkspace, TEXT("height"), 0, REG_DWORD, (const BYTE*)&nHeight, sizeof(nHeight));
     RegCloseKey(hKeyWorkspace);
 
     LocalFree(achValue);
@@ -473,12 +477,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         case IDM_EXIT:
             SendMessage(hWnd, WM_CLOSE, NULL, NULL);
-            break;
-        case IDM_DELETE_RECENT:
-            {
-                ClearRecentFilesMenu();
-                RecentFiles.clear();
-            }
             break;
         case IDM_FILE_OPEN:
             if (OpenNVPIPE())

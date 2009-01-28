@@ -40,9 +40,8 @@ BEGIN
         MENUITEM SEPARATOR
         POPUP "&Letzte Dateien"
         BEGIN
-            MENUITEM "",0
+            MENUITEM SEPARATOR
         END
-        MENUITEM "&Löschen",                    IDM_DELETE_RECENT
         MENUITEM SEPARATOR
         MENUITEM "B&eenden",                    IDM_EXIT
     END
