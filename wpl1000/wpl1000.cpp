@@ -46,15 +46,51 @@ struct TrackListInfoType
 
 typedef struct TrackListInfoType TRACKLISTINFOTYPE;
 
-class RecentFileList : public std::deque<std::string>
+typedef std::pair<int, std::string> RecentFileListEntry;
+typedef std::deque<RecentFileListEntry> RecentFileListBaseClass;
+class RecentFileList : public RecentFileListBaseClass
 {
 public:
-    bool contains(const std::string& _Val) const 
+    /// @return matching string
+    const std::string find(int id) const
     {
+        RecentFileListBaseClass::const_iterator i;
+        for (i = begin(); i != end(); ++i)
+            if ((*i).first == id)
+                return (*i).second;
+        return std::string();
+    }
+
+    /// @return true on successful add
+    bool add(std::string v)
+    {
+        RecentFileListBaseClass::const_iterator i;
         bool found = false;
-        for (std::deque<std::string>::const_iterator i = begin(); !found && i != end(); ++i)
-            found = ((*i) == _Val);
-        return found;
+        int maxId = -1;
+        for (i = begin(); !found && i != end(); ++i)
+        {
+            if ((*i).second == v)
+                return false;
+            if ((*i).first > maxId)
+                maxId = (*i).first;
+        }
+        push_front(std::make_pair((maxId < 0)? ID_RECENT_FILE_LIST : maxId+1, v));
+        return true;
+    }
+
+    /// @return true on successful removal
+    bool remove(const std::string &v)
+    {
+        RecentFileListBaseClass::const_iterator i;
+        for (i = begin(); i != end(); ++i)
+        {
+            if ((*i).second == v)
+            {
+                erase(i);
+                return true;
+            }
+        }
+        return false;
     }
 };
 
@@ -157,14 +193,37 @@ BOOL SaveRecentFileList(VOID)
         TCHAR szValue[MAX_PATH];
         for (RecentFileList::const_iterator i = RecentFiles.begin(); i != RecentFiles.end(); ++i)
         {
-            LPCSTR d = (*i).c_str();
+            LPCSTR d = (*i).second.c_str();
             sprintf_s(szValue, MAX_PATH, "%d", iIndex);
-            LONG retCode = RegSetValueEx(hKey, szValue, 0, REG_SZ, (const BYTE*)d, (*i).size());
+            LONG retCode = RegSetValueEx(hKey, szValue, 0, REG_SZ, (const BYTE*)d, (*i).second.size());
             if (retCode != ERROR_SUCCESS)
                 ErrorExit("RegSetValueEx()", retCode);
             ++iIndex;
         }
+        RegCloseKey(hKey);
     }
+    return bSuccess;
+}
+
+
+BOOL SaveState(VOID)
+{
+    BOOL bSuccess = FALSE;
+    HKEY hKeySettings;
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeySettings, 0, KEY_READ, &hKeySettings) != ERROR_SUCCESS)
+        if (RegCreateKeyEx(HKEY_CURRENT_USER, szKeySettings, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKeySettings, NULL) != ERROR_SUCCESS)
+            Error(TEXT("RegCreateKeyEx()"));
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeySettings, 0, KEY_READ, &hKeySettings) != ERROR_SUCCESS)
+        Error(TEXT("RegOpenKeyEx()"));
+    RegCloseKey(hKeySettings);
+
+    HKEY hKeyWorkspace;
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeyWorkspace, 0, KEY_READ, &hKeyWorkspace) != ERROR_SUCCESS)
+        if (RegCreateKeyEx(HKEY_CURRENT_USER, szKeyWorkspace, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKeyWorkspace, NULL) != ERROR_SUCCESS)
+            Error(TEXT("RegCreateKeyEx()"));
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeyWorkspace, 0, KEY_READ, &hKeyWorkspace) != ERROR_SUCCESS)
+        Error(TEXT("RegOpenKeyEx()"));
+    RegCloseKey(hKeyWorkspace);
     return bSuccess;
 }
 
@@ -213,26 +272,29 @@ BOOL PopulateRecentFileList(VOID)
             HMENU hMainMenu = GetMenu(ghWnd);
             HMENU hFileMenu = GetSubMenu(hMainMenu, 0);
             HMENU hRecentMenu = GetSubMenu(hFileMenu, 3);
+            BOOL bLastMenu = FALSE;
+            for (int i = 0; i < MAX_RECENT_FILES; ++i)
+                bLastMenu = !DeleteMenu(hRecentMenu, i, MF_BYPOSITION);
             RecentFiles.clear();
             for (DWORD i = 0; i < cValues; ++i) 
             { 
                 cchValue = MAX_VALUE_NAME; 
                 achValue[0] = '\0'; 
                 DWORD dwType;
-                DWORD dwSize;
+                DWORD dwSize = MAX_VALUE_NAME;
                 retCode = RegEnumValue(hKey, i, achValue, &cchValue, NULL, &dwType, (LPBYTE)szValue, &dwSize);
                 if (retCode == ERROR_SUCCESS)
                 {
-                    AppendMenu(hRecentMenu, MF_STRING, ID_RECENT_FILE_LIST+i, szValue);
                     if (RecentFiles.size() >= MAX_RECENT_FILES)
                         RecentFiles.pop_back();
-                    RecentFiles.push_front(szValue);
+                    RecentFiles.add(szValue);
+                    AppendMenu(hRecentMenu, MF_STRING, RecentFiles.front().first, szValue);
                 }
             }
             LocalFree(szValue);
         }
         LocalFree(achValue);
-        bSuccess = TRUE;
+        bSuccess = (RegCloseKey(hKey) == ERROR_SUCCESS);
     }
     return bSuccess;
 }
@@ -250,12 +312,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeyRecentFiles, 0, KEY_READ, &hKey) != ERROR_SUCCESS)
         if (RegCreateKeyEx(HKEY_CURRENT_USER, szKeyRecentFiles, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL) != ERROR_SUCCESS)
             return FALSE;
-    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeySettings, 0, KEY_READ, &hKey) != ERROR_SUCCESS)
-        if (RegCreateKeyEx(HKEY_CURRENT_USER, szKeySettings, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL) != ERROR_SUCCESS)
-            return FALSE;
-    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeyWorkspace, 0, KEY_READ, &hKey) != ERROR_SUCCESS)
-        if (RegCreateKeyEx(HKEY_CURRENT_USER, szKeyWorkspace, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL) != ERROR_SUCCESS)
-            return FALSE;
+    RegCloseKey(hKey);
 
     PopulateRecentFileList();
     SetStatusBar(TEXT("Bereit."));
@@ -395,7 +452,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
             break;
         case IDM_EXIT:
-            DestroyWindow(hWnd);
+            SendMessage(hWnd, WM_CLOSE, NULL, NULL);
+            break;
+        case IDM_DELETE_RECENT:
+            {
+                HMENU hMainMenu = GetMenu(hWnd);
+                HMENU hFileMenu = GetSubMenu(hMainMenu, 0);
+                HMENU hRecentMenu = GetSubMenu(hFileMenu, 3);
+                BOOL bLastMenu = FALSE;
+                for (int i = 0; !bLastMenu && i < MAX_RECENT_FILES; ++i)
+                    bLastMenu = !DeleteMenu(hRecentMenu, i, MF_BYPOSITION);
+            }
             break;
         case IDM_FILE_OPEN:
             if (OpenNVPIPE())
@@ -403,9 +470,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 if (LoadNVPIPE())
                 {
                     UpdateTitle();
-                    if (!RecentFiles.contains(wpl1000Filename))
+                    if (RecentFiles.add(wpl1000Filename))
                     {
-                        RecentFiles.push_front(wpl1000Filename);
                         SaveRecentFileList();
                         PopulateRecentFileList();
                     }
@@ -421,10 +487,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         default:
             if (ID_RECENT_FILE_LIST <= wmId && wmId <= ID_RECENT_FILE_LIST+9)
             {
-                wpl1000Filename = RecentFiles.at(wmId - ID_RECENT_FILE_LIST);
-                if (LoadNVPIPE())
+                wpl1000Filename = RecentFiles.find(wmId);
+                if (wpl1000Filename != "")
                 {
-                    UpdateTitle();
+                    if (LoadNVPIPE())
+                    {
+                        UpdateTitle();
+                    }
                 }
             }
             else
@@ -438,6 +507,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         EndPaint(hWnd, &ps);
         break;
     case WM_CLOSE:
+        SaveState();
         DestroyWindow(hWnd);
         break;
     case WM_DESTROY:
