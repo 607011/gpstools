@@ -18,7 +18,6 @@
 #define IDI_SMALL                       110
 #define IDC_WPL1000                     111
 #define IDM_FILE_RECENT                 112
-#define IDM_DELETE_RECENT               113
 #define IDR_MAINFRAME                   128
 #define IDC_MAIN_STATUS                 1000
 #define IDC_CHECK_MULTI                 1001
