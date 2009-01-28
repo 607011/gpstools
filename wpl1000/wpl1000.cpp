@@ -46,63 +46,16 @@ struct TrackListInfoType
 
 typedef struct TrackListInfoType TRACKLISTINFOTYPE;
 
-typedef std::pair<int, std::string> RecentFileListEntry;
-typedef std::deque<RecentFileListEntry> RecentFileListBaseClass;
-class RecentFileList : public RecentFileListBaseClass
-{
-public:
-    /// @return matching string
-    const std::string find(int id) const
-    {
-        RecentFileListBaseClass::const_iterator i;
-        for (i = begin(); i != end(); ++i)
-            if ((*i).first == id)
-                return (*i).second;
-        return std::string();
-    }
-
-    /// @return true on successful add
-    bool add(std::string v)
-    {
-        RecentFileListBaseClass::const_iterator i;
-        bool found = false;
-        int maxId = -1;
-        for (i = begin(); !found && i != end(); ++i)
-        {
-            if ((*i).second == v)
-                return false;
-            if ((*i).first > maxId)
-                maxId = (*i).first;
-        }
-        push_front(std::make_pair((maxId < 0)? ID_RECENT_FILE_LIST : maxId+1, v));
-        return true;
-    }
-
-    /// @return true on successful removal
-    bool remove(const std::string &v)
-    {
-        RecentFileListBaseClass::const_iterator i;
-        for (i = begin(); i != end(); ++i)
-        {
-            if ((*i).second == v)
-            {
-                erase(i);
-                return true;
-            }
-        }
-        return false;
-    }
-};
-
-
 HINSTANCE hInst;
 HWND ghWnd;
 HWND ghMainForm;
+HMENU ghRecentFiles = NULL;
 TCHAR szTitle[MAX_LOADSTRING];
 TCHAR szWindowClass[MAX_LOADSTRING];
 const TCHAR* szKeyRecentFiles = TEXT("SOFTWARE\\Lau\\WPL1000\\Recent File List");
 const TCHAR* szKeySettings    = TEXT("SOFTWARE\\Lau\\WPL1000\\Settings");
 const TCHAR* szKeyWorkspace   = TEXT("SOFTWARE\\Lau\\WPL1000\\Workspace");
+
 
 GPS::WPL1000File wpl1000File;
 GPS::GPXFile gpxFile;
@@ -111,7 +64,6 @@ std::string gpxFilename;
 BOOL multi = FALSE;
 TRACKLISTINFOTYPE* trk = NULL;
 
-#define MAX_RECENT_FILES (10)
 RecentFileList RecentFiles;
 
 VOID                Warn(LPTSTR);
@@ -178,7 +130,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 }
 
 
-BOOL SaveRecentFileList(VOID)
+BOOL SaveRecentFilesToReg(VOID)
 {
     BOOL bSuccess = FALSE;
     const int MAX_KEY_LENGTH = 255;
@@ -209,6 +161,9 @@ BOOL SaveRecentFileList(VOID)
 BOOL SaveState(VOID)
 {
     BOOL bSuccess = FALSE;
+
+    SaveRecentFilesToReg();
+
     HKEY hKeySettings;
     if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeySettings, 0, KEY_READ, &hKeySettings) != ERROR_SUCCESS)
         if (RegCreateKeyEx(HKEY_CURRENT_USER, szKeySettings, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKeySettings, NULL) != ERROR_SUCCESS)
@@ -228,7 +183,7 @@ BOOL SaveState(VOID)
 }
 
 
-BOOL PopulateRecentFileList(VOID)
+BOOL LoadRecentFilesFromReg(VOID)
 {
     BOOL bSuccess = FALSE;
     const int MAX_KEY_LENGTH = 255;
@@ -240,41 +195,25 @@ BOOL PopulateRecentFileList(VOID)
         if (achValue == NULL)
             ErrorExit("LocalAlloc()");
         DWORD cchValue = MAX_VALUE_NAME; 
-        TCHAR achClass[MAX_PATH] = TEXT("");  // buffer for class name 
-        DWORD cchClassName = MAX_PATH;  // size of class string 
-        DWORD cSubKeys=0;               // number of subkeys 
-        DWORD cbMaxSubKey;              // longest subkey size 
-        DWORD cchMaxClass;              // longest class string 
-        DWORD cValues;              // number of values for key 
-        DWORD cchMaxValue;          // longest value name 
-        DWORD cbMaxValueData;       // longest value data 
-        DWORD cbSecurityDescriptor; // size of security descriptor 
-        FILETIME ftLastWriteTime;      // last write time 
-        DWORD retCode = RegQueryInfoKey(
-            hKey,                    // key handle 
-            achClass,                // buffer for class name 
-            &cchClassName,           // size of class string 
-            NULL,                    // reserved 
-            &cSubKeys,               // number of subkeys 
-            &cbMaxSubKey,            // longest subkey size 
-            &cchMaxClass,            // longest class string 
-            &cValues,                // number of values for this key 
-            &cchMaxValue,            // longest value name 
-            &cbMaxValueData,         // longest value data 
-            &cbSecurityDescriptor,   // security descriptor 
-            &ftLastWriteTime);       // last write time 
+        TCHAR achClass[MAX_PATH] = TEXT(""); 
+        DWORD cchClassName = MAX_PATH;
+        DWORD cSubKeys=0;
+        DWORD cbMaxSubKey;
+        DWORD cchMaxClass;
+        DWORD cValues;
+        DWORD cchMaxValue;
+        DWORD cbMaxValueData;
+        DWORD cbSecurityDescriptor;
+        FILETIME ftLastWriteTime;
+        DWORD retCode = RegQueryInfoKey(hKey, achClass, &cchClassName, NULL,                 
+            &cSubKeys, &cbMaxSubKey, &cchMaxClass, &cValues, &cchMaxValue,
+            &cbMaxValueData, &cbSecurityDescriptor, &ftLastWriteTime);
         if (cValues > 0) 
         {
             TCHAR* szValue = (TCHAR*)LocalAlloc(LMEM_FIXED, MAX_VALUE_NAME);
             if (szValue == NULL)
                 ErrorExit("LocalAlloc()");
             retCode = ERROR_SUCCESS;
-            HMENU hMainMenu = GetMenu(ghWnd);
-            HMENU hFileMenu = GetSubMenu(hMainMenu, 0);
-            HMENU hRecentMenu = GetSubMenu(hFileMenu, 3);
-            BOOL bLastMenu = FALSE;
-            for (int i = 0; i < MAX_RECENT_FILES; ++i)
-                bLastMenu = !DeleteMenu(hRecentMenu, i, MF_BYPOSITION);
             RecentFiles.clear();
             for (DWORD i = 0; i < cValues; ++i) 
             { 
@@ -282,14 +221,10 @@ BOOL PopulateRecentFileList(VOID)
                 achValue[0] = '\0'; 
                 DWORD dwType;
                 DWORD dwSize = MAX_VALUE_NAME;
-                retCode = RegEnumValue(hKey, i, achValue, &cchValue, NULL, &dwType, (LPBYTE)szValue, &dwSize);
+                retCode = RegEnumValue(hKey, i, achValue, &cchValue, NULL,
+                    &dwType, (LPBYTE)szValue, &dwSize);
                 if (retCode == ERROR_SUCCESS)
-                {
-                    if (RecentFiles.size() >= MAX_RECENT_FILES)
-                        RecentFiles.pop_back();
                     RecentFiles.add(szValue);
-                    AppendMenu(hRecentMenu, MF_STRING, RecentFiles.front().first, szValue);
-                }
             }
             LocalFree(szValue);
         }
@@ -297,6 +232,39 @@ BOOL PopulateRecentFileList(VOID)
         bSuccess = (RegCloseKey(hKey) == ERROR_SUCCESS);
     }
     return bSuccess;
+}
+
+
+HMENU GetRecentFilesMenu(VOID)
+{
+    if (ghRecentFiles == NULL)
+    {
+        HMENU hMainMenu = GetMenu(ghWnd);
+        HMENU hFileMenu = GetSubMenu(hMainMenu, 0);
+        ghRecentFiles = GetSubMenu(hFileMenu, 3);
+    }
+    return ghRecentFiles;
+}
+
+
+VOID ClearRecentFilesMenu(VOID)
+{
+    HMENU hRecentMenu = GetRecentFilesMenu();
+    RecentFileListBaseClass::const_iterator i;
+    for (i = RecentFiles.begin(); i != RecentFiles.end(); ++i)
+        DeleteMenu(hRecentMenu, (*i).first, MF_BYCOMMAND);
+    DeleteMenu(hRecentMenu, 0, MF_BYPOSITION);
+}
+
+
+BOOL PopulateRecentFilesMenu(VOID)
+{
+    ClearRecentFilesMenu();
+    HMENU hRecentMenu = GetRecentFilesMenu();
+    RecentFileList::const_iterator i;
+    for (i = RecentFiles.begin(); i != RecentFiles.end(); ++i)
+        AppendMenu(hRecentMenu, MF_STRING, (*i).first, (*i).second.c_str());
+    return TRUE;
 }
 
 
@@ -313,8 +281,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         if (RegCreateKeyEx(HKEY_CURRENT_USER, szKeyRecentFiles, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL) != ERROR_SUCCESS)
             return FALSE;
     RegCloseKey(hKey);
-
-    PopulateRecentFileList();
+    ClearRecentFilesMenu();
+    LoadRecentFilesFromReg();
+    PopulateRecentFilesMenu();
     SetStatusBar(TEXT("Bereit."));
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
@@ -456,12 +425,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         case IDM_DELETE_RECENT:
             {
-                HMENU hMainMenu = GetMenu(hWnd);
-                HMENU hFileMenu = GetSubMenu(hMainMenu, 0);
-                HMENU hRecentMenu = GetSubMenu(hFileMenu, 3);
-                BOOL bLastMenu = FALSE;
-                for (int i = 0; !bLastMenu && i < MAX_RECENT_FILES; ++i)
-                    bLastMenu = !DeleteMenu(hRecentMenu, i, MF_BYPOSITION);
+                ClearRecentFilesMenu();
+                RecentFiles.clear();
             }
             break;
         case IDM_FILE_OPEN:
@@ -471,10 +436,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 {
                     UpdateTitle();
                     if (RecentFiles.add(wpl1000Filename))
-                    {
-                        SaveRecentFileList();
-                        PopulateRecentFileList();
-                    }
+                        PopulateRecentFilesMenu();
                 }
             }
             break;
@@ -491,9 +453,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 if (wpl1000Filename != "")
                 {
                     if (LoadNVPIPE())
-                    {
                         UpdateTitle();
-                    }
                 }
             }
             else

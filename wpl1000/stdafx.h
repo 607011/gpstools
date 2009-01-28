@@ -24,3 +24,6 @@
 #include "gpslib/portable.h"
 #include "gpslib/WPL1000File.h"
 #include "gpslib/GPXFile.h"
+
+#include "Resource.h"
+#include "RecentFiles.h"
