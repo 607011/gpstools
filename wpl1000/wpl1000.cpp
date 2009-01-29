@@ -4,8 +4,6 @@
 #include "stdafx.h"
 #include "wpl1000.h"
 
-// TODO: nicht ungefragt Dateien überschreiben
-
 // TODO: nur ausgewählte Tracks sichern
 
 
@@ -55,7 +53,7 @@ VOID                SetStatusBar(LPSTR, UINT Milli = 3000);
 BOOL                OpenNVPIPE(VOID);
 BOOL                OpenGPX(VOID);
 BOOL                LoadNVPIPE(VOID);
-BOOL                SaveGPX(VOID);
+HRESULT             SaveGPX(VOID);
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                        HINSTANCE hPrevInstance,
@@ -285,7 +283,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
     LoadState();
 
-    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE | DS_CONTROL,
+    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE | DS_CONTROL | WS_CLIPCHILDREN,
         nWindowLeft, nWindowTop, nWindowWidth, nWindowHeight,
         HWND_DESKTOP, NULL, hInstance, NULL);
     ghWnd = hWnd;
@@ -442,8 +440,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
             break;
         case IDM_FILE_SAVE:
-            if (OpenGPX())
-                SaveGPX();
+            {
+                HRESULT res = IDCANCEL;
+                do {
+                    if (OpenGPX())
+                        res = SaveGPX();
+                }
+                while (res != IDOK && res != IDCANCEL);
+            }
             break;
         default:
             if (ID_RECENT_FILE_LIST <= wmId && wmId <= ID_RECENT_FILE_LIST+9)
@@ -621,6 +625,7 @@ BOOL LoadNVPIPE(VOID)
     return bSuccess;
 }
 
+
 UINT APIENTRY ObsOpenDialogHook(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
     int wmId, wmEvent;
@@ -637,12 +642,10 @@ UINT APIENTRY ObsOpenDialogHook(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lPara
             break;
         }
         break;
-    case WM_INITDIALOG:
-        break;
     default:
         break;
     }
-    return FALSE;
+    return 0;
 }
 
 
@@ -672,10 +675,9 @@ BOOL OpenGPX(VOID)
 }
 
 
-BOOL SaveGPX(VOID)
+HRESULT SaveGPX(VOID)
 {
-    const DWORD BUFSIZE = 2048;
-    BOOL bSuccess = FALSE;
+    HRESULT answer = IDYES;
     if (multi)
     {
         for (GPS::TrackList::const_iterator i = wpl1000File.tracks().begin(); i != wpl1000File.tracks().end(); ++i)
@@ -688,7 +690,7 @@ BOOL SaveGPX(VOID)
             errno_t rc = trkFile.write(trkFilename);
             if (rc != 0)
                 Error(TEXT("trkFile.write()"));
-            bSuccess = (rc == 0);
+            answer = (rc == 0)? IDOK : IDRETRY;
         }
         GPS::GPXFile wptFile;
         wptFile.setWaypoints(wpl1000File.waypoints());
@@ -700,19 +702,27 @@ BOOL SaveGPX(VOID)
         errno_t rc = wptFile.write(wptFilename);
         if (rc != 0)
             Error(TEXT("wptFile.write()"));
-        bSuccess |= (rc == 0);
+        answer = (rc == 0)? IDOK : IDRETRY;
     }
     else // ! multi
     {   
-        GPS::GPXFile gpxFile;
-        gpxFile.setTracks(wpl1000File.tracks());
-        gpxFile.setWaypoints(wpl1000File.waypoints());
-        errno_t rc = gpxFile.write(gpxFilename);
-        if (rc != 0)
-            Error(TEXT("gpxFile.write()"));
-        bSuccess = (rc == 0);
+        if (PathFileExists(gpxFilename.c_str()))
+        {
+            answer = MessageBox(ghWnd, TEXT("Die gewählte Datei existiert bereits. Datei überschreiben?"),
+                TEXT("Datei überschreiben?"), MB_ICONQUESTION | MB_YESNOCANCEL);
+        }
+        if (answer == IDYES)
+        {
+            GPS::GPXFile gpxFile;
+            gpxFile.setTracks(wpl1000File.tracks());
+            gpxFile.setWaypoints(wpl1000File.waypoints());
+            errno_t rc = gpxFile.write(gpxFilename);
+            if (rc != 0)
+                Error(TEXT("gpxFile.write()"));
+            answer = (rc == 0)? IDOK : IDRETRY;
+        }
     }
-    if (bSuccess)
+    if (answer == IDOK)
         SetStatusBar(TEXT("Speichern OK."));
-    return bSuccess;
+    return answer;
 }
