@@ -27,3 +27,4 @@
 
 #include "Resource.h"
 #include "RecentFiles.h"
+#include "TrackListInfo.h"
