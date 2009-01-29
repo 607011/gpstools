@@ -10,8 +10,11 @@
 // TODO: nur ausgewählte Tracks sichern
 
 
-#define MAX_LOADSTRING      100
-
+const int MAX_LOADSTRING = 100;
+const int DefaultWindowHeight = 460;
+const int DefaultWindowWidth = 460;
+const int DefaultWindowTop = CW_USEDEFAULT;
+const int DefaultWindowLeft = CW_USEDEFAULT;
 
 HINSTANCE hInst;
 HWND ghWnd;
@@ -26,7 +29,6 @@ int nWindowWidth;
 int nWindowHeight;
 int nWindowTop;
 int nWindowLeft;
-
 
 GPS::WPL1000File wpl1000File;
 GPS::GPXFile gpxFile;
@@ -118,7 +120,7 @@ BOOL SaveRecentFilesToReg(VOID)
         {
             LPCSTR d = (*i).second.c_str();
             sprintf_s(szValue, MAX_PATH, "%d", iIndex);
-            LONG retCode = RegSetValueEx(hKey, szValue, 0, REG_SZ, (const BYTE*)d, (*i).second.size());
+            int retCode = RegSetValueEx(hKey, szValue, 0, REG_SZ, (LPBYTE)d, (*i).second.size());
             if (retCode != ERROR_SUCCESS)
                 ErrorExit("RegSetValueEx()", retCode);
             ++iIndex;
@@ -143,20 +145,24 @@ VOID LoadState(VOID)
     if (achValue == NULL)
         ErrorExit("LocalAlloc()");
 
+    nWindowTop = DefaultWindowTop;
     dwSize = MAX_VALUE_NAME;
-    if (RegQueryValueEx(hKeyWorkspace, "top", 0, &dwType, (LPBYTE) achValue, &dwSize) == ERROR_SUCCESS)
+    if (RegQueryValueEx(hKeyWorkspace, "top", 0, &dwType, (LPBYTE)achValue, &dwSize) == ERROR_SUCCESS)
         if (dwType == REG_DWORD)
             nWindowTop = *((int*)achValue);
+    nWindowLeft = DefaultWindowLeft;
     dwSize = MAX_VALUE_NAME;
-    if (RegQueryValueEx(hKeyWorkspace, "left", 0, &dwType, (LPBYTE) achValue, &dwSize) == ERROR_SUCCESS)
+    if (RegQueryValueEx(hKeyWorkspace, "left", 0, &dwType, (LPBYTE)achValue, &dwSize) == ERROR_SUCCESS)
         if (dwType == REG_DWORD)
             nWindowLeft = *((int*)achValue);
+    nWindowWidth = DefaultWindowWidth;
     dwSize = MAX_VALUE_NAME;
-    if (RegQueryValueEx(hKeyWorkspace, "width", 0, &dwType, (LPBYTE) achValue, &dwSize) == ERROR_SUCCESS)
+    if (RegQueryValueEx(hKeyWorkspace, "width", 0, &dwType, (LPBYTE)achValue, &dwSize) == ERROR_SUCCESS)
         if (dwType == REG_DWORD)
             nWindowWidth = *((int*)achValue);
+    nWindowHeight = DefaultWindowHeight;
     dwSize = MAX_VALUE_NAME;
-    if (RegQueryValueEx(hKeyWorkspace, "height", 0, &dwType, (LPBYTE) achValue, &dwSize) == ERROR_SUCCESS)
+    if (RegQueryValueEx(hKeyWorkspace, "height", 0, &dwType, (LPBYTE)achValue, &dwSize) == ERROR_SUCCESS)
         if (dwType == REG_DWORD)
             nWindowHeight = *((int*)achValue);
 
@@ -195,13 +201,13 @@ BOOL SaveState(VOID)
     pwi.cbSize = sizeof(WINDOWINFO);
     GetWindowInfo(ghWnd, &pwi);
     nWindowTop = pwi.rcWindow.top;
-    RegSetValueEx(hKeyWorkspace, TEXT("top"), 0, REG_DWORD, (const BYTE*)&nWindowTop, sizeof(nWindowTop));
+    RegSetValueEx(hKeyWorkspace, TEXT("top"), 0, REG_DWORD, (LPBYTE)&nWindowTop, sizeof(nWindowTop));
     nWindowLeft = pwi.rcWindow.left;
-    RegSetValueEx(hKeyWorkspace, TEXT("left"), 0, REG_DWORD, (const BYTE*)&nWindowLeft, sizeof(nWindowLeft));
+    RegSetValueEx(hKeyWorkspace, TEXT("left"), 0, REG_DWORD, (LPBYTE)&nWindowLeft, sizeof(nWindowLeft));
     nWindowWidth = pwi.rcWindow.right - pwi.rcWindow.left;
-    RegSetValueEx(hKeyWorkspace, TEXT("width"), 0, REG_DWORD, (const BYTE*)&nWindowWidth, sizeof(nWindowHeight));
+    RegSetValueEx(hKeyWorkspace, TEXT("width"), 0, REG_DWORD, (LPBYTE)&nWindowWidth, sizeof(nWindowHeight));
     nWindowHeight = pwi.rcWindow.bottom - pwi.rcWindow.top;
-    RegSetValueEx(hKeyWorkspace, TEXT("height"), 0, REG_DWORD, (const BYTE*)&nWindowHeight, sizeof(nWindowHeight));
+    RegSetValueEx(hKeyWorkspace, TEXT("height"), 0, REG_DWORD, (LPBYTE)&nWindowHeight, sizeof(nWindowHeight));
     RegCloseKey(hKeyWorkspace);
 
     LocalFree(achValue);
