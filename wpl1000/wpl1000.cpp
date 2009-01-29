@@ -40,8 +40,8 @@ TRACKLISTINFOTYPE* trk = NULL;
 RecentFileList RecentFiles;
 
 VOID                Warn(LPTSTR);
-VOID                Error(LPTSTR, DWORD dw = 0);
-VOID                ErrorExit(LPTSTR, DWORD dw = 0);
+VOID                Error(LPTSTR, LONG lErrCode = 0);
+VOID                ErrorExit(LPTSTR, LONG lErrCode = 0);
 
 ATOM				MyRegisterClass(HINSTANCE);
 BOOL				InitInstance(HINSTANCE, int);
@@ -80,7 +80,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
             DispatchMessage(&msg);
         }
     }
-    return (int) msg.wParam;
+    return (int)msg.wParam;
 }
 
 
@@ -106,8 +106,8 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 BOOL SaveRecentFilesToReg(VOID)
 {
     BOOL bSuccess = FALSE;
-    const int MAX_KEY_LENGTH = 255;
-    const int MAX_VALUE_NAME = 16383;
+    const DWORD MAX_KEY_LENGTH = 255;
+    const DWORD MAX_VALUE_NAME = 16383;
     HKEY hKey;
     if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeyRecentFiles, 0, KEY_READ, &hKey) != ERROR_SUCCESS)
         if (RegCreateKeyEx(HKEY_CURRENT_USER, szKeyRecentFiles, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_READ, NULL, &hKey, NULL) != ERROR_SUCCESS)
@@ -120,9 +120,9 @@ BOOL SaveRecentFilesToReg(VOID)
         {
             LPCSTR d = (*i).second.c_str();
             sprintf_s(szValue, MAX_PATH, "%d", iIndex);
-            int retCode = RegSetValueEx(hKey, szValue, 0, REG_SZ, (LPBYTE)d, (*i).second.size());
+            LONG retCode = RegSetValueEx(hKey, szValue, 0, REG_SZ, (LPBYTE)d, (*i).second.size());
             if (retCode != ERROR_SUCCESS)
-                ErrorExit("RegSetValueEx()", retCode);
+                ErrorExit(TEXT("RegSetValueEx()"), retCode);
             ++iIndex;
         }
         RegCloseKey(hKey);
@@ -195,7 +195,7 @@ BOOL SaveState(VOID)
 
     TCHAR* achValue = (TCHAR*)LocalAlloc(LMEM_FIXED, MAX_VALUE_NAME);
     if (achValue == NULL)
-        ErrorExit("LocalAlloc()");
+        ErrorExit(TEXT("LocalAlloc()"));
 
     WINDOWINFO pwi;
     pwi.cbSize = sizeof(WINDOWINFO);
@@ -225,7 +225,7 @@ BOOL LoadRecentFilesFromReg(VOID)
     {
         TCHAR* achValue = (TCHAR*)LocalAlloc(LMEM_FIXED, MAX_VALUE_NAME);
         if (achValue == NULL)
-            ErrorExit("LocalAlloc()");
+            ErrorExit(TEXT("LocalAlloc()"));
         DWORD cchValue = MAX_VALUE_NAME; 
         TCHAR achClass[MAX_PATH] = TEXT(""); 
         DWORD cchClassName = MAX_PATH;
@@ -237,7 +237,7 @@ BOOL LoadRecentFilesFromReg(VOID)
         DWORD cbMaxValueData;
         DWORD cbSecurityDescriptor;
         FILETIME ftLastWriteTime;
-        DWORD retCode = RegQueryInfoKey(hKey, achClass, &cchClassName, NULL,                 
+        LONG retCode = RegQueryInfoKey(hKey, achClass, &cchClassName, NULL,                 
             &cSubKeys, &cbMaxSubKey, &cchMaxClass, &cValues, &cchMaxValue,
             &cbMaxValueData, &cbSecurityDescriptor, &ftLastWriteTime);
         if (cValues > 0) 
@@ -605,7 +605,7 @@ BOOL LoadNVPIPE(VOID)
     lvI.stateMask = 0;
     int index = 0;
     trk = new TRACKLISTINFOTYPE[wpl1000File.tracks().size()];
-    const int BUFSIZE = 200;
+    const DWORD BUFSIZE = 200;
     for (GPS::TrackList::const_iterator i = wpl1000File.tracks().begin(); i != wpl1000File.tracks().end(); ++i)
     {
         CHAR szBuf[BUFSIZE];
