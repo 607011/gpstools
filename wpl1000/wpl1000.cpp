@@ -52,7 +52,7 @@ VOID                SetStatusBar(LPSTR, UINT Milli = 3000);
 
 BOOL                OpenNVPIPE(VOID);
 BOOL                OpenGPX(VOID);
-BOOL                LoadNVPIPE(VOID);
+HRESULT             LoadNVPIPE(VOID);
 HRESULT             SaveGPX(VOID);
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
@@ -130,9 +130,7 @@ BOOL SaveRecentFilesToReg(VOID)
 
 VOID LoadState(VOID)
 {
-    DWORD dwType;
-    DWORD dwSize;
-
+    DWORD dwType, dwSize;
     HKEY hKeyWorkspace;
     if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeyWorkspace, 0, KEY_READ, &hKeyWorkspace) == ERROR_SUCCESS)
     {
@@ -165,7 +163,7 @@ VOID LoadState(VOID)
 
 BOOL SaveState(VOID)
 {
-    BOOL bSuccess = FALSE;
+    BOOL bSuccess = TRUE;
 
     SaveRecentFilesToReg();
 
@@ -261,18 +259,17 @@ VOID ClearRecentFilesMenu(VOID)
     RecentFileListBaseClass::const_iterator i;
     for (i = RecentFiles.begin(); i != RecentFiles.end(); ++i)
         DeleteMenu(hRecentMenu, (*i).first, MF_BYCOMMAND);
-    DeleteMenu(hRecentMenu, 0, MF_BYPOSITION);
+    DeleteMenu(hRecentMenu, 0, MF_BYPOSITION); // remove separator
 }
 
 
-BOOL PopulateRecentFilesMenu(VOID)
+VOID PopulateRecentFilesMenu(VOID)
 {
     ClearRecentFilesMenu();
     HMENU hRecentMenu = GetRecentFilesMenu();
     RecentFileList::const_iterator i;
     for (i = RecentFiles.begin(); i != RecentFiles.end(); ++i)
         AppendMenu(hRecentMenu, MF_STRING, (*i).first, (*i).second.c_str());
-    return TRUE;
 }
 
 
@@ -352,12 +349,12 @@ LRESULT CALLBACK MainFormProc(HWND hWndDlg, UINT Msg, WPARAM wParam, LPARAM lPar
     case WM_INITDIALOG:
         {
             TRACKLISTCOLUMNTYPE cols[] = {
-                { TEXT("Start"), 120, LVCFMT_LEFT },
-                { TEXT("Ende"), 120, LVCFMT_LEFT },
-                { TEXT("Punkte"), 48, LVCFMT_RIGHT },
-                { TEXT("km"), 48, LVCFMT_RIGHT },
-                { TEXT("Dauer"), 72, LVCFMT_LEFT },
-                { NULL, 0, 0 }
+                { TEXT("Start"),  120, LVCFMT_LEFT  },
+                { TEXT("Ende"),   120, LVCFMT_LEFT  },
+                { TEXT("Punkte"),  48, LVCFMT_RIGHT },
+                { TEXT("km"),      48, LVCFMT_RIGHT },
+                { TEXT("Dauer"),   72, LVCFMT_LEFT  },
+                { NULL,             0, 0 }
             };
             hList = GetDlgItem(hWndDlg, IDC_LISTVIEW);
             LVCOLUMN lvc; 
@@ -557,23 +554,20 @@ BOOL OpenNVPIPE(VOID)
 }
 
 
-BOOL LoadNVPIPE(VOID)
+HRESULT LoadNVPIPE(VOID)
 {
-    BOOL bSuccess = FALSE;
     wpl1000File.clearAll();
     errno_t rc = wpl1000File.load(wpl1000Filename);
     if (rc != 0) 
     {
         Error(TEXT("wpl1000File.load()"));
-        return FALSE;
+        return IDABORT;
     }
     if (wpl1000File.tracks().size() == 0) 
     {
         Warn(TEXT("Die Datei enthält keine Tracks!"));
-        return FALSE;
+        return IDIGNORE;
     }
-
-    SetStatusBar(TEXT("Laden OK."));
 
     HWND hList = GetDlgItem(ghMainForm, IDC_LISTVIEW);
     ListView_DeleteAllItems(hList);
@@ -621,8 +615,8 @@ BOOL LoadNVPIPE(VOID)
         ListView_InsertItem(hList, &lvI);
         ++index;
     }
-    bSuccess = (rc == 0);
-    return bSuccess;
+    SetStatusBar(TEXT("Laden OK."));
+    return IDOK;
 }
 
 
