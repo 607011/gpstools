@@ -242,8 +242,8 @@ BOOL LoadRecentFilesFromReg(VOID)
             &cbMaxValueData, &cbSecurityDescriptor, &ftLastWriteTime);
         if (cValues > 0) 
         {
-            TCHAR* szValue = (TCHAR*)LocalAlloc(LMEM_FIXED, MAX_VALUE_NAME);
-            if (szValue == NULL)
+            TCHAR* pszData = (TCHAR*)LocalAlloc(LMEM_FIXED, MAX_VALUE_NAME);
+            if (pszData == NULL)
                 ErrorExit("LocalAlloc()");
             retCode = ERROR_SUCCESS;
             RecentFiles.clear();
@@ -254,11 +254,11 @@ BOOL LoadRecentFilesFromReg(VOID)
                 DWORD dwType;
                 DWORD dwSize = MAX_VALUE_NAME;
                 retCode = RegEnumValue(hKey, i, achValue, &cchValue, NULL,
-                    &dwType, (LPBYTE)szValue, &dwSize);
+                    &dwType, (LPBYTE)pszData, &dwSize);
                 if (retCode == ERROR_SUCCESS)
-                    RecentFiles.add(szValue);
+                    RecentFiles.add(pszData);
             }
-            LocalFree(szValue);
+            LocalFree(pszData);
         }
         LocalFree(achValue);
         bSuccess = (RegCloseKey(hKey) == ERROR_SUCCESS);
@@ -593,10 +593,6 @@ BOOL LoadNVPIPE(VOID)
 
     SetStatusBar(TEXT("Laden OK."));
 
-    char* buf = (char*)LocalAlloc(LMEM_ZEROINIT, MAX_PATH+2);
-    if (buf == NULL)
-        ErrorExit("LocalAlloc()", GetLastError());
-
     HWND hList = GetDlgItem(ghMainForm, IDC_LISTVIEW);
     ListView_DeleteAllItems(hList);
 
@@ -610,9 +606,10 @@ BOOL LoadNVPIPE(VOID)
     int index = 0;
     trk = new TRACKLISTINFOTYPE[wpl1000File.tracks().size()];
     const int BUFSIZE = 200;
-    CHAR pszBuf[BUFSIZE];
     for (GPS::TrackList::const_iterator i = wpl1000File.tracks().begin(); i != wpl1000File.tracks().end(); ++i)
     {
+        CHAR szBuf[BUFSIZE];
+
         const std::string& t0 = (*i)->startTimestamp().toString();
         trk[index].pszStart = new CHAR[t0.size()+1];
         StringCchCopy(trk[index].pszStart, t0.size(), t0.c_str());
@@ -621,13 +618,13 @@ BOOL LoadNVPIPE(VOID)
         trk[index].pszFinish = new CHAR[t1.size()+1];
         StringCchCopy(trk[index].pszFinish, t1.size(), t1.c_str());
 
-        sprintf_s(pszBuf, BUFSIZE, "%.1lf", 1e-3 * (*i)->distance());
-        trk[index].pszDistance = new CHAR[strlen(pszBuf)+1];
-        StringCchCopy(trk[index].pszDistance, strlen(pszBuf)+1, pszBuf);
+        sprintf_s(szBuf, BUFSIZE, "%.1lf", 1e-3 * (*i)->distance());
+        trk[index].pszDistance = new CHAR[strlen(szBuf)+1];
+        StringCchCopy(trk[index].pszDistance, strlen(szBuf)+1, szBuf);
 
-        sprintf_s(pszBuf, BUFSIZE, "%u", (*i)->points().size());
-        trk[index].pszPointCount = new CHAR[strlen(pszBuf)+1];
-        StringCchCopy(trk[index].pszPointCount, strlen(pszBuf)+1, pszBuf);
+        sprintf_s(szBuf, BUFSIZE, "%u", (*i)->points().size());
+        trk[index].pszPointCount = new CHAR[strlen(szBuf)+1];
+        StringCchCopy(trk[index].pszPointCount, strlen(szBuf)+1, szBuf);
 
         GPS::Duration d((*i)->duration());
         const std::string dstr = d.toString();
@@ -643,7 +640,6 @@ BOOL LoadNVPIPE(VOID)
         ++index;
     }
     bSuccess = (rc == 0);
-    VirtualFree(buf, 0, MEM_RELEASE);
     return bSuccess;
 }
 
@@ -683,10 +679,6 @@ BOOL SaveGPX(VOID)
         GPS::GPXFile gpxFile;
         gpxFile.setTracks(wpl1000File.tracks());
         gpxFile.setWaypoints(wpl1000File.waypoints());
-        char* buf = (char*)LocalAlloc(LMEM_ZEROINIT, BUFSIZE);
-        if (buf == NULL)
-            ErrorExit(TEXT("LocalAlloc()"));
-        LocalFree(buf);
         errno_t rc = gpxFile.write(gpxFilename);
         if (rc != 0)
             Error(TEXT("gpxFile.write()"));
