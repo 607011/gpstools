@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "wpl1000.h"
 
-
 // TODO: nicht ungefragt Dateien überschreiben
 
 // TODO: nur ausgewählte Tracks sichern
@@ -19,7 +18,7 @@ const int DefaultWindowWidth = 460;
 const int DefaultWindowTop = CW_USEDEFAULT;
 const int DefaultWindowLeft = CW_USEDEFAULT;
 
-HINSTANCE hInst;
+HINSTANCE ghInst;
 HWND ghWnd;
 HWND ghMainForm;
 HMENU ghRecentFiles = NULL;
@@ -282,11 +281,11 @@ BOOL PopulateRecentFilesMenu(VOID)
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     HWND hWnd;
-    hInst = hInstance;
+    ghInst = hInstance;
 
     LoadState();
 
-    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE | DS_CONTROL,
         nWindowLeft, nWindowTop, nWindowWidth, nWindowHeight,
         HWND_DESKTOP, NULL, hInstance, NULL);
     ghWnd = hWnd;
@@ -304,7 +303,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 VOID UpdateTitle(VOID)
 {
     TCHAR szTitleCopy[MAX_LOADSTRING];
-    LoadString(hInst, IDS_APP_TITLE, szTitleCopy, MAX_LOADSTRING);
+    LoadString(ghInst, IDS_APP_TITLE, szTitleCopy, MAX_LOADSTRING);
     StringCchCopy(szTitle, MAX_LOADSTRING, wpl1000Filename.c_str());
     StringCchCat(szTitle, MAX_LOADSTRING, " - ");
     StringCchCat(szTitle, MAX_LOADSTRING, szTitleCopy);
@@ -350,7 +349,7 @@ LRESULT CALLBACK MainFormProc(HWND hWndDlg, UINT Msg, WPARAM wParam, LPARAM lPar
         nWidth = LOWORD(lParam); 
         nHeight = HIWORD(lParam);
         hList = GetDlgItem(hWndDlg, IDC_LISTVIEW);
-        SetWindowPos(hList, 0, 6, 36, nWidth-18, nHeight-36-20, SWP_NOMOVE); 
+        SetWindowPos(hList, 0, 6, 36, nWidth-18, nHeight-18, SWP_NOMOVE); 
         break;
     case WM_INITDIALOG:
         {
@@ -426,7 +425,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         switch (wmId)
         {
         case IDM_ABOUT:
-            DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+            DialogBox(ghInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
             break;
         case IDM_EXIT:
             SendMessage(hWnd, WM_CLOSE, NULL, NULL);
@@ -497,11 +496,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             int PartSize[2] = { clientRect.right, -1 };
             hStatus = CreateWindowEx(0, STATUSCLASSNAME, NULL,
                 WS_CHILD | WS_VISIBLE, 0, 0, 0, 0,
-                hWnd, (HMENU)IDC_MAIN_STATUS, hInst, NULL);
+                hWnd, (HMENU)IDC_MAIN_STATUS, ghInst, NULL);
             SendMessage(hStatus, SB_SETPARTS, sizeof(PartSize)/sizeof(int), (LPARAM)PartSize);
             RECT statusBarRect;
             GetClientRect(hStatus, &statusBarRect);
-            hMainForm = CreateDialog(hInst, MAKEINTRESOURCE(IDD_MAINFORM), hWnd, (DLGPROC)MainFormProc);
+            hMainForm = CreateDialog(ghInst, MAKEINTRESOURCE(IDD_MAINFORM), hWnd, (DLGPROC)MainFormProc);
             ghMainForm = hMainForm;
             ShowWindow(hMainForm, SW_SHOW);
         }
@@ -622,6 +621,56 @@ BOOL LoadNVPIPE(VOID)
     return bSuccess;
 }
 
+UINT APIENTRY ObsOpenDialogHook(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+{
+    int wmId, wmEvent;
+    switch(Msg)
+    {
+    case WM_COMMAND:
+        wmId    = LOWORD(wParam);
+        wmEvent = HIWORD(wParam);
+        switch (wmId)
+        {
+        case IDC_CHECK_MULTI:
+            if (wmEvent == BN_CLICKED) 
+                multi ^= TRUE;
+            break;
+        }
+        break;
+    case WM_INITDIALOG:
+        break;
+    default:
+        break;
+    }
+    return FALSE;
+}
+
+
+BOOL OpenGPX(VOID)
+{
+    BOOL bSuccess = FALSE;
+    OPENFILENAME ofn;
+    TCHAR szFileName[MAX_PATH] = "";
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = ghWnd;
+    ofn.lpstrFilter = TEXT("GPX files (*.gpx)\0*.gpx\0All Files (*.*)\0*.*\0");
+    ofn.lpstrFile = szFileName;
+    ofn.nMaxFile = MAX_PATH;
+    ofn.lpstrDefExt = TEXT("gpx");
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_EXPLORER | OFN_HIDEREADONLY;
+    ofn.Flags |= OFN_ENABLETEMPLATE | OFN_ENABLEHOOK;
+    ofn.hInstance = ghInst;
+    ofn.lpTemplateName = MAKEINTRESOURCE(IDD_MULTITEMPL);
+    ofn.lpfnHook = ObsOpenDialogHook;
+    if (GetSaveFileName(&ofn))
+    {
+        gpxFilename = ofn.lpstrFile;
+        bSuccess = (gpxFilename != "");
+    }
+    return bSuccess;
+}
+
 
 BOOL SaveGPX(VOID)
 {
@@ -665,27 +714,5 @@ BOOL SaveGPX(VOID)
     }
     if (bSuccess)
         SetStatusBar(TEXT("Speichern OK."));
-    return bSuccess;
-}
-
-
-BOOL OpenGPX(VOID)
-{
-    BOOL bSuccess = FALSE;
-    OPENFILENAME ofn;
-    TCHAR szFileName[MAX_PATH] = "";
-    ZeroMemory(&ofn, sizeof(ofn));
-    ofn.lStructSize = sizeof(ofn);
-    ofn.hwndOwner = ghWnd;
-    ofn.lpstrFilter = TEXT("GPX files (*.gpx)\0*.gpx\0All Files (*.*)\0*.*\0");
-    ofn.lpstrFile = szFileName;
-    ofn.nMaxFile = MAX_PATH;
-    ofn.Flags = OFN_PATHMUSTEXIST | OFN_EXPLORER | OFN_HIDEREADONLY;
-    ofn.lpstrDefExt = TEXT("gpx");
-    if(GetSaveFileName(&ofn))
-    {
-        gpxFilename = ofn.lpstrFile;
-        bSuccess = (gpxFilename != "");
-    }
     return bSuccess;
 }
