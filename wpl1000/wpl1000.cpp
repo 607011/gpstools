@@ -12,37 +12,6 @@
 
 #define MAX_LOADSTRING      100
 
-typedef struct TrackListColumnType {
-    LPSTR pszText;
-    int cx;
-    int fmt;
-} TRACKLISTCOLUMNTYPE;
-
-struct TrackListInfoType
-{
-    TrackListInfoType(void)
-        : pszStart(NULL), pszFinish(NULL), pszPointCount(NULL), pszDistance(NULL), pszDuration(NULL) { }
-    ~TrackListInfoType()
-    {
-        if (pszStart != NULL)
-            delete [] pszStart;
-        if (pszFinish != NULL)
-            delete [] pszFinish;
-        if (pszPointCount != NULL)
-            delete [] pszPointCount;
-        if (pszDistance != NULL)
-            delete [] pszDistance;
-        if (pszDuration != NULL)
-            delete [] pszDuration;
-    }
-    LPSTR pszStart;
-    LPSTR pszFinish;
-    LPSTR pszPointCount;
-    LPSTR pszDistance;
-    LPSTR pszDuration;
-};
-
-typedef struct TrackListInfoType TRACKLISTINFOTYPE;
 
 HINSTANCE hInst;
 HWND ghWnd;
@@ -53,10 +22,10 @@ TCHAR szWindowClass[MAX_LOADSTRING];
 const TCHAR* szKeyRecentFiles = TEXT("SOFTWARE\\Lau\\WPL1000\\Recent File List");
 const TCHAR* szKeySettings    = TEXT("SOFTWARE\\Lau\\WPL1000\\Settings");
 const TCHAR* szKeyWorkspace   = TEXT("SOFTWARE\\Lau\\WPL1000\\Workspace");
-int nWidth;
-int nHeight;
-int nTop;
-int nLeft;
+int nWindowWidth;
+int nWindowHeight;
+int nWindowTop;
+int nWindowLeft;
 
 
 GPS::WPL1000File wpl1000File;
@@ -177,19 +146,19 @@ VOID LoadState(VOID)
     dwSize = MAX_VALUE_NAME;
     if (RegQueryValueEx(hKeyWorkspace, "top", 0, &dwType, (LPBYTE) achValue, &dwSize) == ERROR_SUCCESS)
         if (dwType == REG_DWORD)
-            nTop = *((int*)achValue);
+            nWindowTop = *((int*)achValue);
     dwSize = MAX_VALUE_NAME;
     if (RegQueryValueEx(hKeyWorkspace, "left", 0, &dwType, (LPBYTE) achValue, &dwSize) == ERROR_SUCCESS)
         if (dwType == REG_DWORD)
-            nLeft = *((int*)achValue);
+            nWindowLeft = *((int*)achValue);
     dwSize = MAX_VALUE_NAME;
     if (RegQueryValueEx(hKeyWorkspace, "width", 0, &dwType, (LPBYTE) achValue, &dwSize) == ERROR_SUCCESS)
         if (dwType == REG_DWORD)
-            nWidth = *((int*)achValue);
+            nWindowWidth = *((int*)achValue);
     dwSize = MAX_VALUE_NAME;
     if (RegQueryValueEx(hKeyWorkspace, "height", 0, &dwType, (LPBYTE) achValue, &dwSize) == ERROR_SUCCESS)
         if (dwType == REG_DWORD)
-            nHeight = *((int*)achValue);
+            nWindowHeight = *((int*)achValue);
 
     LocalFree(achValue);
     RegCloseKey(hKeyWorkspace);
@@ -203,13 +172,13 @@ BOOL SaveState(VOID)
 
     SaveRecentFilesToReg();
 
-    HKEY hKeySettings;
-    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeySettings, 0, KEY_READ, &hKeySettings) != ERROR_SUCCESS)
-        if (RegCreateKeyEx(HKEY_CURRENT_USER, szKeySettings, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKeySettings, NULL) != ERROR_SUCCESS)
-            Error(TEXT("RegCreateKeyEx()"));
-    if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeySettings, 0, KEY_SET_VALUE, &hKeySettings) != ERROR_SUCCESS)
-        Error(TEXT("RegOpenKeyEx()"));
-    RegCloseKey(hKeySettings);
+    //HKEY hKeySettings;
+    //if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeySettings, 0, KEY_READ, &hKeySettings) != ERROR_SUCCESS)
+    //    if (RegCreateKeyEx(HKEY_CURRENT_USER, szKeySettings, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKeySettings, NULL) != ERROR_SUCCESS)
+    //        Error(TEXT("RegCreateKeyEx()"));
+    //if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeySettings, 0, KEY_SET_VALUE, &hKeySettings) != ERROR_SUCCESS)
+    //    Error(TEXT("RegOpenKeyEx()"));
+    //RegCloseKey(hKeySettings);
 
     HKEY hKeyWorkspace;
     if (RegOpenKeyEx(HKEY_CURRENT_USER, szKeyWorkspace, 0, KEY_READ, &hKeyWorkspace) != ERROR_SUCCESS)
@@ -225,14 +194,14 @@ BOOL SaveState(VOID)
     WINDOWINFO pwi;
     pwi.cbSize = sizeof(WINDOWINFO);
     GetWindowInfo(ghWnd, &pwi);
-    nTop = pwi.rcWindow.top;
-    RegSetValueEx(hKeyWorkspace, TEXT("top"), 0, REG_DWORD, (const BYTE*)&nTop, sizeof(nTop));
-    nLeft = pwi.rcWindow.left;
-    RegSetValueEx(hKeyWorkspace, TEXT("left"), 0, REG_DWORD, (const BYTE*)&nLeft, sizeof(nLeft));
-    nWidth = pwi.rcWindow.right - pwi.rcWindow.left;
-    RegSetValueEx(hKeyWorkspace, TEXT("width"), 0, REG_DWORD, (const BYTE*)&nWidth, sizeof(nHeight));
-    nHeight = pwi.rcWindow.bottom - pwi.rcWindow.top;
-    RegSetValueEx(hKeyWorkspace, TEXT("height"), 0, REG_DWORD, (const BYTE*)&nHeight, sizeof(nHeight));
+    nWindowTop = pwi.rcWindow.top;
+    RegSetValueEx(hKeyWorkspace, TEXT("top"), 0, REG_DWORD, (const BYTE*)&nWindowTop, sizeof(nWindowTop));
+    nWindowLeft = pwi.rcWindow.left;
+    RegSetValueEx(hKeyWorkspace, TEXT("left"), 0, REG_DWORD, (const BYTE*)&nWindowLeft, sizeof(nWindowLeft));
+    nWindowWidth = pwi.rcWindow.right - pwi.rcWindow.left;
+    RegSetValueEx(hKeyWorkspace, TEXT("width"), 0, REG_DWORD, (const BYTE*)&nWindowWidth, sizeof(nWindowHeight));
+    nWindowHeight = pwi.rcWindow.bottom - pwi.rcWindow.top;
+    RegSetValueEx(hKeyWorkspace, TEXT("height"), 0, REG_DWORD, (const BYTE*)&nWindowHeight, sizeof(nWindowHeight));
     RegCloseKey(hKeyWorkspace);
 
     LocalFree(achValue);
@@ -333,7 +302,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     LoadState();
 
     hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-        nLeft, nTop, nWidth, nHeight, HWND_DESKTOP, NULL, hInstance, NULL);
+        nWindowLeft, nWindowTop, nWindowWidth, nWindowHeight,
+        HWND_DESKTOP, NULL, hInstance, NULL);
     ghWnd = hWnd;
 
     ClearRecentFilesMenu();
@@ -461,8 +431,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     int nWidth, nHeight;
     int wmId, wmEvent;
-    PAINTSTRUCT ps;
-    HDC hdc;
     HWND hStatus, hMainForm;
 
     switch (message)
@@ -491,9 +459,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         case IDM_FILE_SAVE:
             if (OpenGPX())
-            {
                 SaveGPX();
-            }
             break;
         default:
             if (ID_RECENT_FILE_LIST <= wmId && wmId <= ID_RECENT_FILE_LIST+9)
@@ -509,11 +475,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 return DefWindowProc(hWnd, message, wParam, lParam);
             break;
         }
-        break;
-    case WM_PAINT:
-        hdc = BeginPaint(hWnd, &ps);
-        // ...
-        EndPaint(hWnd, &ps);
         break;
     case WM_CLOSE:
         SaveState();
