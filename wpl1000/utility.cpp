@@ -9,18 +9,18 @@ VOID Warn(LPTSTR lpszMessage)
 }
 
 
-VOID Error(LPTSTR lpszFunction, DWORD dw)
+VOID Error(LPTSTR lpszFunction, LONG lErrCode)
 {
     LPVOID lpMsgBuf;
     LPVOID lpDisplayBuf;
-    if (dw == 0)
-        dw = GetLastError();
+    if (lErrCode == 0)
+        lErrCode = GetLastError();
     FormatMessage(
         FORMAT_MESSAGE_ALLOCATE_BUFFER |
         FORMAT_MESSAGE_FROM_SYSTEM |
         FORMAT_MESSAGE_IGNORE_INSERTS,
         NULL,
-        dw,
+        lErrCode,
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
         (LPTSTR) &lpMsgBuf,
         0, NULL );
@@ -30,17 +30,15 @@ VOID Error(LPTSTR lpszFunction, DWORD dw)
     StringCchPrintf((LPTSTR)lpDisplayBuf, 
         LocalSize(lpDisplayBuf) / sizeof(TCHAR),
         TEXT("%s fehlgeschlagen mit Fehler %d: %s"), 
-        lpszFunction, dw, lpMsgBuf); 
+        lpszFunction, lErrCode, lpMsgBuf); 
     MessageBox(NULL, (LPCTSTR)lpDisplayBuf, TEXT("Fehler"), MB_OK); 
     LocalFree(lpMsgBuf);
     LocalFree(lpDisplayBuf);
 }
 
 
-VOID ErrorExit(LPTSTR lpszFunction, DWORD dw)
+VOID ErrorExit(LPTSTR lpszFunction, LONG lErrCode)
 {
-    Error(lpszFunction, dw);
-    ExitProcess(dw); 
+    Error(lpszFunction, lErrCode);
+    ExitProcess(lErrCode); 
 }
-
-
