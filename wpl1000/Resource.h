@@ -1,7 +1,5 @@
-//{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
-// Used by wpl1000.rc
-//
+// $Id$
+
 #define IDC_MYICON                      2
 #define IDD_MAINFORM                    101
 #define IDD_WPL1000_DIALOG              102
