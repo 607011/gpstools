@@ -8,6 +8,8 @@
 // Windows Header Files:
 #include <windows.h>
 
+#include <commdlg.h>
+
 // C RunTime Header Files
 #include <stdlib.h>
 #include <malloc.h>

@@ -7,6 +7,7 @@
 
 typedef std::pair<int, std::string> RecentFileListEntry;
 typedef std::deque<RecentFileListEntry> RecentFileListBaseClass;
+
 class RecentFileList : public RecentFileListBaseClass
 {
 public:
