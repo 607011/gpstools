@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib strsafe.lib"
+				AdditionalDependencies="comctl32.lib strsafe.lib shlwapi.lib"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="LIBCMTD.lib "
 				GenerateDebugInformation="true"
@@ -137,10 +137,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib strsafe.lib"
+				AdditionalDependencies="comctl32.lib strsafe.lib shlwapi.lib"
 				LinkIncremental="1"
 				UACUIAccess="true"
-				IgnoreDefaultLibraryNames="LIBCMT.lib "
+				IgnoreDefaultLibraryNames="LIBCMT.lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
