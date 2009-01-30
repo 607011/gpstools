@@ -4,9 +4,6 @@
 #include "stdafx.h"
 #include "wpl1000.h"
 
-// TODO: nur ausgewählte Tracks sichern
-
-
 const DWORD MAX_KEY_LENGTH = 255;
 const DWORD MAX_VALUE_NAME = 16383;
 const DWORD MAX_LOADSTRING = 100;
@@ -349,16 +346,20 @@ LRESULT CALLBACK MainFormProc(HWND hWndDlg, UINT Msg, WPARAM wParam, LPARAM lPar
     case WM_INITDIALOG:
         {
             TRACKLISTCOLUMNTYPE cols[] = {
-                { TEXT("Start"),  120, LVCFMT_LEFT  },
-                { TEXT("Ende"),   120, LVCFMT_LEFT  },
-                { TEXT("Punkte"),  48, LVCFMT_RIGHT },
-                { TEXT("km"),      48, LVCFMT_RIGHT },
-                { TEXT("Dauer"),   72, LVCFMT_LEFT  },
+                { TEXT("Start"),  136, LVCFMT_LEFT  },
+                { TEXT("Ende"),   124, LVCFMT_LEFT  },
+                { TEXT("Punkte"),  52, LVCFMT_RIGHT },
+                { TEXT("km"),      52, LVCFMT_RIGHT },
+                { TEXT("Dauer"),   80, LVCFMT_LEFT  },
                 { NULL,             0, 0 }
             };
             hList = GetDlgItem(hWndDlg, IDC_LISTVIEW);
+            ListView_SetExtendedListViewStyle(hList,
+                LVS_EX_CHECKBOXES | LVS_EX_DOUBLEBUFFER |
+                LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES |
+                LVS_EX_ONECLICKACTIVATE);
             LVCOLUMN lvc; 
-            lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
+            lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT;
             int iCol = 0;
             while (cols[iCol].pszText != NULL)
             {
@@ -376,33 +377,48 @@ LRESULT CALLBACK MainFormProc(HWND hWndDlg, UINT Msg, WPARAM wParam, LPARAM lPar
         switch (((LPNMHDR) lParam)->code)
         {
         case LVN_GETDISPINFO:
-            NMLVDISPINFO* plvdi = (NMLVDISPINFO*)lParam;
-            switch (plvdi->item.iSubItem)
             {
-            case 0:
-                plvdi->item.pszText = trk[plvdi->item.iItem].pszStart;
-                break;
-            case 1:
-                plvdi->item.pszText = trk[plvdi->item.iItem].pszFinish;
-                break;
-            case 2:
-                plvdi->item.pszText = trk[plvdi->item.iItem].pszPointCount;
-                break;
-            case 3:
-                plvdi->item.pszText = trk[plvdi->item.iItem].pszDistance;
-                break;
-            case 4:
-                plvdi->item.pszText = trk[plvdi->item.iItem].pszDuration;
-                break;
-            default:
-                break;
+                NMLVDISPINFO* plvdi = (NMLVDISPINFO*)lParam;
+                switch (plvdi->item.iSubItem)
+                {
+                case 0:
+                    plvdi->item.pszText = trk[plvdi->item.iItem].pszStart;
+                    break;
+                case 1:
+                    plvdi->item.pszText = trk[plvdi->item.iItem].pszFinish;
+                    break;
+                case 2:
+                    plvdi->item.pszText = trk[plvdi->item.iItem].pszPointCount;
+                    break;
+                case 3:
+                    plvdi->item.pszText = trk[plvdi->item.iItem].pszDistance;
+                    break;
+                case 4:
+                    plvdi->item.pszText = trk[plvdi->item.iItem].pszDuration;
+                    break;
+                default:
+                    break;
+                }
             }
             return 0;
+        //case LVN_ITEMCHANGED:
+        //    {
+        //        LPNMLISTVIEW pnmv = (LPNMLISTVIEW)lParam;
+        //        if (pnmv->uNewState != pnmv->uOldState)
+        //        {
+        //            UINT uPrevState = (pnmv->uOldState & LVIS_STATEIMAGEMASK) >> 12;
+        //            UINT uNewState = (pnmv->uNewState & LVIS_STATEIMAGEMASK) >> 12;
+        //            hList = GetDlgItem(hWndDlg, IDC_LISTVIEW);
+        //        }
+        //    }
+        //    break;
+        default:
+            break;
         }
     default:
         break;
     }
-    return FALSE;
+    return 0;
 }
 
 
@@ -524,11 +540,11 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
         {
             EndDialog(hDlg, LOWORD(wParam));
-            return (INT_PTR)TRUE;
+            return 1;
         }
         break;
     }
-    return (INT_PTR)FALSE;
+    return 0;
 }
 
 
@@ -587,24 +603,24 @@ HRESULT LoadNVPIPE(VOID)
         CHAR szBuf[BUFSIZE];
 
         const std::string& t0 = (*i)->startTimestamp().toString();
-        trk[index].pszStart = new CHAR[t0.size()+1];
-        StringCchCopy(trk[index].pszStart, t0.size(), t0.c_str());
+        trk[index].pszStart = new CHAR[t0.size()+2];
+        StringCchCopy(trk[index].pszStart, t0.size()+1, t0.c_str());
 
         const std::string& t1 = (*i)->finishTimestamp().toString();
-        trk[index].pszFinish = new CHAR[t1.size()+1];
-        StringCchCopy(trk[index].pszFinish, t1.size(), t1.c_str());
+        trk[index].pszFinish = new CHAR[t1.size()+2];
+        StringCchCopy(trk[index].pszFinish, t1.size()+1, t1.c_str());
 
         sprintf_s(szBuf, BUFSIZE, "%.1lf", 1e-3 * (*i)->distance());
-        trk[index].pszDistance = new CHAR[strlen(szBuf)+1];
+        trk[index].pszDistance = new CHAR[strlen(szBuf)+2];
         StringCchCopy(trk[index].pszDistance, strlen(szBuf)+1, szBuf);
 
         sprintf_s(szBuf, BUFSIZE, "%u", (*i)->points().size());
-        trk[index].pszPointCount = new CHAR[strlen(szBuf)+1];
+        trk[index].pszPointCount = new CHAR[strlen(szBuf)+2];
         StringCchCopy(trk[index].pszPointCount, strlen(szBuf)+1, szBuf);
 
         GPS::Duration d((*i)->duration());
         const std::string dstr = d.toString();
-        trk[index].pszDuration = new CHAR[dstr.size()+1];
+        trk[index].pszDuration = new CHAR[dstr.size()+2];
         StringCchCopy(trk[index].pszDuration, dstr.size()+1, dstr.c_str());
 
         lvI.iItem = index;
@@ -613,6 +629,7 @@ HRESULT LoadNVPIPE(VOID)
         lvI.lParam = (LPARAM)&trk[index];
         lvI.pszText = LPSTR_TEXTCALLBACK;
         ListView_InsertItem(hList, &lvI);
+        ListView_SetItemState(hList, index, LVIS_SELECTED << 12, LVIS_STATEIMAGEMASK);
         ++index;
     }
     SetStatusBar(TEXT("Laden OK."));
@@ -620,7 +637,7 @@ HRESULT LoadNVPIPE(VOID)
 }
 
 
-UINT APIENTRY ObsOpenDialogHook(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+UINT_PTR CALLBACK ObsOpenDialogHook(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
     int wmId, wmEvent;
     switch(Msg)
@@ -669,6 +686,31 @@ BOOL OpenGPX(VOID)
 }
 
 
+bool ItemIsChecked(const LPCSTR pszText)
+{
+    HWND hList = GetDlgItem(ghMainForm, IDC_LISTVIEW);
+    int nCount = ListView_GetItemCount(hList);
+    for (int iIndex = 0; iIndex < nCount; ++iIndex)
+    {
+        const DWORD BUFSIZE = 100;
+        TCHAR achText[BUFSIZE];
+        LVITEM lvi;
+        lvi.iItem = iIndex;
+        lvi.iSubItem = 0;
+        lvi.mask = LVIF_TEXT;
+        lvi.pszText = achText;
+        lvi.cchTextMax = BUFSIZE;
+        ListView_GetItem(hList, &lvi);
+        if (StrCmp(lvi.pszText, pszText) == 0)
+        {
+            UINT uResult = ListView_GetItemState(hList, iIndex, LVIS_STATEIMAGEMASK) >> 12;
+            return uResult == LVIS_SELECTED;
+        }
+    }
+    return false;
+}
+
+
 HRESULT SaveGPX(VOID)
 {
     HRESULT answer = IDYES;
@@ -676,15 +718,19 @@ HRESULT SaveGPX(VOID)
     {
         for (GPS::TrackList::const_iterator i = wpl1000File.tracks().begin(); i != wpl1000File.tracks().end(); ++i)
         {
-            GPS::GPXFile trkFile;
-            trkFile.addTrack(*i);
-            std::basic_string<char>::size_type spos = gpxFilename.find_last_of(PathDelimiter);
-            std::string trkFilename = gpxFilename;
-            trkFilename.insert(spos+1, (*i)->startTimestamp().toString("%Y%m%d-%H%M") + "-");
-            errno_t rc = trkFile.write(trkFilename);
-            if (rc != 0)
-                Error(TEXT("trkFile.write()"));
-            answer = (rc == 0)? IDOK : IDRETRY;
+            const std::string& t0 = (*i)->startTimestamp().toString();
+            if (ItemIsChecked(t0.c_str()))
+            {
+                GPS::GPXFile trkFile;
+                trkFile.addTrack(*i);
+                std::basic_string<char>::size_type spos = gpxFilename.find_last_of(PathDelimiter);
+                std::string trkFilename = gpxFilename;
+                trkFilename.insert(spos+1, (*i)->startTimestamp().toString("%Y%m%d-%H%M") + "-");
+                errno_t rc = trkFile.write(trkFilename);
+                if (rc != 0)
+                    Error(TEXT("trkFile.write()"));
+                answer = (rc == 0)? IDOK : IDRETRY;
+            }
         }
         GPS::GPXFile wptFile;
         wptFile.setWaypoints(wpl1000File.waypoints());

@@ -152,7 +152,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				EmbedManifest="false"
+				EmbedManifest="true"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -266,6 +266,10 @@
 				</File>
 			</Filter>
 		</Filter>
+		<File
+			RelativePath=".\TODO.txt"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
