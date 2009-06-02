@@ -140,7 +140,7 @@ void loadConfiguration(void)
 
     // reading <input> configuration data
     TiXmlHandle cfgInput = cfgRoot.FirstChild("input");
-    TiXmlHandle cfgInputElevation = cfgInput.FirstChild("default");
+    TiXmlHandle cfgInputElevation = cfgInput.FirstChild("elevation");
     if (cfgInputElevation.FirstChild("file").Element() != NULL && cfgInputElevation.FirstChild("file").Element()->GetText() != NULL)
         defaultFile = cfgInputElevation.FirstChild("file").Element()->GetText();
     if (cfgInputElevation.FirstChild("offset").Element() != NULL && cfgInputElevation.FirstChild("offset").Element()->GetText() != NULL)
@@ -336,7 +336,7 @@ void loadConfiguration(void)
 void disclaimer(void)
 {
     std::cout << "gpsplot " << VERSION << " - " << _("Höhenprofil-Plots aus GPX- oder SDF-Dateien erzeugen.") << std::endl
-        << "Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>" << std::endl
+        << "Copyright (c) 2008-2009 Oliver Lau <oliver@von-und-fuer-lau.de>" << std::endl
         << _("Alle Rechte vorbehalten.") << std::endl << std::endl;
 }
 
