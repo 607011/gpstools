@@ -33,7 +33,7 @@ int mergeWhat = 0;
 TiXmlDocument config;
 time_t eleTimeOffset = 0;
 time_t hrTimeOffset = 0;
-double eleOffset = 0;
+GPS::DoubleValue eleOffset;
 std::vector<SmoothingOptions*> smoothings;
 const std::string MISSING = "?";
 const std::string gnuplotPltFile = "gnuplot.plt";
@@ -166,7 +166,7 @@ void loadConfiguration(void)
             if (useStr == "heartrate")      { mergeWhat |= GPS::Track::HEARTRATE; }
             else if (useStr == "elevation") { mergeWhat |= GPS::Track::ELEVATION; }
             else if (useStr == "geocoords") { mergeWhat |= GPS::Track::GEOCOORDS; }
-            else errmsg(_("Unbekannte Merge-Option in <merge><use>") + useStr + "</use></merge>");
+            else errmsg(_("Unbekannte Merge-Option: <merge><use>") + useStr + "</use></merge>");
         }
 	}
 
@@ -243,6 +243,8 @@ void loadConfiguration(void)
             gnuplotElevationLo = atoi(cfgGnuplot.FirstChild("elevation").FirstChild("range").FirstChild("lo").Element()->GetText());
         if (cfgGnuplot.FirstChild("elevation").FirstChild("range").FirstChild("hi").Element() != NULL && cfgGnuplot.FirstChild("elevation").FirstChild("range").FirstChild("hi").Element()->GetText() != NULL)
             gnuplotElevationHi = atoi(cfgGnuplot.FirstChild("elevation").FirstChild("range").FirstChild("hi").Element()->GetText());
+        if (cfgGnuplot.FirstChild("elevation").FirstChild("offset").Element() != NULL && cfgGnuplot.FirstChild("elevation").FirstChild("offset").Element()->GetText() != NULL)
+            eleOffset = atof(cfgGnuplot.FirstChild("elevation").FirstChild("offset").Element()->GetText());
 
         if (cfgGnuplot.FirstChild("speed").FirstChild("height").Element() != NULL && cfgGnuplot.FirstChild("speed").FirstChild("height").Element()->GetText() != NULL)
             gnuplotSpeedPct = atof(cfgGnuplot.FirstChild("speed").FirstChild("height").Element()->GetText());
@@ -351,6 +353,8 @@ void usage(void)
         << "     " << _("Eintrag input/hr/file aus Konfigurationsdatei überschreiben") << std::endl
         << "  " << _("--gnuplot=Pfad_zu_Gnuplot-Binary") << std::endl
         << "     " << _("Eintrag gnuplot/executable aus Konfigurationsdatei überschreiben") << std::endl
+        << "  " << _("--eleoffset=Korrektur der Höhendaten in Metern (Dezimalzahl)") << std::endl
+        << "     " << _("Eintrag input/elevation/offset aus Konfigurationsdatei überschreiben") << std::endl
         << "  " << _("--dump=Dump-Datei") << std::endl
         << "     " << _("Eintrag dump/file aus Konfigurationsdatei überschreiben") << std::endl
         << "  " << _("--quiet") << std::endl

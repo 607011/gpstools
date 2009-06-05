@@ -70,7 +70,7 @@ extern int mergeWhat;
 extern TiXmlDocument config;
 extern time_t eleTimeOffset;
 extern time_t hrTimeOffset;
-extern double eleOffset;
+extern GPS::DoubleValue eleOffset;
 extern std::vector<SmoothingOptions*> smoothings;
 extern const std::string MISSING;
 extern const std::string gnuplotPltFile;

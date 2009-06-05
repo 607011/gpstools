@@ -22,7 +22,7 @@ enum _long_options {
     SELECT_NAME,
     SELECT_GNUPLOT,
     SELECT_LIST,
-    SELECT_ELESHIFT,
+    SELECT_ELEOFFSET,
     SELECT_XAXIS,
     SELECT_DEBUG,
     SELECT_QUIET,
@@ -38,7 +38,7 @@ static struct option long_options[] = {
     { "help",      no_argument,       0, SELECT_HELP },
     { "name",      required_argument, 0, SELECT_NAME },
     { "gnuplot",   required_argument, 0, SELECT_GNUPLOT },
-    { "eleshift",  required_argument, 0, SELECT_ELESHIFT },
+    { "eleoffset", required_argument, 0, SELECT_ELEOFFSET },
     { "list",      no_argument,       0, SELECT_LIST },
     { "quiet",     no_argument,       0, SELECT_QUIET },
     { "debug",     no_argument,       0, SELECT_DEBUG },
@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
             if (optarg != NULL)
                 defaultFileCmdline = optarg;
             break;
-        case SELECT_ELESHIFT:
+        case SELECT_ELEOFFSET:
             if (optarg != NULL)
                 eleOffset = atof(optarg);
             break;
@@ -197,11 +197,10 @@ int main(int argc, char* argv[])
     if (!trk->hasTimestamps())
         warnmsg(_("Der Track enthält keine Zeitstempel"));
 
-
     if (eleTimeOffset != 0)
         trk->shiftTimestamps(eleTimeOffset);
-    if (eleOffset != 0)
-        trk->shiftElevation(eleOffset);
+    if (eleOffset.defined())
+        trk->shiftElevation(eleOffset.value());
 
     if (mergeFile != "")
     {
