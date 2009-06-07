@@ -1,5 +1,5 @@
 // $Id$
-// Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
+// Copyright (c) 2008-2009 Oliver Lau <oliver@von-und-fuer-lau.de>
 // Alle Rechte vorbehalten.
 
 #include <iostream>
@@ -55,7 +55,7 @@ void disclaimer(void)
         cout << _("wpl1000reader - Tracks aus einem GPS-Logger vom Typ 'Wintec WPL-1000\n"
 	     << "(Easy Showily)' oder 'Navilock NL-456DL Easy Logger' auslesen und als\n"
 	     << "GPX-Datei speichern.") << endl << endl;
-        cout << _("Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>\n"
+        cout << _("Copyright (c) 2008-2009 Oliver Lau <oliver@von-und-fuer-lau.de>\n"
          << "Alle Rechte vorbehalten.")
          << endl << endl;
     }

@@ -1,5 +1,5 @@
 // $Id$
-// Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
+// Copyright (c) 2008-2009 Oliver Lau <oliver@von-und-fuer-lau.de>
 // Alle Rechte vorbehalten.
 
 #include <cstdlib>
@@ -60,7 +60,7 @@ void disclaimer(void)
     std::cout << "gpxtimeshift - Die Zeitstempel der Trackpunkte aller Tracks in einer" << std::endl
          << "               GPX-Datei um ein angegebenes Mass in die Zukunft oder" << std::endl
          << "               die Vergangenheit verschieben." << std::endl
-         << "Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>" << std::endl
+         << "Copyright (c) 2008-2009 Oliver Lau <oliver@von-und-fuer-lau.de>" << std::endl
          << "Alle Rechte vorbehalten." << std::endl
          << std::endl;
 }

@@ -1,5 +1,5 @@
 // $Id$
-// Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
+// Copyright (c) 2008-2009 Oliver Lau <oliver@von-und-fuer-lau.de>
 // Alle Rechte vorbehalten.
 
 #ifdef _MSC_VER
@@ -50,7 +50,7 @@ static struct option long_options[] = {
 void disclaimer(void)
 {
     std::cout << "areameter - Von einem Track eingeschlossene Fläche berechnen." << endl
-        << "Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>" << endl
+        << "Copyright (c) 2008-2009 Oliver Lau <oliver@von-und-fuer-lau.de>" << endl
         << "Alle Rechte vorbehalten." << endl << endl;
 }
 
