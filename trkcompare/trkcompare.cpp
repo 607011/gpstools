@@ -1,5 +1,5 @@
 // $Id$
-// Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
+// Copyright (c) 2008-2009 Oliver Lau <oliver@von-und-fuer-lau.de>
 // Alle Rechte vorbehalten.
 
 #include <cstdlib>
@@ -44,7 +44,7 @@ static struct option long_options[] = {
 void disclaimer(void)
 {
     std::cout << "trkcompare - Ermitteln, wie gut GPS-Tracks mit einer Referenz übereinstimmen." << std::endl
-        << "Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>" << std::endl
+        << "Copyright (c) 2008-2009 Oliver Lau <oliver@von-und-fuer-lau.de>" << std::endl
         << "Alle Rechte vorbehalten." << std::endl
         << std::endl;
 }

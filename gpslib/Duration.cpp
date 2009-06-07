@@ -1,5 +1,5 @@
 // $Id$
-// Copyright (c) 2008 Oliver Lau <oliver@ersatzworld.net>
+// Copyright (c) 2008-2009 Oliver Lau <oliver@von-und-fuer-lau.de>
 // Alle Rechte vorbehalten.
 
 #include <string>
