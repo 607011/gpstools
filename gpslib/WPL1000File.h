@@ -62,11 +62,12 @@ namespace GPS {
     public:
         enum _PointType
         {
-            WPL1000_TRACKPOINT  = 0x00,
-            WPL1000_TRACK_START = 0x01,
-            WPL1000_WAYPOINT    = 0x02,
-            WPL1000_END_OF_LOG  = 0xff,
-            WPL1000_ERROR       = -1
+            WPL1000_TRACKPOINT        = 0x00,
+            WPL1000_TRACK_START       = 0x01,
+            WPL1000_WAYPOINT          = 0x02,
+            WPL1000_UNKNOWN_POINTTYPE = 0x04,
+            WPL1000_END_OF_LOG        = 0xff,
+            WPL1000_ERROR             = -1
         };
     private:
         uint8_t _Type;
