@@ -53,7 +53,7 @@ namespace GPS {
     int WPL1000Data::readFrom(fstream& fs)
     {
         // Reverse Engineering mit freundlicher Unterstützung von Eckhard Zemp, Berlin (www.zemp.ch)
-        // und Gerhard Mehldau, Los Angeles (Kalifornien)
+        // Gerhard Mehldau, Los Angeles (Kalifornien) und Thomas Engelmeier
         readField<uint8_t>(fs, &_Type);
         readField<uint8_t>(fs, &_Unknown);
         readField<GPS::WPL1000Time>(fs, &_T);
@@ -67,6 +67,8 @@ namespace GPS {
             setName(ts.toString());
             // fall-through
         case WPL1000_TRACKPOINT:
+            // fall-through
+        case WPL1000_UNKNOWN_POINTTYPE:
             // fall-through
         case WPL1000_TRACK_START:
             setLatitude(1e-7 * (double) _WPL1000lat);
@@ -106,6 +108,8 @@ namespace GPS {
             switch (rc)
             {
             case WPL1000Data::WPL1000_TRACK_START:
+                // fall-through
+            case WPL1000Data::WPL1000_UNKNOWN_POINTTYPE:
                 // fall-through
             case WPL1000Data::WPL1000_TRACKPOINT:
                 if (_Trk == NULL)
