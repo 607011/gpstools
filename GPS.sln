@@ -11,6 +11,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "trkcompare", "trkcompare\trkcompare.vcproj", "{9993D5B9-E21C-494A-BD22-2A682E7982FD}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Qeo", "Qeo\Qeo.vcproj", "{DDE1BC25-C5C8-4D8D-B4A3-CB91911BDFC8}"
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wpl1000reader", "wpl1000reader\wpl1000reader.vcproj", "{E5CFF1BB-24E9-42D5-8A93-214086802DC9}"
 EndProject

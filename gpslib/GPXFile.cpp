@@ -270,7 +270,7 @@ namespace GPS {
     }
 
 
-    Track* GPXFile::trackByName(const std::string& name)
+    Track* GPXFile::track(const std::string& name)
     {
         for (TrackList::const_iterator i = _TrkList.begin(); i != _TrkList.end(); ++i)
             if ((*i)->name() == name)
@@ -279,7 +279,7 @@ namespace GPS {
     }
 
 
-    Track* GPXFile::trackByNumber(unsigned int number)
+    Track* GPXFile::track(unsigned int number)
     {
         for (TrackList::const_iterator i = _TrkList.begin(); i != _TrkList.end(); ++i)
             if ((*i)->number().defined() && (*i)->number().value() == number)

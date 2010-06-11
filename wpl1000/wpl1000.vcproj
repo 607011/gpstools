@@ -139,7 +139,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="comctl32.lib strsafe.lib shlwapi.lib"
 				LinkIncremental="1"
-				UACUIAccess="true"
+				UACUIAccess="false"
 				IgnoreDefaultLibraryNames="LIBCMT.lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -152,7 +152,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				EmbedManifest="true"
+				EmbedManifest="false"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
