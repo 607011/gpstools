@@ -52,13 +52,13 @@ namespace GPS {
         /// angegebenen Namen (trk/name) herauspicken.
         /// @param name Name des Tracks
         /// @return Track
-        Track* trackByName(const std::string& name);
+        Track* track(const std::string& name);
 
         /// Aus der Liste der eingelesenen Tracks denjenigen mit der
         /// angegebenen Nummer (trk/number) herauspicken.
         /// @param name Nummer des Tracks
         /// @return Track
-        Track* trackByNumber(unsigned int number);
+        Track* track(unsigned int number = 0);
 
     private:
         static void getWptType(Waypoint* wpt, TiXmlNode* gpxWpt);

@@ -172,13 +172,13 @@ int main(int argc, char* argv[])
     {
         if (trackSelectBy == TRACK_SELECT_BY_NAME)
         {
-            trk = gpxFile.trackByName(trackSelector);
+            trk = gpxFile.track(trackSelector);
             if (trk == NULL)
                 errmsg(_("Track konnte unter dem angegebenen Namen nicht gefunden werden"));
         }
         else if (trackSelectBy == TRACK_SELECT_BY_NUMBER)
         {
-            trk = gpxFile.trackByNumber(atoi(trackSelector.c_str()));
+            trk = gpxFile.track(atoi(trackSelector.c_str()));
             if (trk == NULL)
                 errmsg(_("Track konnte unter der angegebenen Nummer nicht gefunden werden"));
         }
