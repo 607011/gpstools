@@ -40,6 +40,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/Zi /Gh /Oy-"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(SolutionDir)"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
@@ -61,8 +62,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib strsafe.lib shlwapi.lib"
+				AdditionalOptions="/DEBUG /Opt:NOICF /MAP"
+				AdditionalDependencies="comctl32.lib strsafe.lib shlwapi.lib sdt.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(SD_TRACING)&quot;"
 				IgnoreDefaultLibraryNames="LIBCMTD.lib "
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -89,6 +92,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="&quot;$(SD_DEVELOPER)\sdt_patchclean.exe&quot; &quot;$(TargetDir)$(TargetFileName)&quot; &quot;$(ProjectPath).$(PlatformName).$(ConfigurationName).sddb&quot; &quot;$(VCInstallDir)/&quot;&#x0D;&#x0A;echo &quot;$(SD_DEVELOPER)\sdt_patchclean.exe&quot; &quot;$(TargetDir)$(TargetFileName)&quot; &quot;$(ProjectPath).$(PlatformName).$(ConfigurationName).sddb&quot; &quot;$(VCInstallDir)/&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -116,6 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/Zi /Gh /Oy-"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="$(SolutionDir)"
@@ -137,8 +142,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib strsafe.lib shlwapi.lib"
+				AdditionalOptions="/DEBUG /Opt:NOICF /MAP"
+				AdditionalDependencies="comctl32.lib strsafe.lib shlwapi.lib sdt.lib"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(SD_TRACING)&quot;"
 				UACUIAccess="false"
 				IgnoreDefaultLibraryNames="LIBCMT.lib"
 				GenerateDebugInformation="true"
@@ -168,6 +175,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="&quot;$(SD_DEVELOPER)\sdt_patchclean.exe&quot; &quot;$(TargetDir)$(TargetFileName)&quot; &quot;$(ProjectPath).$(PlatformName).$(ConfigurationName).sddb&quot; &quot;$(VCInstallDir)/&quot;&#x0D;&#x0A;echo &quot;$(SD_DEVELOPER)\sdt_patchclean.exe&quot; &quot;$(TargetDir)$(TargetFileName)&quot; &quot;$(ProjectPath).$(PlatformName).$(ConfigurationName).sddb&quot; &quot;$(VCInstallDir)/&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
