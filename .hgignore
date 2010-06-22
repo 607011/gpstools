@@ -28,3 +28,5 @@ Debug/*
 Changelog.txt
 gpsplot-config-schema.html
 gpsplot-config.html
+*.aps
+*.sdf
