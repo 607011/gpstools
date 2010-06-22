@@ -18,7 +18,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// German (Neutral) resources
+// Deutsch (neutral) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
 #ifdef _WIN32
@@ -76,12 +76,13 @@ BEGIN
 END
 
 IDD_MULTITEMPL DIALOGEX 0, 0, 300, 24
-STYLE WS_CHILD | DS_SETFONT | DS_CONTROL | WS_CLIPSIBLINGS | DS_3DLOOK
+STYLE DS_SETFONT | DS_3DLOOK | DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
     CONTROL         "jeden Track in separater Datei speichern (multi)",IDC_CHECK_MULTI,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,6,228,10
 END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -123,12 +124,12 @@ BEGIN
     IDC_WPL1000             "WPL1000"
 END
 
-#endif    // German (Neutral) resources
+#endif    // Deutsch (neutral) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// German (Germany) resources
+// Deutsch (Deutschland) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
 #ifdef _WIN32
@@ -142,8 +143,8 @@ LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,9,0,3
- PRODUCTVERSION 0,9,0,3
+ FILEVERSION 0,9,0,4
+ PRODUCTVERSION 0,9,0,4
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -161,7 +162,7 @@ BEGIN
             VALUE "FileDescription", "wpl1000 Application"
             VALUE "FileVersion", "0, 9, 0, 4"
             VALUE "InternalName", "wpl1000"
-            VALUE "LegalCopyright", "Copyright (C) 2009"
+            VALUE "LegalCopyright", "Copyright (C) 2009 Oliver Lau <oliver@von-und-fuer-lau.de>"
             VALUE "OriginalFilename", "wpl1000.exe"
             VALUE "ProductName", "wpl1000 Application"
             VALUE "ProductVersion", "0, 9, 0, 4"
@@ -173,12 +174,12 @@ BEGIN
     END
 END
 
-#endif    // German (Germany) resources
+#endif    // Deutsch (Deutschland) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// Englisch (USA) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 #ifdef _WIN32
@@ -226,7 +227,7 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
-#endif    // English (U.S.) resources
+#endif    // Englisch (USA) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
