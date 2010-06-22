@@ -20,3 +20,11 @@ Debug/*
 *.ncb
 *.suo
 *.orig
+*.gpx
+*.exe
+*.sddb
+*.map
+*.plt
+Changelog.txt
+gpsplot-config-schema.html
+gpsplot-config.html

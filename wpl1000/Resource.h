@@ -1,5 +1,7 @@
-// $Id$
-
+//{{NO_DEPENDENCIES}}
+// Microsoft Visual C++ generated include file.
+// Used by wpl1000.rc
+//
 #define IDC_MYICON                      2
 #define IDD_MAINFORM                    101
 #define IDD_WPL1000_DIALOG              102
@@ -22,9 +24,8 @@
 #define IDC_CHECK_MULTI                 1001
 #define IDC_LISTVIEW                    1002
 #define IDT_STATUSBAR                   2001
-#define IDC_STATIC                      -1
-
 #define ID_RECENT_FILE_LIST             9001
+#define IDC_STATIC                      -1
 
 // Next default values for new objects
 // 
