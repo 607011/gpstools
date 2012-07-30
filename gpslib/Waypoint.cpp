@@ -6,6 +6,7 @@
 #include "Timestamp.h"
 
 #include <cmath>
+#include <cstdio>
 
 namespace GPS {
 

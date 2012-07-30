@@ -5,6 +5,7 @@
 #include <string>
 #include <ctime>
 #include <iostream>
+#include <cstdio>
 
 #include "Duration.h"
 #include "Timestamp.h"

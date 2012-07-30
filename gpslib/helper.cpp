@@ -3,6 +3,7 @@
 // Alle Rechte vorbehalten.
 
 #include <iostream>
+#include <cstdio>
 #include <algorithm>
 
 #include "helper.h"
